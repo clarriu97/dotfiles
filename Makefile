@@ -93,6 +93,8 @@ configure-ubuntu-terminal: ## install and configure the terminal for Ubuntu
 	sudo apt install -y kitty
 	@echo -e "${Green}kitty${Cyan} installed!${NC}"
 
+	$(MAKE) configure-kitty
+
 	## tldr (Too long, didn't read)
 	@echo -e "${Cyan}Installing ${Green}tldr${Cyan}...${NC}"
 	sudo apt install -y tldr
@@ -113,12 +115,14 @@ configure-fedora-terminal: ## install and configure the terminal for Fedora
 	$(MAKE) install-hack-nerd-font
 
 	## copy terminal files
-	cp terminal/.zshrc $$(HOME)/.zshrc
-	cp terminal/.p10k.zsh $$(HOME)/.p10k.zsh
+	cp terminal/.zshrc $${HOME}/.zshrc
+	cp terminal/.p10k.zsh $${HOME}/.p10k.zsh
 
 	@echo -e "${Cyan}Installing ${Green}kitty${Cyan}...${NC}"
 	sudo dnf install -y kitty
 	@echo -e "${Green}kitty${Cyan} installed!${NC}"
+
+	$(MAKE) configure-kitty
 
 	## tldr (Too long, didn't read)
 	@echo -e "${Cyan}Installing ${Green}tldr${Cyan}...${NC}"
@@ -134,6 +138,11 @@ configure-fedora-terminal: ## install and configure the terminal for Fedora
 	@echo -e "${Cyan}Installing ${Green}bat${Cyan}...${NC}"
 	sudo dnf install -y bat
 	@echo -e "${Green}bat${Cyan} installed!${NC}"
+
+configure-kitty: ## configure Kitty terminal emulator
+	mkdir -p $${HOME}/.config/kitty
+	cp terminal/color.ini $${HOME}/.config/kitty
+	cp kitty.conf $${HOME}/.config/kitty
 
 configure-zsh-terminal: ## configure zsh as the user shell
 	sudo usermod --shell /usr/bin/zsh clarriu
