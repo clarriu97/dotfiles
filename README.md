@@ -5,13 +5,14 @@ This repository is meant to store all the files and configurations needed to ins
 
 The tool can configure two main things:
 
-- Your terminal: using `zsh`, `powerlevel10k`
+- Your terminal: using `zsh`, [`powerlevel10k`](https://github.com/romkatv/powerlevel10k)
+- Your Windows Manager: using [i3wm](https://i3wm.org/)
 
 ## Overview
 
 This is how your environment will look like if you install everything.
 
-[terminal](images/terminal.png)
+![terminal](images/terminal.png)
 
 ## Support
 
@@ -28,5 +29,7 @@ To automate the process and to avoid problems, you should have the following too
 
 ## Get started
 
-???+ warning
-    In the installation process there will be actions that require super user permissions.
+> In the installation process there will be actions that require super user permissions.
+> The process will reboot your system when it finishes.
+
+

@@ -35,11 +35,15 @@ help:
 	@python3.8 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 setup-env: ## start the whole setup
-	$(MAKE) ask-for-distro-and-choice
+	$(MAKE) show-warning-message && $(MAKE) ask-for-distro-and-choice
 	# reboot
 
+show-warning-message: ## show a warning message when setting up the environment
+	@echo -e "${Red}Note: the process requires super user privileges and will reboot your machine once finished. Is that okay with you? [Y/n] ${NC}" && read ans && [ $${ans:-N} = y ]
+	# @read line; if [ $$line = "n" ]; then echo Aborting...; exit 1; fi
+
 .ONESHELL:
-ask-for-distro-and-choice:
+ask-for-distro-and-choice: ## ask the user what does he/she wants to configure and for which Linux distribution
 	@echo Please select your Linux distro:; \
         echo '1) Fedora'; \
         echo '2) Ubuntu'; \
