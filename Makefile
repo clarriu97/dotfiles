@@ -54,6 +54,9 @@ ask-for-distro-and-choice: ## ask the user what does he/she wants to configure a
 		echo '3) Both Terminal and I3'; \
         read -p 'Enter value: ' choice; export CHOICE=$$choice
 
+	$(MAKE) install-hack-nerd-font
+	$(MAKE) set-wallpaper
+
 	@if [ $$DISTRO == "1" ]; then
 		$(MAKE) update-fedora
 		$(MAKE) install-fedora-os-deps
@@ -78,6 +81,18 @@ ask-for-distro-and-choice: ## ask the user what does he/she wants to configure a
 		fi
 	fi
 
+install-hack-nerd-font: ## install font used in the terminal
+	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/Hack.zip
+	sudo mv Hack.zip /usr/share/fonts && \
+	cd /usr/share/fonts && \
+	sudo unzip Hack.zip && \
+	sudo rm Hack.zip && sudo rm LICENSE.md && sudo rm readme.md
+
+set-wallpaper: ## put a custom wallpaper
+	gsettings set org.gnome.desktop.background picture-options 'scaled'
+	gsettings set org.gnome.desktop.background picture-uri /home/clarriu/projects/dotfiles/images/pokemon_wallpaper.jpeg
+	# feh --bg-fill images/pokemon_wallpaper.jpeg
+
 update-ubuntu: ## update Ubuntu dependencies
 	sudo apt-get update -y && sudo apt-get upgrade -y
 
@@ -85,7 +100,7 @@ update-fedora: ## update Fedora dependencies
 	sudo dnf upgrade -y
 
 configure-ubuntu-terminal: ## install and configure the terminal for Ubuntu
-	$(MAKE) configure-zsh-terminal
+	$(MAKE) configure-zsh-and-p10k
 
 	@echo -e "${Cyan}Installing ${Green}kitty${Cyan}...${NC}"
 	sudo add-apt-repository universe
@@ -110,13 +125,13 @@ configure-ubuntu-terminal: ## install and configure the terminal for Ubuntu
 	sudo apt install -y bat
 	@echo -e "${Green}bat${Cyan} installed!${NC}"
 
-configure-fedora-terminal: ## install and configure the terminal for Fedora
-	$(MAKE) configure-zsh-terminal
-	$(MAKE) install-hack-nerd-font
+	## fzf
+	@echo -e "${Cyan}Installing ${Green}fzf${Cyan}...${NC}"
+	sudo apt-get install -y fzf
+	@echo -e "${Green}fzf${Cyan} installed!${NC}"
 
-	## copy terminal files
-	cp terminal/.zshrc $${HOME}/.zshrc
-	cp terminal/.p10k.zsh $${HOME}/.p10k.zsh
+configure-fedora-terminal: ## install and configure the terminal for Fedora
+	$(MAKE) configure-zsh-and-p10k
 
 	@echo -e "${Cyan}Installing ${Green}kitty${Cyan}...${NC}"
 	sudo dnf install -y kitty
@@ -139,26 +154,37 @@ configure-fedora-terminal: ## install and configure the terminal for Fedora
 	sudo dnf install -y bat
 	@echo -e "${Green}bat${Cyan} installed!${NC}"
 
+	## fzf
+	@echo -e "${Cyan}Installing ${Green}fzf${Cyan}...${NC}"
+	sudo dnf install -y fzf
+	@echo -e "${Green}fzf${Cyan} installed!${NC}"
+
 configure-kitty: ## configure Kitty terminal emulator
 	mkdir -p $${HOME}/.config/kitty
 	cp terminal/color.ini $${HOME}/.config/kitty
 	cp kitty.conf $${HOME}/.config/kitty
 
-configure-zsh-terminal: ## configure zsh as the user shell
+configure-zsh-and-p10k: ## configure zsh as the user shell
 	sudo usermod --shell /usr/bin/zsh clarriu
+	sudo usermod --shell /usr/bin/zsh root
 
-install-hack-nerd-font: ## install font used in the terminal
-	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/Hack.zip
-	sudo mv Hack.zip /usr/share/fonts && \
-	cd /usr/share/fonts && \
-	sudo unzip Hack.zip && \
-	sudo rm Hack.zip && sudo rm LICENSE.md && sudo rm readme.md
+	## copy terminal files
+	cp terminal/.zshrc $${HOME}/.zshrc
+	cp terminal/.p10k.zsh $${HOME}/.p10k.zsh
+
+	sudo cp terminal/.zshrc /root/.zshrc
+	sudo cp terminal/.p10k.zsh /root/.p10k.zsh
 
 install-ubuntu-os-deps: update-ubuntu ## install Ubuntu OS dependencies
 	$(MAKE) update-ubuntu
 
 	## Neofetch
 	sudo apt install -y neofetch
+
+	## feh
+	@echo -e "${Cyan}Installing ${Green}feh${Cyan}...${NC}"
+	sudo apt install -y feh
+	@echo -e "${Green}feh${Cyan} installed!${NC}"
 
 install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	$(MAKE) update-fedora
@@ -189,6 +215,11 @@ install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
 	sudo dnf install -y brave-browser
 	@echo -e "${Green}Brave browser${Cyan} installed!${NC}"
+
+	## feh
+	@echo -e "${Cyan}Installing ${Green}feh${Cyan}...${NC}"
+	sudo dnf install -y feh
+	@echo -e "${Green}feh${Cyan} installed!${NC}"
 
 	## zsh
 	@echo -e "${Cyan}Installing ${Green}zsh${Cyan}...${NC}"
