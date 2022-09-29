@@ -48,11 +48,11 @@ show-warning-message: ## show a warning message when setting up the environment
 
 .ONESHELL:
 ask-for-distro-and-choice: ## ask the user what does he/she wants to configure and for which Linux distribution
-	@echo \nPlease select your Linux distro:; \
+	@echo -e "\nPlease select your Linux distro:"; \
         echo '1) Fedora'; \
         echo '2) Ubuntu'; \
         read -p 'Enter value: ' distro; export DISTRO=$$distro
-	@echo \nWhat do you want to install?:; \
+	@echo -e "\nWhat do you want to install?:"; \
         echo '1) Terminal'; \
         echo '2) I3 Windows Manager'; \
 		echo '3) Both Terminal and I3'; \
@@ -69,7 +69,7 @@ ask-for-distro-and-choice: ## ask the user what does he/she wants to configure a
 			$(MAKE) configure-fedora-terminal
 			$(MAKE) configure-fedora-i3
 		else
-			"Please select one of the options..."
+			echo -e "\nPlease select one of the options..."
 		fi
 	elif [ $$DISTRO == "2" ]; then
 		$(MAKE) update-and-upgrade-ubuntu
@@ -82,10 +82,10 @@ ask-for-distro-and-choice: ## ask the user what does he/she wants to configure a
 			$(MAKE) configure-ubuntu-terminal
 			$(MAKE) configure-ubuntu-i3
 		else
-			"Please select one of the options..."
+			echo -e "\nPlease select one of the options..."
 		fi
 	else
-		echo "Please select one of the options..."
+		echo -e "\nPlease select one of the options..."
 	fi
 
 ###################
