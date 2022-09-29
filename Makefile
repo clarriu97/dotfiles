@@ -22,9 +22,9 @@ Color_Off='\033[0m'       # Text Reset
 
 # Regular Colors
 Black=\033[0;30m
-Cyan=\033[0;31m
+Red=\033[0;31m
 Green=\033[0;32m
-Cyan=\033[0;33m
+Orange=\033[0;33m
 Blue=\033[0;34m
 Purple=\033[0;35m
 Cyan=\033[0;36m
@@ -39,8 +39,25 @@ setup-env: ## start the whole setup
 	$(MAKE) show-warning-message && $(MAKE) ask-for-distro-and-choice
 	# reboot
 
+.ONESHELL:
 welcome-message: ## show a welcome message and presents the tool
-
+	@echo -e "${Orange}"
+	@echo -e "██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗    ████████╗ ██████╗ "
+	@echo -e "██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝    ╚══██╔══╝██╔═══██╗"
+	@echo -e "██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗         ██║   ██║   ██║"
+	@echo -e "██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝         ██║   ██║   ██║"
+	@echo -e "╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗       ██║   ╚██████╔╝"
+	@echo -e " ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝       ╚═╝    ╚═════╝ "
+	@echo -e "                                                                                    "
+	@echo -e "██████╗  ██████╗ ████████╗███████╗██╗██╗     ███████╗███████╗                       "
+	@echo -e "██╔══██╗██╔═══██╗╚══██╔══╝██╔════╝██║██║     ██╔════╝██╔════╝                       "
+	@echo -e "██║  ██║██║   ██║   ██║   █████╗  ██║██║     █████╗  ███████╗                       "
+	@echo -e "██║  ██║██║   ██║   ██║   ██╔══╝  ██║██║     ██╔══╝  ╚════██║                       "
+	@echo -e "██████╔╝╚██████╔╝   ██║   ██║     ██║███████╗███████╗███████║                       "
+	@echo -e "╚═════╝  ╚═════╝    ╚═╝   ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝                       "
+	@echo -e ""
+	@echo -e "\n${NC}This project is made by ${Red}clarriu97${NC}"
+	@echo -e "\nhttps://github.com/${Red}clarriu97${NC}/dotfiles"
 
 show-warning-message: ## show a warning message when setting up the environment
 	@echo -e "\n${Red}Note: the process requires super user privileges and will reboot your machine once finished. Is that okay with you? [Y/n] ${NC}" && read ans && [ $${ans:-N} != n ]
@@ -69,7 +86,7 @@ ask-for-distro-and-choice: ## ask the user what does he/she wants to configure a
 			$(MAKE) configure-fedora-terminal
 			$(MAKE) configure-fedora-i3
 		else
-			echo -e "\nPlease select one of the options..."
+			echo -e "\nPlease select one of the options..." && exit 1
 		fi
 	elif [ $$DISTRO == "2" ]; then
 		$(MAKE) update-and-upgrade-ubuntu
@@ -82,10 +99,10 @@ ask-for-distro-and-choice: ## ask the user what does he/she wants to configure a
 			$(MAKE) configure-ubuntu-terminal
 			$(MAKE) configure-ubuntu-i3
 		else
-			echo -e "\nPlease select one of the options..."
+			echo -e "\nPlease select one of the options..." && exit 1
 		fi
 	else
-		echo -e "\nPlease select one of the options..."
+		echo -e "\nPlease select one of the options..." && exit 1
 	fi
 
 ###################
@@ -242,6 +259,7 @@ configure-ubuntu-terminal: ## install and configure the terminal for Ubuntu
 	@echo -e "${Cyan}Installing ${Green}bat${Cyan}...${NC}"
 	wget https://github.com/sharkdp/bat/releases/download/v0.22.1/bat-musl_0.22.1_amd64.deb && \
 	sudo dpkg -i bat-musl_0.22.1_amd64.deb
+	rm bat-musl_0.22.1_amd64.deb
 	@echo -e "${Green}bat${Cyan} installed!${NC}"
 
 	## fzf
