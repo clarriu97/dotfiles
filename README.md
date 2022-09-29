@@ -26,10 +26,25 @@ The tool supports the following Linux distributions:
 To automate the process and to avoid problems, you should have the following tools installed:
 
 - [GNU Make](https://www.gnu.org/software/make/)
+- [Git](https://git-scm.com/)
 
 ## Get started
 
 > In the installation process there will be actions that require super user permissions.
 > The process will reboot your system when it finishes.
+
+To start the installation of all tools and configurations, simply run the following command:
+
+```bash
+git clone https://github.com/clarriu97/dotfiles && cd dotfiles && make -s setup-env
+```
+
+## User guide and shortcuts
+
+`in3` is a windows manager with which we will be able to manage all our windows environment
+with the keyboard. For that purpose, every command will be a combination of the `$mod` key plus
+any other keys. In my case, the `$mod` key is the Windows key:
+
+![winkey](images/win_key.jpg)
 
 

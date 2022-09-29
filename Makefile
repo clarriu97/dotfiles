@@ -202,7 +202,7 @@ configure-zsh-plugins: ## configure zsh plugins
 configure-kitty: ## configure Kitty terminal emulator
 	mkdir -p $${HOME}/.config/kitty
 	cp terminal/color.ini $${HOME}/.config/kitty
-	cp kitty.conf $${HOME}/.config/kitty
+	cp terminal/kitty.conf $${HOME}/.config/kitty
 
 configure-ubuntu-terminal: ## install and configure the terminal for Ubuntu
 	## Kitty
