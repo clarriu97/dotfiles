@@ -35,20 +35,24 @@ help:
 	@python3.8 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 setup-env: ## start the whole setup
+	$(MAKE) welcome-message
 	$(MAKE) show-warning-message && $(MAKE) ask-for-distro-and-choice
 	# reboot
 
+welcome-message: ## show a welcome message and presents the tool
+
+
 show-warning-message: ## show a warning message when setting up the environment
-	@echo -e "${Red}Note: the process requires super user privileges and will reboot your machine once finished. Is that okay with you? [Y/n] ${NC}" && read ans && [ $${ans:-N} != n ]
+	@echo -e "\n${Red}Note: the process requires super user privileges and will reboot your machine once finished. Is that okay with you? [Y/n] ${NC}" && read ans && [ $${ans:-N} != n ]
 	# @read line; if [ $$line = "n" ]; then echo Aborting...; exit 1; fi
 
 .ONESHELL:
 ask-for-distro-and-choice: ## ask the user what does he/she wants to configure and for which Linux distribution
-	@echo Please select your Linux distro:; \
+	@echo \nPlease select your Linux distro:; \
         echo '1) Fedora'; \
         echo '2) Ubuntu'; \
         read -p 'Enter value: ' distro; export DISTRO=$$distro
-	@echo What do you want to install?:; \
+	@echo \nWhat do you want to install?:; \
         echo '1) Terminal'; \
         echo '2) I3 Windows Manager'; \
 		echo '3) Both Terminal and I3'; \
@@ -228,8 +232,10 @@ configure-ubuntu-terminal: ## install and configure the terminal for Ubuntu
 	@echo -e "${Green}tldr${Cyan} installed!${NC}"
 
 	## lsd (ls with steroids)
-	@echo -e "${Cyan}Installing ${Green}tldr${Cyan}...${NC}"
-	sudo apt install -y lsd
+	@echo -e "${Cyan}Installing ${Green}lsd${Cyan}...${NC}"
+	wget https://github.com/Peltoche/lsd/releases/download/0.23.1/lsd-musl_0.23.1_i686.deb && \
+	sudo dpkg -i lsd-musl_0.23.1_i686.deb
+	rm lsd-musl_0.23.1_i686.deb
 	@echo -e "${Green}lsd${Cyan} installed!${NC}"
 
 	## bat (cat with steroids)
