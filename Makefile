@@ -205,6 +205,7 @@ configure-kitty: ## configure Kitty terminal emulator
 	cp kitty.conf $${HOME}/.config/kitty
 
 configure-ubuntu-terminal: ## install and configure the terminal for Ubuntu
+	## Kitty
 	@echo -e "${Cyan}Installing ${Green}kitty${Cyan}...${NC}"
 	sudo add-apt-repository universe
 	sudo apt update -y
@@ -231,7 +232,12 @@ configure-ubuntu-terminal: ## install and configure the terminal for Ubuntu
 	sudo apt-get install -y fzf
 	@echo -e "${Green}fzf${Cyan} installed!${NC}"
 
+	$(MAKE) configure-zsh-and-p10k
+	$(MAKE) configure-zsh-plugins
+	$(MAKE) configure-kitty
+
 configure-fedora-terminal: ## install and configure the terminal for Fedora
+	## Kitty
 	@echo -e "${Cyan}Installing ${Green}kitty${Cyan}...${NC}"
 	sudo dnf install -y kitty
 	@echo -e "${Green}kitty${Cyan} installed!${NC}"
@@ -256,6 +262,10 @@ configure-fedora-terminal: ## install and configure the terminal for Fedora
 	sudo dnf install -y fzf
 	@echo -e "${Green}fzf${Cyan} installed!${NC}"
 
+	$(MAKE) configure-zsh-and-p10k
+	$(MAKE) configure-zsh-plugins
+	$(MAKE) configure-kitty
+
 install-hack-nerd-font: ## install font used in the terminal
 	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/Hack.zip
 	sudo mv Hack.zip /usr/share/fonts && \
@@ -263,13 +273,21 @@ install-hack-nerd-font: ## install font used in the terminal
 	sudo unzip Hack.zip && \
 	sudo rm Hack.zip && sudo rm LICENSE.md && sudo rm readme.md
 
-set-wallpaper: ## put a custom wallpaper
-	gsettings set org.gnome.desktop.background picture-options 'scaled'
-	gsettings set org.gnome.desktop.background picture-uri /home/clarriu/projects/dotfiles/images/pokemon_wallpaper.jpeg
-	# feh --bg-fill images/pokemon_wallpaper.jpeg
+#####################
+## Windows manager ##
+#####################
 
 configure-fedora-i3: ## configure Fedora i3wm
 	@echo "Fedora"
 
 configure-ubuntu-i3: ## configure Ubuntu i3wm
 	@echo "Ubuntu"
+
+#########################
+## Extra configuration ##
+#########################
+
+# set-wallpaper: ## put a custom wallpaper
+# 	gsettings set org.gnome.desktop.background picture-options 'scaled'
+# 	gsettings set org.gnome.desktop.background picture-uri /home/clarriu/projects/dotfiles/images/pokemon_wallpaper.jpeg
+# 	# feh --bg-fill images/pokemon_wallpaper.jpeg
