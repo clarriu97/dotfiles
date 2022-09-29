@@ -47,7 +47,26 @@ any other keys. In my case, the `$mod` key is the `Windows` key:
 
 ![winkey](images/win_key.jpg)
 
+The shortcuts related to the windows manager are:
+
+- `Win` + `Enter`: open the terminal emulator (`kitty`).
 - `Win` + number(`n`): move to window `n`.
 - `Win` + `Shift` + number(`n`): move the window you are working on, to window `n`.
 - `Win` + `Tab`: move to the last window you were at.
 - `Win` + `Shift` + `Q`: close the window you are working on.
+- `Win` + `Shift` + `H`: uses `xrandr` to place the screens in the home layout, adapting the orientation and resolution of these screens.
+- `Win` + `Shift` + `G`: uses `xrandr` to place the screens in the office layout, adapting the orientation and resolution of these screens.
+- `Win` + `Shift` + `B`: uses `xrandr` to display only the primary screen.
+- `Win` + `R`: resize your windows (use `ESC` for escape this mode).
+- `Win` + `Shift` + `S`: take a screenshot using [flameshot](https://github.com/flameshot-org/flameshot).
+- `Win` + `Shift` + `E`: open `Files`.
+- `Win` + `Ctrl` + `R`: reboot the machine.
+- `Win` + `Ctrl` + `P`: power off the machine.
+
+The shortcuts you will be able to use in your terminal are:
+- `Ctrl` + `Shift` + `t`: open a new tab.
+- `Ctrl` + `Shift` + `Alt` + `t`: rename a tab
+- `Ctrl` + `Shift` + `Letf arrow`: move to the left tab.
+- `Ctrl` + `Shift` + `Right arrow`: move to the right tab.
+- `Ctrl` + `Shift` + `,` move a tab to the left (spanish keyboard distribution).
+- `Ctrl` + `Shift` + `.` move a tab to the right (spanish keyboard distribution).

@@ -135,6 +135,11 @@ install-ubuntu-os-deps: update-ubuntu ## install Ubuntu OS dependencies
 	sudo apt-get install -y zsh
 	@echo -e "${Green}zsh${Cyan} installed!${NC}"
 
+	## flameshot
+	@echo -e "${Cyan}Installing ${Green}flameshot${Cyan}...${NC}"
+	sudo apt install -y flameshot
+	@echo -e "${Green}flameshot${Cyan} installed!${NC}"
+
 install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	## Visual Studio Code
 	@echo -e "${Cyan}Installing ${Green}Visual Studio Code${Cyan}...${NC}"
@@ -167,6 +172,11 @@ install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	@echo -e "${Cyan}Installing ${Green}zsh${Cyan}...${NC}"
 	sudo dnf install -y zsh
 	@echo -e "${Green}zsh${Cyan} installed!${NC}"
+
+	## flameshot
+	@echo -e "${Cyan}Installing ${Green}flameshot${Cyan}...${NC}"
+	sudo dnf install -y flameshot
+	@echo -e "${Green}flameshot${Cyan} installed!${NC}"
 
 ############################
 ## Terminal configuration ##
