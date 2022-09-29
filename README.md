@@ -1,11 +1,11 @@
 
 ## Welcome
 
-This repository is meant to store all the files and configurations needed to instantly set my Linux working environment to my liking.
+This repository is meant to store all the files and configurations needed to instantly setup my Linux working environment to my liking.
 
-The tool can configure two main things:
+This tool can configure two main things:
 
-- Your terminal: using `zsh`, [`powerlevel10k`](https://github.com/romkatv/powerlevel10k)
+- Your terminal: using `zsh`, [`powerlevel10k`](https://github.com/romkatv/powerlevel10k) and some `zsh` plugins.
 - Your Windows Manager: using [i3wm](https://i3wm.org/)
 
 ## Overview
@@ -30,14 +30,26 @@ To automate the process and to avoid problems, you should have the following too
 
 ## Get started
 
-> In the installation process there will be actions that require super user permissions.
-> The process will reboot your system when it finishes.
+> In the installation process there will be actions that require super user permissions
+> and the process will reboot your system when it finishes.
 
 To start the installation of all tools and configurations, simply run the following command:
 
 ```bash
 git clone https://github.com/clarriu97/dotfiles && cd dotfiles && make -s setup-env
 ```
+
+You will be asked about the Linux distro you are using, and the tools you want to configure.
+You can choose between:
+
+1. Only the terminal.
+2. Only the windows manager.
+3. Both the terminal and the windows manager.
+
+![example_questions](images/example_questions.png)
+
+Once you have selected the options that best fit your needs, the installation and
+configuration process will begin.
 
 ## User guide and shortcuts
 
@@ -52,7 +64,7 @@ The shortcuts related to the windows manager are:
 - `Win` + `Enter`: open the terminal emulator (`kitty`).
 - `Win` + number(`n`): move to window `n`.
 - `Win` + `Shift` + number(`n`): move the window you are working on, to window `n`.
-- `Win` + `Tab`: move to the last window you were at.
+- `Win` + `Tab`: move to the last window you were working on.
 - `Win` + `Shift` + `Q`: close the window you are working on.
 - `Win` + `Shift` + `H`: uses `xrandr` to place the screens in the home layout, adapting the orientation and resolution of these screens.
 - `Win` + `Shift` + `G`: uses `xrandr` to place the screens in the office layout, adapting the orientation and resolution of these screens.
