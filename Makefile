@@ -196,8 +196,7 @@ configure-zsh-plugins: ## configure zsh plugins
 	sudo mkdir -p /usr/share/zsh-sudo && \
 	sudo cp terminal/zsh-plugins/sudo.plugin.zsh /usr/share/zsh-sudo
 
-	sudo cp terminal/zsh-plugins/zsh-syntax-highlighting /usr/share
-
+	sudo cp -r terminal/zsh-plugins/zsh-syntax-highlighting /usr/share
 	@echo -e "${Green}Done!${NC}"
 
 configure-kitty: ## configure Kitty terminal emulator
@@ -274,7 +273,7 @@ install-hack-nerd-font: ## install font used in the terminal
 	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/Hack.zip
 	sudo mv Hack.zip /usr/share/fonts && \
 	cd /usr/share/fonts && \
-	sudo unzip Hack.zip && \
+	sudo unzip -n Hack.zip && \
 	sudo rm Hack.zip && sudo rm LICENSE.md && sudo rm readme.md
 	@echo -e "${Green}HackNerdFont${Cyan} installed!${NC}"
 
