@@ -54,9 +54,6 @@ ask-for-distro-and-choice: ## ask the user what does he/she wants to configure a
 		echo '3) Both Terminal and I3'; \
         read -p 'Enter value: ' choice; export CHOICE=$$choice
 
-	$(MAKE) install-hack-nerd-font
-	$(MAKE) set-wallpaper
-
 	@if [ $$DISTRO == "1" ]; then
 		$(MAKE) update-fedora
 		$(MAKE) install-fedora-os-deps
@@ -64,21 +61,27 @@ ask-for-distro-and-choice: ## ask the user what does he/she wants to configure a
 			$(MAKE) configure-fedora-terminal
 		elif [ $$CHOICE == "2" ]; then
 			$(MAKE) configure-fedora-i3
-		else
+		elif [ $$CHOICE == "3" ]; then
 			$(MAKE) configure-fedora-terminal
 			$(MAKE) configure-fedora-i3
+		else
+			"Please select one of the options..."
 		fi
-	else
-		$(MAKE) update-ubuntu
+	elif [ $$DISTRO == "2" ]; then
+		$(MAKE) update-and-upgrade-ubuntu
 		$(MAKE) install-ubuntu-os-deps
 		if [ $$CHOICE == "1" ]; then
 			$(MAKE) configure-ubuntu-terminal
 		elif [ $$CHOICE == "2" ]; then
 			$(MAKE) configure-ubuntu-i3
-		else
+		elif [ $$CHOICE == "3" ]; then
 			$(MAKE) configure-ubuntu-terminal
 			$(MAKE) configure-ubuntu-i3
+		else
+			"Please select one of the options..."
 		fi
+	else
+		echo "Please select one of the options..."
 	fi
 
 install-hack-nerd-font: ## install font used in the terminal
