@@ -39,7 +39,7 @@ setup-env: ## start the whole setup
 	# reboot
 
 show-warning-message: ## show a warning message when setting up the environment
-	@echo -e "${Red}Note: the process requires super user privileges and will reboot your machine once finished. Is that okay with you? [Y/n] ${NC}" && read ans && [ $${ans:-N} = y ]
+	@echo -e "${Red}Note: the process requires super user privileges and will reboot your machine once finished. Is that okay with you? [Y/n] ${NC}" && read ans && [ $${ans:-N} != n ]
 	# @read line; if [ $$line = "n" ]; then echo Aborting...; exit 1; fi
 
 .ONESHELL:
@@ -183,19 +183,21 @@ configure-zsh-and-p10k: ## configure zsh and powerlevel10k
 
 	sudo cp terminal/.zshrc /root/.zshrc
 	sudo cp terminal/.p10k.zsh /root/.p10k.zsh
+
+	git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
 	@echo -e "${Green}Done!${NC}"
 
 configure-zsh-plugins: ## configure zsh plugins
 	@echo -e "${Cyan}Installing ${Green}zsh plugins${Cyan}...${NC}"
 
 	sudo mkdir -p /usr/share/zsh-autosuggestions && \
-	sudo cp terminal/zsh-syntax-autosuggestions.zsh /usr/share/zsh-autosuggestions
+	sudo cp terminal/zsh-autosuggestions.zsh /usr/share/zsh-autosuggestions
 
 	sudo mkdir -p /usr/share/zsh-sudo && \
 	sudo cp terminal/sudo.plugin.zsh /usr/share/zsh-sudo
 
-	sudo mkdir -p /usr/share/zsh-autosuggestions && \
-	sudo cp terminal/zsh-syntax-highlighting.zsh /usr/share/zsh-autosuggestions
+	sudo mkdir -p /usr/share/zsh-syntax-highlighting && \
+	sudo cp terminal/zsh-syntax-highlighting.zsh /usr/share/zsh-syntax-highlighting
 
 	@echo -e "${Green}Done!${NC}"
 
@@ -235,6 +237,7 @@ configure-ubuntu-terminal: ## install and configure the terminal for Ubuntu
 	$(MAKE) configure-zsh-and-p10k
 	$(MAKE) configure-zsh-plugins
 	$(MAKE) configure-kitty
+	$(MAKE) install-hack-nerd-font
 
 configure-fedora-terminal: ## install and configure the terminal for Fedora
 	## Kitty
@@ -265,6 +268,7 @@ configure-fedora-terminal: ## install and configure the terminal for Fedora
 	$(MAKE) configure-zsh-and-p10k
 	$(MAKE) configure-zsh-plugins
 	$(MAKE) configure-kitty
+	$(MAKE) install-hack-nerd-font
 
 install-hack-nerd-font: ## install font used in the terminal
 	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/Hack.zip

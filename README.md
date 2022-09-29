@@ -18,8 +18,8 @@ This is how your environment will look like if you install everything.
 
 The tool supports the following Linux distributions:
 
-- [Fedora](https://getfedora.org/)
-- [Ubuntu](https://ubuntu.com/)
+- [Fedora 36](https://getfedora.org/)
+- [Ubuntu 20.04](https://ubuntu.com/)
 
 ## Needs
 
