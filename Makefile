@@ -168,28 +168,48 @@ install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	sudo dnf install -y zsh
 	@echo -e "${Green}zsh${Cyan} installed!${NC}"
 
-install-hack-nerd-font: ## install font used in the terminal
-	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/Hack.zip
-	sudo mv Hack.zip /usr/share/fonts && \
-	cd /usr/share/fonts && \
-	sudo unzip Hack.zip && \
-	sudo rm Hack.zip && sudo rm LICENSE.md && sudo rm readme.md
+############################
+## Terminal configuration ##
+############################
 
-set-wallpaper: ## put a custom wallpaper
-	gsettings set org.gnome.desktop.background picture-options 'scaled'
-	gsettings set org.gnome.desktop.background picture-uri /home/clarriu/projects/dotfiles/images/pokemon_wallpaper.jpeg
-	# feh --bg-fill images/pokemon_wallpaper.jpeg
+configure-zsh-and-p10k: ## configure zsh and powerlevel10k
+	@echo -e "${Cyan}Configuring ${Green}zsh ${Cyan}and ${Green}Powerlevel10k${Cyan}...${NC}"
+	sudo usermod --shell /usr/bin/zsh clarriu
+	sudo usermod --shell /usr/bin/zsh root
+
+	## copy terminal files
+	cp terminal/.zshrc $${HOME}/.zshrc
+	cp terminal/.p10k.zsh $${HOME}/.p10k.zsh
+
+	sudo cp terminal/.zshrc /root/.zshrc
+	sudo cp terminal/.p10k.zsh /root/.p10k.zsh
+	@echo -e "${Green}Done!${NC}"
+
+configure-zsh-plugins: ## configure zsh plugins
+	@echo -e "${Cyan}Installing ${Green}zsh plugins${Cyan}...${NC}"
+
+	sudo mkdir -p /usr/share/zsh-autosuggestions && \
+	sudo cp terminal/zsh-syntax-autosuggestions.zsh /usr/share/zsh-autosuggestions
+
+	sudo mkdir -p /usr/share/zsh-sudo && \
+	sudo cp terminal/sudo.plugin.zsh /usr/share/zsh-sudo
+
+	sudo mkdir -p /usr/share/zsh-autosuggestions && \
+	sudo cp terminal/zsh-syntax-highlighting.zsh /usr/share/zsh-autosuggestions
+
+	@echo -e "${Green}Done!${NC}"
+
+configure-kitty: ## configure Kitty terminal emulator
+	mkdir -p $${HOME}/.config/kitty
+	cp terminal/color.ini $${HOME}/.config/kitty
+	cp kitty.conf $${HOME}/.config/kitty
 
 configure-ubuntu-terminal: ## install and configure the terminal for Ubuntu
-	$(MAKE) configure-zsh-and-p10k
-
 	@echo -e "${Cyan}Installing ${Green}kitty${Cyan}...${NC}"
 	sudo add-apt-repository universe
 	sudo apt update -y
 	sudo apt install -y kitty
 	@echo -e "${Green}kitty${Cyan} installed!${NC}"
-
-	$(MAKE) configure-kitty
 
 	## tldr (Too long, didn't read)
 	@echo -e "${Cyan}Installing ${Green}tldr${Cyan}...${NC}"
@@ -212,13 +232,9 @@ configure-ubuntu-terminal: ## install and configure the terminal for Ubuntu
 	@echo -e "${Green}fzf${Cyan} installed!${NC}"
 
 configure-fedora-terminal: ## install and configure the terminal for Fedora
-	$(MAKE) configure-zsh-and-p10k
-
 	@echo -e "${Cyan}Installing ${Green}kitty${Cyan}...${NC}"
 	sudo dnf install -y kitty
 	@echo -e "${Green}kitty${Cyan} installed!${NC}"
-
-	$(MAKE) configure-kitty
 
 	## tldr (Too long, didn't read)
 	@echo -e "${Cyan}Installing ${Green}tldr${Cyan}...${NC}"
@@ -240,21 +256,17 @@ configure-fedora-terminal: ## install and configure the terminal for Fedora
 	sudo dnf install -y fzf
 	@echo -e "${Green}fzf${Cyan} installed!${NC}"
 
-configure-kitty: ## configure Kitty terminal emulator
-	mkdir -p $${HOME}/.config/kitty
-	cp terminal/color.ini $${HOME}/.config/kitty
-	cp kitty.conf $${HOME}/.config/kitty
+install-hack-nerd-font: ## install font used in the terminal
+	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/Hack.zip
+	sudo mv Hack.zip /usr/share/fonts && \
+	cd /usr/share/fonts && \
+	sudo unzip Hack.zip && \
+	sudo rm Hack.zip && sudo rm LICENSE.md && sudo rm readme.md
 
-configure-zsh-and-p10k: ## configure zsh as the user shell
-	sudo usermod --shell /usr/bin/zsh clarriu
-	sudo usermod --shell /usr/bin/zsh root
-
-	## copy terminal files
-	cp terminal/.zshrc $${HOME}/.zshrc
-	cp terminal/.p10k.zsh $${HOME}/.p10k.zsh
-
-	sudo cp terminal/.zshrc /root/.zshrc
-	sudo cp terminal/.p10k.zsh /root/.p10k.zsh
+set-wallpaper: ## put a custom wallpaper
+	gsettings set org.gnome.desktop.background picture-options 'scaled'
+	gsettings set org.gnome.desktop.background picture-uri /home/clarriu/projects/dotfiles/images/pokemon_wallpaper.jpeg
+	# feh --bg-fill images/pokemon_wallpaper.jpeg
 
 configure-fedora-i3: ## configure Fedora i3wm
 	@echo "Fedora"
