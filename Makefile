@@ -240,7 +240,8 @@ configure-ubuntu-terminal: ## install and configure the terminal for Ubuntu
 
 	## bat (cat with steroids)
 	@echo -e "${Cyan}Installing ${Green}bat${Cyan}...${NC}"
-	sudo apt install -y bat
+	wget https://github.com/sharkdp/bat/releases/download/v0.22.1/bat-musl_0.22.1_amd64.deb && \
+	sudo dpkg -i bat-musl_0.22.1_amd64.deb
 	@echo -e "${Green}bat${Cyan} installed!${NC}"
 
 	## fzf

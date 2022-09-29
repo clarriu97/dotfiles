@@ -123,6 +123,9 @@ bindkey "^[[1;3D" beginning-of-line  # ALT + <
 bindkey "^[[1;5C" forward-word       # CTRL + >
 bindkey "^[[1;5D" backward-word      # CTRL + <
 
+# delete a character with the "supr" key
+bindkey "^[[3~" delete-char
+
 # autocomplete non case sensitive
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|=*' 'l:|=* r:|=*'
 autoload -Uz compinit && compinit

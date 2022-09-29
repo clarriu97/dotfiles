@@ -82,3 +82,7 @@ The shortcuts you will be able to use in your terminal are:
 - `Ctrl` + `Shift` + `Right arrow`: move to the right tab.
 - `Ctrl` + `Shift` + `,` move a tab to the left (spanish keyboard distribution).
 - `Ctrl` + `Shift` + `.` move a tab to the right (spanish keyboard distribution).
+- `Ctrl` + `>`: forward word.
+- `Ctrl` + `<`: backward word.
+- `Alt` + `>`: end of line.
+- `Alt` + `<`: begining of line.
