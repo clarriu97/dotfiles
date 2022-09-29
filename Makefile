@@ -191,13 +191,12 @@ configure-zsh-plugins: ## configure zsh plugins
 	@echo -e "${Cyan}Installing ${Green}zsh plugins${Cyan}...${NC}"
 
 	sudo mkdir -p /usr/share/zsh-autosuggestions && \
-	sudo cp terminal/zsh-autosuggestions.zsh /usr/share/zsh-autosuggestions
+	sudo cp terminal/zsh-plugins/zsh-autosuggestions.zsh /usr/share/zsh-autosuggestions
 
 	sudo mkdir -p /usr/share/zsh-sudo && \
-	sudo cp terminal/sudo.plugin.zsh /usr/share/zsh-sudo
+	sudo cp terminal/zsh-plugins/sudo.plugin.zsh /usr/share/zsh-sudo
 
-	sudo mkdir -p /usr/share/zsh-syntax-highlighting && \
-	sudo cp terminal/zsh-syntax-highlighting.zsh /usr/share/zsh-syntax-highlighting
+	sudo cp terminal/zsh-plugins/zsh-syntax-highlighting /usr/share
 
 	@echo -e "${Green}Done!${NC}"
 
@@ -271,11 +270,13 @@ configure-fedora-terminal: ## install and configure the terminal for Fedora
 	$(MAKE) install-hack-nerd-font
 
 install-hack-nerd-font: ## install font used in the terminal
+	@echo -e "${Cyan}Installing ${Green}HackNerdFont${Cyan}...${NC}"
 	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/Hack.zip
 	sudo mv Hack.zip /usr/share/fonts && \
 	cd /usr/share/fonts && \
 	sudo unzip Hack.zip && \
 	sudo rm Hack.zip && sudo rm LICENSE.md && sudo rm readme.md
+	@echo -e "${Green}HackNerdFont${Cyan} installed!${NC}"
 
 #####################
 ## Windows manager ##
