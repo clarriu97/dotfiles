@@ -43,8 +43,11 @@ git clone https://github.com/clarriu97/dotfiles && cd dotfiles && make -s setup-
 
 `in3` is a windows manager with which we will be able to manage all our windows environment
 with the keyboard. For that purpose, every command will be a combination of the `$mod` key plus
-any other keys. In my case, the `$mod` key is the Windows key:
+any other keys. In my case, the `$mod` key is the `Windows` key:
 
 ![winkey](images/win_key.jpg)
 
-
+- `Win` + number(`n`): move to window `n`.
+- `Win` + `Shift` + number(`n`): move the window you are working on, to window `n`.
+- `Win` + `Tab`: move to the last window you were at.
+- `Win` + `Shift` + `Q`: close the window you are working on.

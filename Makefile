@@ -174,7 +174,7 @@ install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 
 configure-zsh-and-p10k: ## configure zsh and powerlevel10k
 	@echo -e "${Cyan}Configuring ${Green}zsh ${Cyan}and ${Green}Powerlevel10k${Cyan}...${NC}"
-	sudo usermod --shell /usr/bin/zsh clarriu
+	sudo usermod --shell /usr/bin/zsh $$USER
 	sudo usermod --shell /usr/bin/zsh root
 
 	## copy terminal files
