@@ -97,6 +97,77 @@ update-ubuntu: ## update Ubuntu dependencies
 update-fedora: ## update Fedora dependencies
 	sudo dnf upgrade -y
 
+#####################
+## OS dependencies ##
+#####################
+
+install-ubuntu-os-deps: update-ubuntu ## install Ubuntu OS dependencies
+	## Visual Studio Code
+	@echo -e "${Cyan}Installing ${Green}Visual Studio Code${Cyan}...${NC}"
+	sudo apt install -y software-properties-common apt-transport-https wget
+	wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+	sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+	sudo apt install -y code
+	@echo -e "${Green}Visual Studio Code${Cyan} installed!${NC}"
+
+	## Spotify
+	@echo -e "${Cyan}Installing ${Green}Spotify${Cyan}...${NC}"
+	curl -sS https://download.spotify.com/debian/pubkey_5E3C45D7B312C643.gpg | sudo apt-key add - 
+	@echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
+	$(MAKE) update-ubuntu
+	sudo apt-get install -y spotify-client
+	@echo -e "${Green}Spotify${Cyan} installed!${NC}"
+
+	## Neofetch
+	sudo apt install -y neofetch
+
+	## Brave browser
+	@echo -e "${Cyan}Installing ${Green}Brave browser${Cyan}...${NC}"
+	sudo apt install -y apt-transport-https curl
+	sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+	@echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+	$(MAKE) update-ubuntu
+	sudo apt install -y brave-browser
+	@echo -e "${Green}Brave browser${Cyan} installed!${NC}"
+
+	## zsh
+	@echo -e "${Cyan}Installing ${Green}zsh${Cyan}...${NC}"
+	sudo apt-get install -y zsh
+	@echo -e "${Green}zsh${Cyan} installed!${NC}"
+
+install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
+	## Visual Studio Code
+	@echo -e "${Cyan}Installing ${Green}Visual Studio Code${Cyan}...${NC}"
+	sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+	sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+	dnf check-update
+	sudo dnf install -y code
+	@echo -e "${Green}Visual Studio Code${Cyan} installed!${NC}"
+
+	## Spotify
+	@echo -e "${Cyan}Installing ${Green}Spotify${Cyan}...${NC}"
+	sudo dnf install -y flatpak && \
+	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+	sudo flatpak install -y flathub com.spotify.Client
+	@echo -e "${Green}Spotify${Cyan} installed!${NC}"
+
+	## Neofetch
+	@echo -e "${Cyan}Installing ${Green}Neofetch${Cyan}...${NC}"
+	sudo dnf install -y neofetch
+	@echo -e "${Green}Neofetch${Cyan} installed!${NC}"
+
+	## Brave browser
+	@echo -e "${Cyan}Installing ${Green}Brave browser${Cyan}...${NC}"
+	sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/
+	sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
+	sudo dnf install -y brave-browser
+	@echo -e "${Green}Brave browser${Cyan} installed!${NC}"
+
+	## zsh
+	@echo -e "${Cyan}Installing ${Green}zsh${Cyan}...${NC}"
+	sudo dnf install -y zsh
+	@echo -e "${Green}zsh${Cyan} installed!${NC}"
+
 install-hack-nerd-font: ## install font used in the terminal
 	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/Hack.zip
 	sudo mv Hack.zip /usr/share/fonts && \
@@ -184,57 +255,6 @@ configure-zsh-and-p10k: ## configure zsh as the user shell
 
 	sudo cp terminal/.zshrc /root/.zshrc
 	sudo cp terminal/.p10k.zsh /root/.p10k.zsh
-
-install-ubuntu-os-deps: update-ubuntu ## install Ubuntu OS dependencies
-	$(MAKE) update-ubuntu
-
-	## Neofetch
-	sudo apt install -y neofetch
-
-	## feh
-	@echo -e "${Cyan}Installing ${Green}feh${Cyan}...${NC}"
-	sudo apt install -y feh
-	@echo -e "${Green}feh${Cyan} installed!${NC}"
-
-install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
-	$(MAKE) update-fedora
-
-	## Visual Studio Code
-	@echo -e "${Cyan}Installing ${Green}Visual Studio Code${Cyan}...${NC}"
-	sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
-	sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-	dnf check-update
-	sudo dnf install -y code
-	@echo -e "${Green}Visual Studio Code${Cyan} installed!${NC}"
-
-	## Spotify
-	@echo -e "${Cyan}Installing ${Green}Spotify${Cyan}...${NC}"
-	sudo dnf install -y flatpak && \
-	flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-	sudo flatpak install -y flathub com.spotify.Client
-	@echo -e "${Green}Spotify${Cyan} installed!${NC}"
-
-	## Neofetch
-	@echo -e "${Cyan}Installing ${Green}Neofetch${Cyan}...${NC}"
-	sudo dnf install -y neofetch
-	@echo -e "${Green}Neofetch${Cyan} installed!${NC}"
-
-	## Brave browser
-	@echo -e "${Cyan}Installing ${Green}Brave browser${Cyan}...${NC}"
-	sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/
-	sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc
-	sudo dnf install -y brave-browser
-	@echo -e "${Green}Brave browser${Cyan} installed!${NC}"
-
-	## feh
-	@echo -e "${Cyan}Installing ${Green}feh${Cyan}...${NC}"
-	sudo dnf install -y feh
-	@echo -e "${Green}feh${Cyan} installed!${NC}"
-
-	## zsh
-	@echo -e "${Cyan}Installing ${Green}zsh${Cyan}...${NC}"
-	sudo dnf install -y zsh
-	@echo -e "${Green}zsh${Cyan} installed!${NC}"
 
 configure-fedora-i3: ## configure Fedora i3wm
 	@echo "Fedora"
