@@ -84,6 +84,19 @@ ask-for-distro-and-choice: ## ask the user what does he/she wants to configure a
 		echo "Please select one of the options..."
 	fi
 
+###################
+## System update ##
+###################
+
+update-and-upgrade-ubuntu: ## update and upgrade Ubuntu dependencies
+	sudo apt-get update -y && sudo apt-get upgrade -y
+
+update-ubuntu: ## update Ubuntu dependencies
+	sudo apt-get update
+
+update-fedora: ## update Fedora dependencies
+	sudo dnf upgrade -y
+
 install-hack-nerd-font: ## install font used in the terminal
 	wget https://github.com/ryanoasis/nerd-fonts/releases/download/v2.2.2/Hack.zip
 	sudo mv Hack.zip /usr/share/fonts && \
@@ -95,12 +108,6 @@ set-wallpaper: ## put a custom wallpaper
 	gsettings set org.gnome.desktop.background picture-options 'scaled'
 	gsettings set org.gnome.desktop.background picture-uri /home/clarriu/projects/dotfiles/images/pokemon_wallpaper.jpeg
 	# feh --bg-fill images/pokemon_wallpaper.jpeg
-
-update-ubuntu: ## update Ubuntu dependencies
-	sudo apt-get update -y && sudo apt-get upgrade -y
-
-update-fedora: ## update Fedora dependencies
-	sudo dnf upgrade -y
 
 configure-ubuntu-terminal: ## install and configure the terminal for Ubuntu
 	$(MAKE) configure-zsh-and-p10k
