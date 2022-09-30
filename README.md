@@ -70,8 +70,8 @@ The shortcuts related to the windows manager are:
 - `Win` + `Shift` + `G`: uses `xrandr` to place the screens in the office layout, adapting the orientation and resolution of these screens.
 - `Win` + `Shift` + `B`: uses `xrandr` to display only the primary screen.
 - `Win` + `R`: resize your windows (use `ESC` for escape this mode).
-- `Win` + `Shift` + `S`: take a screenshot using [flameshot](https://github.com/flameshot-org/flameshot).
-- `Win` + `Shift` + `E`: open `Files`.
+- `Win` + `Ctrl` + `S`: take a screenshot using [flameshot](https://github.com/flameshot-org/flameshot).
+- `Win` + `Ctrl` + `E`: open `Files`.
 - `Win` + `Ctrl` + `R`: reboot the machine.
 - `Win` + `Ctrl` + `P`: power off the machine.
 
@@ -86,3 +86,13 @@ The shortcuts you will be able to use in your terminal are:
 - `Ctrl` + `<`: backward word.
 - `Alt` + `>`: end of line.
 - `Alt` + `<`: begining of line.
+
+This are some of the terminal alias you can use:
+- `l`: `ls -al`
+- `gs`: `git status`
+- `gd`: `git diff`
+- `catzsh`: `cat ~/.zshrc`
+- `nanozsh`: `nano ~/.zshrc`
+- `gtree`: `git log --graph --oneline --all`
+- `open` + argument: open any file with `xdg-open`
+- `sizeof` + argument: check any file or folder size with `du -sh`

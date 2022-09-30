@@ -39,7 +39,6 @@ setup-env: ## start the whole setup
 	$(MAKE) show-warning-message && $(MAKE) ask-for-distro-and-choice
 	# reboot
 
-.ONESHELL:
 welcome-message: ## show a welcome message and presents the tool
 	@echo -e "${Orange}"
 	@echo -e "██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗    ████████╗ ██████╗ "
@@ -326,7 +325,5 @@ configure-ubuntu-i3: ## configure Ubuntu i3wm
 ## Extra configuration ##
 #########################
 
-# set-wallpaper: ## put a custom wallpaper
-# 	gsettings set org.gnome.desktop.background picture-options 'scaled'
-# 	gsettings set org.gnome.desktop.background picture-uri /home/clarriu/projects/dotfiles/images/pokemon_wallpaper.jpeg
-# 	# feh --bg-fill images/pokemon_wallpaper.jpeg
+set-ubuntu-wallpaper: ## put a custom wallpaper
+	feh --bg-fill images/wallpaper.jpeg
