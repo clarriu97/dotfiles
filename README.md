@@ -53,7 +53,7 @@ configuration process will begin.
 
 ## User guide and shortcuts
 
-`in3` is a windows manager with which we will be able to manage all our windows environment
+`i3wm` is a windows manager with which we will be able to manage all our windows environment
 with the keyboard. For that purpose, every command will be a combination of the `$mod` key plus
 any other keys. In my case, the `$mod` key is the `Windows` key:
 
