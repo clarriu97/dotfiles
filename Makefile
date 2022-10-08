@@ -80,10 +80,10 @@ ask-for-distro-and-choice: ## ask the user what does he/she wants to configure a
 		if [ $$CHOICE == "1" ]; then
 			$(MAKE) configure-fedora-terminal
 		elif [ $$CHOICE == "2" ]; then
-			$(MAKE) configure-fedora-i3
+			$(MAKE) configure-i3
 		elif [ $$CHOICE == "3" ]; then
 			$(MAKE) configure-fedora-terminal
-			$(MAKE) configure-fedora-i3
+			$(MAKE) configure-i3
 		else
 			echo -e "\nPlease select one of the options..." && exit 1
 		fi
@@ -93,10 +93,10 @@ ask-for-distro-and-choice: ## ask the user what does he/she wants to configure a
 		if [ $$CHOICE == "1" ]; then
 			$(MAKE) configure-ubuntu-terminal
 		elif [ $$CHOICE == "2" ]; then
-			$(MAKE) configure-ubuntu-i3
+			$(MAKE) configure-i3
 		elif [ $$CHOICE == "3" ]; then
 			$(MAKE) configure-ubuntu-terminal
-			$(MAKE) configure-ubuntu-i3
+			$(MAKE) configure-i3
 		else
 			echo -e "\nPlease select one of the options..." && exit 1
 		fi
@@ -160,6 +160,11 @@ install-ubuntu-os-deps: update-ubuntu ## install Ubuntu OS dependencies
 	sudo apt install -y flameshot
 	@echo -e "${Green}flameshot${Cyan} installed!${NC}"
 
+	## i3wm
+	@echo -e "${Cyan}Installing ${Green}i3wm${Cyan}...${NC}"
+	sudo apt install -y i3
+	@echo -e "${Green}i3wm${Cyan} installed!${NC}"
+
 install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	## Visual Studio Code
 	@echo -e "${Cyan}Installing ${Green}Visual Studio Code${Cyan}...${NC}"
@@ -197,6 +202,11 @@ install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	@echo -e "${Cyan}Installing ${Green}flameshot${Cyan}...${NC}"
 	sudo dnf install -y flameshot
 	@echo -e "${Green}flameshot${Cyan} installed!${NC}"
+
+	## i3wm
+	@echo -e "${Cyan}Installing ${Green}i3wm${Cyan}...${NC}"
+	sudo dnf install -y i3
+	@echo -e "${Green}i3wm${Cyan} installed!${NC}"
 
 ############################
 ## Terminal configuration ##
@@ -315,11 +325,14 @@ install-hack-nerd-font: ## install font used in the terminal
 ## Windows manager ##
 #####################
 
-configure-fedora-i3: ## configure Fedora i3wm
-	@echo "Fedora"
+configure-i3: ## configure Fedora i3wm
+	mkdir -p $${HOME}/.config/i3
+	cp i3/config $${HOME}/.config/i3
+	cp i3/scripts $${HOME}/.config/i3
+	cp i3/i3blocks.conf $${HOME}/.config/i3
 
-configure-ubuntu-i3: ## configure Ubuntu i3wm
-	@echo "Ubuntu"
+	mkdir -p $${HOME}/.screenlayout
+	cp i3/.screenlayout/* $${HOME}/.screenlayout
 
 #########################
 ## Extra configuration ##
