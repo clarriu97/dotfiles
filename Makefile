@@ -150,6 +150,11 @@ install-ubuntu-os-deps: update-ubuntu ## install Ubuntu OS dependencies
 	sudo apt install -y brave-browser
 	@echo -e "${Green}Brave browser${Cyan} installed!${NC}"
 
+	## dpkg
+	@echo -e "${Cyan}Installing ${Green}dpkg${Cyan}...${NC}"
+	sudo apt-get install -y dpkg
+	@echo -e "${Green}dpkg${Cyan} installed!${NC}"
+
 	## zsh
 	@echo -e "${Cyan}Installing ${Green}zsh${Cyan}...${NC}"
 	sudo apt-get install -y zsh
@@ -169,6 +174,23 @@ install-ubuntu-os-deps: update-ubuntu ## install Ubuntu OS dependencies
 	@echo -e "${Cyan}Installing ${Green}tox${Cyan}...${NC}"
 	$(MAKE) install-tox
 	@echo -e "${Green}tox${Cyan} installed!${NC}"
+
+	## arandr
+	@echo -e "${Cyan}Installing ${Green}arandr${Cyan}...${NC}"
+	sudo apt-get install -y arandr
+	@echo -e "${Green}arandr${Cyan} installed!${NC}"
+
+	## rofi
+	@echo -e "${Cyan}Installing ${Green}rofi${Cyan}...${NC}"
+	sudo apt install -y rofi
+	@echo -e "${Green}rofi${Cyan} installed!${NC}"
+
+	## playerctl
+	@echo -e "${Cyan}Installing ${Green}playerctl${Cyan}...${NC}"
+	wget https://github.com/altdesktop/playerctl/releases/download/v2.4.1/playerctl-2.4.1_amd64.deb
+	sudo dpkg -i playerctl-2.4.1_amd64.deb
+	rm playerctl-2.4.1_amd64.deb
+	@echo -e "${Green}playerctl${Cyan} installed!${NC}"
 
 install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	## Visual Studio Code
@@ -198,6 +220,11 @@ install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	sudo dnf install -y brave-browser
 	@echo -e "${Green}Brave browser${Cyan} installed!${NC}"
 
+	## dpkg
+	@echo -e "${Cyan}Installing ${Green}dpkg${Cyan}...${NC}"
+	sudo dnf install -y dpkg
+	@echo -e "${Green}dpkg${Cyan} installed!${NC}"
+
 	## zsh
 	@echo -e "${Cyan}Installing ${Green}zsh${Cyan}...${NC}"
 	sudo dnf install -y zsh
@@ -217,6 +244,21 @@ install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	@echo -e "${Cyan}Installing ${Green}tox${Cyan}...${NC}"
 	$(MAKE) install-tox
 	@echo -e "${Green}tox${Cyan} installed!${NC}"
+
+	## arandr
+	@echo -e "${Cyan}Installing ${Green}arandr${Cyan}...${NC}"
+	sudo dnf install -y arandr
+	@echo -e "${Green}arandr${Cyan} installed!${NC}"
+
+	## rofi
+	@echo -e "${Cyan}Installing ${Green}rofi${Cyan}...${NC}"
+	sudo dnf install -y rofi
+	@echo -e "${Green}rofi${Cyan} installed!${NC}"
+
+	## playerctl
+	@echo -e "${Cyan}Installing ${Green}playerctl${Cyan}...${NC}"
+	sudo dnf install -y playerctl
+	@echo -e "${Green}playerctl${Cyan} installed!${NC}"
 
 install-tox: ## install tox with pip
 	pip install tox
