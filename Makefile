@@ -170,6 +170,11 @@ install-ubuntu-os-deps: update-ubuntu ## install Ubuntu OS dependencies
 	sudo apt install -y i3
 	@echo -e "${Green}i3wm${Cyan} installed!${NC}"
 
+	## i3blocks
+	@echo -e "${Cyan}Installing ${Green}i3blocks${Cyan}...${NC}"
+	sudo apt install -y i3blocks
+	@echo -e "${Green}i3blocks${Cyan} installed!${NC}"
+
 	## tox
 	@echo -e "${Cyan}Installing ${Green}tox${Cyan}...${NC}"
 	$(MAKE) install-tox
@@ -239,6 +244,11 @@ install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	@echo -e "${Cyan}Installing ${Green}i3wm${Cyan}...${NC}"
 	sudo dnf install -y i3
 	@echo -e "${Green}i3wm${Cyan} installed!${NC}"
+
+	## i3blocks
+	@echo -e "${Cyan}Installing ${Green}i3blocks${Cyan}...${NC}"
+	sudo apt install -y i3blocks
+	@echo -e "${Green}i3blocks${Cyan} installed!${NC}"
 
 	## tox
 	@echo -e "${Cyan}Installing ${Green}tox${Cyan}...${NC}"
@@ -388,6 +398,8 @@ configure-i3: ## configure i3wm
 
 	mkdir -p $${HOME}/.screenlayout
 	cp i3/.screenlayout/* $${HOME}/.screenlayout
+
+	cp images/candado.png $${HOME}/Pictures
 
 #########################
 ## Extra configuration ##
