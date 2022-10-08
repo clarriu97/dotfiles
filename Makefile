@@ -37,7 +37,7 @@ help:
 setup-env: ## start the whole setup
 	$(MAKE) welcome-message
 	$(MAKE) show-warning-message && $(MAKE) ask-for-distro-and-choice
-	# reboot
+	reboot
 
 welcome-message: ## show a welcome message and presents the tool
 	@echo -e "${Orange}"
@@ -60,7 +60,7 @@ welcome-message: ## show a welcome message and presents the tool
 
 show-warning-message: ## show a warning message when setting up the environment
 	@echo -e "\n${Red}Note: the process requires super user privileges and will reboot your machine once finished. Is that okay with you? [Y/n] ${NC}" && read ans && [ $${ans:-N} != n ]
-	# @read line; if [ $$line = "n" ]; then echo Aborting...; exit 1; fi
+	@read line; if [ $$line = "n" ]; then echo Aborting...; exit 1; fi
 
 .ONESHELL:
 ask-for-distro-and-choice: ## ask the user what does he/she wants to configure and for which Linux distribution
@@ -341,7 +341,7 @@ install-hack-nerd-font: ## install font used in the terminal
 configure-i3: ## configure i3wm
 	mkdir -p $${HOME}/.config/i3
 	cp i3/config $${HOME}/.config/i3
-	cp i3/scripts $${HOME}/.config/i3
+	cp -r i3/scripts $${HOME}/.config/i3
 	cp i3/i3blocks.conf $${HOME}/.config/i3
 
 	mkdir -p $${HOME}/.screenlayout

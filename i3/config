@@ -153,13 +153,13 @@ assign [class="Brave-browser"] $ws1
 assign [class="Code"] $ws3
 
 # execute the screen configuration to use the laptop screen
-bindsym $mod+Shift+b exec "/home/clarriu/.screenlayout/laptop.sh"
+bindsym $mod+Shift+b exec "${HOME}/.screenlayout/laptop.sh"
 
 # execute the screen configuration for home (4k screen, put it in 2k)
-bindsym $mod+Shift+h exec "/home/clarriu/.screenlayout/home.sh"
+bindsym $mod+Shift+h exec "${HOME}/.screenlayout/home.sh"
 
 # execute the screen configuration for the office
-bindsym $mod+Shift+g exec "/home/clarriu/.screenlayout/office.sh"
+bindsym $mod+Shift+g exec "${HOME}/.screenlayout/office.sh"
 
 # execute vs code
 bindsym $mod+Shift+v exec code
@@ -168,7 +168,7 @@ bindsym $mod+Shift+v exec code
 bindsym $mod+Shift+s exec spotify
 
 # execute file explorer
-bindsym $mod+Control+e exec gio open /home/clarriu
+bindsym $mod+Control+e exec gio open ${HOME}
 
 # power off - reboot the system
 bindsym $mod+Control+p exec "systemctl poweroff"
@@ -185,7 +185,7 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
 
 # lock screen
-bindsym $mod+Shift+x exec /home/clarriu/.config/i3/scripts/lock
+bindsym $mod+Shift+x exec ${HOME}/.config/i3/scripts/lock
 
 # resize window (you can also use the mouse for that)
 mode "resize" {
@@ -217,7 +217,7 @@ bindsym $mod+r mode "resize"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-        status_command i3blocks -c /home/clarriu/.config/i3/i3blocks.conf
+        status_command i3blocks -c ${HOME}/.config/i3/i3blocks.conf
 	position top
 	i3bar_command i3bar
         font pango: SauceCodePro Nerd Font 11
@@ -271,12 +271,6 @@ client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color      
 
 #Turn on when you start your desktop
 exec brave-browser
-exec_always feh --bg-scale /home/clarriu/Pictures/wallpaper.jpg
+exec_always feh --bg-scale ${HOME}/Pictures/wallpaper.jpg
 exec code
 exec spotify
-# exec_always --no-startup-id $HOME/.config/polybar/launch.sh
-# Picom
-exec_always --no-startup-id picom &
-# auto lock the screen
-# exec "xautolock -detectsleep -time 5 -locker \"i3lock -c 000000\""
-exec --no-startup-id xidlehook --not-when-fullscreen --not-when-audio --timer normal 600 '/home/clarriu/.config/i3/scripts/lock' ''
