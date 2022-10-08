@@ -165,6 +165,11 @@ install-ubuntu-os-deps: update-ubuntu ## install Ubuntu OS dependencies
 	sudo apt install -y i3
 	@echo -e "${Green}i3wm${Cyan} installed!${NC}"
 
+	## tox
+	@echo -e "${Cyan}Installing ${Green}tox${Cyan}...${NC}"
+	$(MAKE) install-tox
+	@echo -e "${Green}tox${Cyan} installed!${NC}"
+
 install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	## Visual Studio Code
 	@echo -e "${Cyan}Installing ${Green}Visual Studio Code${Cyan}...${NC}"
@@ -207,6 +212,14 @@ install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	@echo -e "${Cyan}Installing ${Green}i3wm${Cyan}...${NC}"
 	sudo dnf install -y i3
 	@echo -e "${Green}i3wm${Cyan} installed!${NC}"
+
+	## tox
+	@echo -e "${Cyan}Installing ${Green}tox${Cyan}...${NC}"
+	$(MAKE) install-tox
+	@echo -e "${Green}tox${Cyan} installed!${NC}"
+
+install-tox: ## install tox with pip
+	pip install tox
 
 ############################
 ## Terminal configuration ##
@@ -325,7 +338,7 @@ install-hack-nerd-font: ## install font used in the terminal
 ## Windows manager ##
 #####################
 
-configure-i3: ## configure Fedora i3wm
+configure-i3: ## configure i3wm
 	mkdir -p $${HOME}/.config/i3
 	cp i3/config $${HOME}/.config/i3
 	cp i3/scripts $${HOME}/.config/i3
