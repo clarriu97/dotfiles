@@ -112,7 +112,7 @@ update-and-upgrade-ubuntu: ## update and upgrade Ubuntu dependencies
 	sudo apt-get update -y && sudo apt-get upgrade -y
 
 update-ubuntu: ## update Ubuntu dependencies
-	sudo apt-get update
+	sudo apt-get update -y
 
 update-fedora: ## update Fedora dependencies
 	sudo dnf upgrade -y
@@ -190,6 +190,18 @@ install-ubuntu-os-deps: update-ubuntu ## install Ubuntu OS dependencies
 	sudo apt install -y rofi
 	@echo -e "${Green}rofi${Cyan} installed!${NC}"
 
+	## docker
+	@echo -e "${Cyan}Installing ${Green}docker${Cyan}...${NC}"
+	sudo apt-get install \
+		ca-certificates \
+		curl \
+		gnupg \
+		lsb-release
+	sudo mkdir -p /etc/apt/keyrings
+	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+	$(MAKE) docker-group
+	@echo -e "${Green}docker${Cyan} installed!${NC}"
+
 	## playerctl
 	@echo -e "${Cyan}Installing ${Green}playerctl${Cyan}...${NC}"
 	wget https://github.com/altdesktop/playerctl/releases/download/v2.4.1/playerctl-2.4.1_amd64.deb
@@ -265,10 +277,24 @@ install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	sudo dnf install -y rofi
 	@echo -e "${Green}rofi${Cyan} installed!${NC}"
 
+	## docker
+	@echo -e "${Cyan}Installing ${Green}docker${Cyan}...${NC}"
+	sudo dnf install -y dnf-plugins-core
+	sudo dnf config-manager \
+		--add-repo \
+		https://download.docker.com/linux/fedora/docker-ce.repo
+	sudo dnf install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+	$(MAKE) docker-group
+	@echo -e "${Green}docker${Cyan} installed!${NC}"
+
 	## playerctl
 	@echo -e "${Cyan}Installing ${Green}playerctl${Cyan}...${NC}"
 	sudo dnf install -y playerctl
 	@echo -e "${Green}playerctl${Cyan} installed!${NC}"
+
+docker-group: ## add your user to the docker group
+	sudo groupadd docker
+	sudo usermod -aG docker $$USER
 
 install-tox: ## install tox with pip
 	pip install tox
