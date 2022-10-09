@@ -209,6 +209,16 @@ install-ubuntu-os-deps: update-ubuntu ## install Ubuntu OS dependencies
 	rm playerctl-2.4.1_amd64.deb
 	@echo -e "${Green}playerctl${Cyan} installed!${NC}"
 
+	## scrub
+	@echo -e "${Cyan}Installing ${Green}scrub${Cyan}...${NC}"
+	sudo apt install -y scrub
+	@echo -e "${Green}scrub${Cyan} installed!${NC}"
+
+	## coreutils (just in case)
+	@echo -e "${Cyan}Installing ${Green}coreutils${Cyan}...${NC}"
+	sudo apt install -y coreutils
+	@echo -e "${Green}coreutils${Cyan} installed!${NC}"
+
 install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	## Visual Studio Code
 	@echo -e "${Cyan}Installing ${Green}Visual Studio Code${Cyan}...${NC}"
@@ -291,6 +301,16 @@ install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	@echo -e "${Cyan}Installing ${Green}playerctl${Cyan}...${NC}"
 	sudo dnf install -y playerctl
 	@echo -e "${Green}playerctl${Cyan} installed!${NC}"
+
+	## scrub
+	@echo -e "${Cyan}Installing ${Green}scrub${Cyan}...${NC}"
+	sudo dnf install -y scrub
+	@echo -e "${Green}scrub${Cyan} installed!${NC}"
+
+	## coreutils (just in case)
+	@echo -e "${Cyan}Installing ${Green}coreutils${Cyan}...${NC}"
+	sudo dnf install -y coreutils
+	@echo -e "${Green}coreutils${Cyan} installed!${NC}"
 
 docker-group: ## add your user to the docker group
 	sudo groupadd docker
