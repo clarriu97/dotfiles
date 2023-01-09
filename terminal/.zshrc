@@ -24,6 +24,7 @@ alias catn="/usr/bin/cat"
 alias update="sudo apt-get update -y && sudo apt-get upgrade -y && exit"
 alias gtree="git log --graph --oneline --all"
 alias solaar="~/foo/Solaar/bin/solaar &"
+alias xclip="xclip -selection clipboard"
 
 # OTHER
 export PATH=/sbin/:/usr/bin/:$HOME/bin:/usr/local/bin:~/.local/bin:$PATH
