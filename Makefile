@@ -219,6 +219,11 @@ install-ubuntu-os-deps: update-ubuntu ## install Ubuntu OS dependencies
 	sudo apt install -y coreutils
 	@echo -e "${Green}coreutils${Cyan} installed!${NC}"
 
+	## xclip
+	@echo -e "${Cyan}Installing ${Green}xclip${Cyan}...${NC}"
+	sudo apt install -y xclip
+	@echo -e "${Green}xclip${Cyan} installed!${NC}"
+
 install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	## Visual Studio Code
 	@echo -e "${Cyan}Installing ${Green}Visual Studio Code${Cyan}...${NC}"
@@ -311,6 +316,11 @@ install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	@echo -e "${Cyan}Installing ${Green}coreutils${Cyan}...${NC}"
 	sudo dnf install -y coreutils
 	@echo -e "${Green}coreutils${Cyan} installed!${NC}"
+
+	## xclip
+	@echo -e "${Cyan}Installing ${Green}xclip${Cyan}...${NC}"
+	sudo dnf install -y xclip
+	@echo -e "${Green}xclip${Cyan} installed!${NC}"
 
 docker-group: ## add your user to the docker group
 	sudo groupadd docker
