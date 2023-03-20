@@ -224,6 +224,11 @@ install-ubuntu-os-deps: update-ubuntu ## install Ubuntu OS dependencies
 	sudo apt install -y xclip
 	@echo -e "${Green}xclip${Cyan} installed!${NC}"
 
+	## polybar
+	@echo -e "${Cyan}Installing ${Green}polybar${Cyan}...${NC}"
+	sudo apt install -y polybar
+	@echo -e "${Green}polybar${Cyan} installed!${NC}"
+
 install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	## Visual Studio Code
 	@echo -e "${Cyan}Installing ${Green}Visual Studio Code${Cyan}...${NC}"
@@ -321,6 +326,11 @@ install-fedora-os-deps: update-fedora ## install Fedora OS dependencies
 	@echo -e "${Cyan}Installing ${Green}xclip${Cyan}...${NC}"
 	sudo dnf install -y xclip
 	@echo -e "${Green}xclip${Cyan} installed!${NC}"
+
+	## polybar
+	@echo -e "${Cyan}Installing ${Green}polybar${Cyan}...${NC}"
+	sudo dnf install -y polybar
+	@echo -e "${Green}polybar${Cyan} installed!${NC}"
 
 docker-group: ## add your user to the docker group
 	sudo groupadd docker
@@ -457,9 +467,16 @@ configure-i3: ## configure i3wm
 
 	cp images/candado.png $${HOME}/Pictures
 
+	$(MAKE) configure-polybar
+
 #########################
 ## Extra configuration ##
 #########################
 
 set-ubuntu-wallpaper: ## put a custom wallpaper
 	feh --bg-fill images/wallpaper.jpeg
+
+configure-polybar: ## configure the polybar
+	mkdir -p $${HOME}/.config/polybar
+	cp polybar/* $${HOME}/.config/polybar
+	chmod +x $${HOME}/.config/polybar/launch.sh

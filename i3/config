@@ -214,27 +214,6 @@ mode "resize" {
 
 bindsym $mod+r mode "resize"
 
-# Start i3bar to display a workspace bar (plus the system information i3status
-# finds out, if available)
-bar {
-        status_command i3blocks -c ${HOME}/.config/i3/i3blocks.conf
-	position top
-	i3bar_command i3bar
-        font pango: SauceCodePro Nerd Font 11
-        colors {
-		background #282A36
-                statusline #F8F8F2
-                separator  #44475A
-
-                focused_workspace  #44475A #44475A #F8F8F2
-                active_workspace   #282A36 #44475A #F8F8F2
-                inactive_workspace #282A36 #282A36 #BFBFBF
-                urgent_workspace   #FF5555 #FF5555 #F8F8F2
-                binding_mode       #FF5555 #FF5555 #F8F8F2
-	}
-}
-
-
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp exec xbacklight -inc 20 # increase screen brightness
 bindsym XF86MonBrightnessDown exec xbacklight -dec 20 # decrease screen brightness
@@ -259,18 +238,8 @@ client.unfocused        $inactive-bg-color $inactive-bg-color $inactive-text-col
 client.focused_inactive $inactive-bg-color $inactive-bg-color $inactive-text-color #00ff00
 client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color          #00ff00
 
-##### i3-gaps ##############
-# for_window [class=".*"] border pixel 1
-# for_window [class=".*"] border_radius 20
-# gaps inner 10
-# gaps outer 1
-
-################# i3-radius #######################
-# smart_borders on
-# smart_borders no_gaps
-
 #Turn on when you start your desktop
 exec brave-browser
-exec_always feh --bg-scale ${HOME}/Pictures/wallpaper.jpg
 exec code
-exec spotify
+exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+exec_always spotify
