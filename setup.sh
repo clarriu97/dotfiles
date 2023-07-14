@@ -74,8 +74,12 @@ function install_ubuntu_dependencies {
 		lsb-release && \
 	sudo mkdir -p /etc/apt/keyrings && \
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
-	sudo groupadd docker && \
-	sudo usermod -aG docker $USER && \
+	if ! grep -q docker /etc/group; then
+        sudo groupadd docker
+    fi
+    if ! groups $USER | grep -q '\bdocker\b'; then
+        sudo usermod -aG docker $USER
+    fi
 	echo -e "${green}docker${cyan} installed!${nc}\n" && \
 
     echo -e "Installing ${orange}playerctl${cyan}...${nc}" && \
@@ -156,7 +160,6 @@ function install_fedora_dependencies {
 		--add-repo \
 		https://download.docker.com/linux/fedora/docker-ce.repo && \
 	sudo dnf install docker-ce docker-ce-cli containerd.io docker-compose-plugin && \
-
     if ! grep -q docker /etc/group; then
         sudo groupadd docker
     fi
