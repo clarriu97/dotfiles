@@ -6,7 +6,7 @@ This repository is meant to store all the files and configurations needed to ins
 This tool can configure two main things:
 
 - Your terminal: using `zsh`, [`powerlevel10k`](https://github.com/romkatv/powerlevel10k) and some `zsh` plugins.
-- Your Windows Manager: using [i3wm](https://i3wm.org/)
+- Your Windows Manager: using [i3wm](https://i3wm.org/) and the [polybar](https://github.com/polybar/polybar).
 
 ## Overview
 
@@ -18,14 +18,13 @@ This is how your environment will look like if you install everything.
 
 The tool supports the following Linux distributions:
 
-- [Fedora 36](https://getfedora.org/)
+- [Fedora 36-38](https://getfedora.org/)
 - [Ubuntu 20.04](https://ubuntu.com/)
 
 ## Needs
 
 To automate the process and to avoid problems, you should have the following tools installed:
 
-- [GNU Make](https://www.gnu.org/software/make/)
 - [Git](https://git-scm.com/)
 
 ## Get started
@@ -36,7 +35,9 @@ To automate the process and to avoid problems, you should have the following too
 To start the installation of all tools and configurations, simply run the following command:
 
 ```bash
-git clone https://github.com/clarriu97/dotfiles && cd dotfiles && make -s setup-env
+git clone https://github.com/clarriu97/dotfiles /tmp
+chmod +x /tmp/dotfiles/setup.sh 
+bash /tmp/dotfiles/setup.sh
 ```
 
 You will be asked about the Linux distro you are using, and the tools you want to configure.
