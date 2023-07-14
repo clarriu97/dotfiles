@@ -96,7 +96,11 @@ function install_ubuntu_dependencies {
 
     echo -e "Installing ${orange}polybar${cyan}...${nc}" && \
     sudo apt install -y polybar && \
-    echo -e "${green}polybar${cyan} installed!${nc}\n"
+    echo -e "${green}polybar${cyan} installed!${nc}\n" && \
+
+    echo -e "Installing ${orange}vlc${cyan}...${nc}" && \
+    sudo apt install -y vlc && \
+    echo -e "${green}vlc${cyan} installed!${nc}\n"
 }
 
 function install_fedora_dependencies {
@@ -179,7 +183,11 @@ function install_fedora_dependencies {
 
     echo -e "Installing ${orange}polybar${cyan}...${nc}" && \
     sudo dnf install -y polybar && \
-    echo -e "${green}polybar${cyan} installed!${nc}\n"
+    echo -e "${green}polybar${cyan} installed!${nc}\n" && \
+
+    echo -e "Installing ${orange}vlc${cyan}...${nc}" && \
+    sudo dnf install -y vlc && \
+    echo -e "${green}vlc${cyan} installed!${nc}\n"
 }
 
 ############################
