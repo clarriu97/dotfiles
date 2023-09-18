@@ -197,7 +197,14 @@ function install_fedora_dependencies {
     sudo dnf -y install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
     sudo dnf -y install ffmpeg --allowerasing && \
     sudo dnf -y install ffmpeg-devel && \
-    echo -e "${green}ffmpeg${cyan} installed!${nc}\n"
+    echo -e "${green}ffmpeg${cyan} installed!${nc}\n" && \
+
+    echo -e "Installing ${orange}Nvidia drivers${cyan}...${nc}" && \
+    sudo dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+    sudo dnf install -y https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+    sudo dnf install -y akmod-nvidia
+    sudo dnf install -y nvidia-settings
+    echo -e "${green}Nvidia drivers${cyan} installed!${nc}\n"
 }
 
 ############################
