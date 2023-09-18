@@ -35,9 +35,9 @@ To automate the process and to avoid problems, you should have the following too
 To start the installation of all tools and configurations, simply run the following command:
 
 ```bash
-git clone https://github.com/clarriu97/dotfiles /tmp
+git clone https://github.com/clarriu97/dotfiles /tmp/dotfiles
 chmod +x /tmp/dotfiles/setup.sh 
-bash /tmp/dotfiles/setup.sh
+/tmp/dotfiles/setup.sh
 ```
 
 You will be asked about the Linux distro you are using, and the tools you want to configure.
