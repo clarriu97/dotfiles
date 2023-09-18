@@ -106,11 +106,8 @@ function install_ubuntu_dependencies {
     sudo apt install -y kdenlive && \
     echo -e "${green}kdenlive${cyan} installed!${nc}\n" && \
 
-    echo -e "Installing ${orange}ffmpeg${cyan}...${nc}" && \
-    sudo dnf -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm && \
-    sudo dnf -y install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
-    sudo dnf -y install ffmpeg --allowerasing && \
-    sudo dnf -y install ffmpeg-devel && \
+    echo -e "Installing ${orange}vlc${cyan}...${nc}" && \
+    sudo apt install -y vlc && \
     echo -e "${green}vlc${cyan} installed!${nc}\n"
 }
 
@@ -195,9 +192,12 @@ function install_fedora_dependencies {
     sudo dnf install -y polybar && \
     echo -e "${green}polybar${cyan} installed!${nc}\n" && \
 
-    echo -e "Installing ${orange}vlc${cyan}...${nc}" && \
-    sudo dnf install -y vlc && \
-    echo -e "${green}vlc${cyan} installed!${nc}\n"
+    echo -e "Installing ${orange}ffmpeg${cyan}...${nc}" && \
+    sudo dnf -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm && \
+    sudo dnf -y install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
+    sudo dnf -y install ffmpeg --allowerasing && \
+    sudo dnf -y install ffmpeg-devel && \
+    echo -e "${green}ffmpeg${cyan} installed!${nc}\n"
 }
 
 ############################
