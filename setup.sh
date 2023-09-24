@@ -200,11 +200,15 @@ function install_fedora_dependencies {
     echo -e "${green}ffmpeg${cyan} installed!${nc}\n" && \
 
     echo -e "Installing ${orange}Nvidia drivers${cyan}...${nc}" && \
-    sudo dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
-    sudo dnf install -y https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
-    sudo dnf install -y akmod-nvidia
-    sudo dnf install -y nvidia-settings
-    echo -e "${green}Nvidia drivers${cyan} installed!${nc}\n"
+    sudo dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm && \
+    sudo dnf install -y https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
+    sudo dnf install -y akmod-nvidia && \
+    sudo dnf install -y nvidia-settings && \
+    echo -e "${green}Nvidia drivers${cyan} installed!${nc}\n" && \
+
+    echo -e "Installing ${orange}kf5-kirigami2${cyan}...${nc}" && \
+    sudo dnf install -y kf5-kirigami2 && \
+    echo -e "${green}kf5-kirigami2${cyan} installed!${nc}\n"
 }
 
 ############################
