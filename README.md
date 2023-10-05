@@ -52,6 +52,28 @@ You can choose between:
 Once you have selected the options that best fit your needs, the installation and
 configuration process will begin.
 
+### Disclaimer
+
+For the polybar configuration, you will need to check ad-hoc your own network interface, and
+change the `interface` values from the `etc` and `wlan` modules in the
+`/home/<user>/.config/polybar/config.ini` file.
+
+For example:
+
+```
+[module/wlan]
+inherit = network-base
+interface-type = wireless
+interface = wlp5s0
+label-connected = %{F#F0C674}%{F-}  %essid% %local_ip% %{F#F0C674}  %downspeed:1%  %upspeed:1%%{F-}
+
+[module/eth]
+inherit = network-base
+interface-type = wired
+interface = enp0s31f6
+label-connected = %{F#F0C674}%{F-}  %local_ip% %{F#F0C674}  %downspeed:1%  %upspeed:1%%{F-}
+```
+
 ## User guide and shortcuts
 
 `i3wm` is a windows manager with which we will be able to manage all our windows environment
