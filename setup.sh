@@ -333,7 +333,6 @@ function install_hack_nerd_font {
 function configure_wm {
     mkdir -p $HOME/.config/i3 && \
     cp i3/config $HOME/.config/i3 && \
-    cp -r i3/scripts $HOME/.config/i3 && \
 
     mkdir -p $HOME/.screenlayout && \
     cp i3/.screenlayout/* $HOME/.screenlayout && \
