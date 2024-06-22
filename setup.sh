@@ -18,203 +18,95 @@ function update_fedora {
 #####################
 
 function install_ubuntu_dependencies {
-    echo -e "\n${orange}Installing dependencies...${nc}\n" && \
-    echo -e "Installing ${orange}Visual Studio Code${cyan}...${nc}" && \
-	sudo apt install -y software-properties-common apt-transport-https wget && \
-	wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add - && \
-	sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" && \
-	sudo apt install -y code && \
-	echo -e "${green}Visual Studio Code${cyan} installed!${nc}\n" && \
+    echo -e "\n${orange}Installing dependencies:${nc}\n" && \
+    echo -e "\t- ${cyan}software-properties-common${nc}" && \
+    echo -e "\t- ${cyan}apt-transport-https${nc}" && \
+    echo -e "\t- ${cyan}wget${nc}" && \
+    echo -e "\t- ${cyan}Visual Studio Code${nc}" && \
+    echo -e "\t- ${cyan}neofetch${nc}" && \
+    echo -e "\t- ${cyan}Brave browser${nc}" && \
+    echo -e "\t- ${cyan}dpkg${nc}" && \
+    echo -e "\t- ${cyan}zsh${nc}" && \
+    echo -e "\t- ${cyan}flameshot${nc}" && \
+    echo -e "\t- ${cyan}i3wm${nc}" && \
+    echo -e "\t- ${cyan}tox${nc}" && \
+    echo -e "\t- ${cyan}arandr${nc}" && \
+    echo -e "\t- ${cyan}rofi${nc}" && \
+    echo -e "\t- ${cyan}docker${nc}" && \
+    echo -e "\t- ${cyan}playerctl${nc}" && \
+    echo -e "\t- ${cyan}scrub${nc}" && \
+    echo -e "\t- ${cyan}coreutils${nc}" && \
+    echo -e "\t- ${cyan}xclip${nc}" && \
+    echo -e "\t- ${cyan}polybar${nc}" && \
+    echo -e "\t- ${cyan}vlc${nc}" && \
+    echo -e "\n" && \
 
-    echo -e "Installing ${orange}neofetch${cyan}...${nc}" && \
-    sudo apt install -y neofetch && \
-    echo -e "${green}neofetch${cyan} installed!${nc}\n" && \
+    sudo apt install -y software-properties-common apt-transport-https wget && \
+    wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add - && \
+    sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" && \
+	sudo apt install -y \
+        code \
+        neofetch \
+        brave-browser \
+        dpkg \
+        zsh \
+        flameshot \
+        i3 \
+        tox \
+        arandr \
+        rofi \
+        docker \
+        playerctl \
+        scrub \
+        coreutils \
+        xclip \
+        polybar \
+        vlc && \
 
-    echo -e "Installing ${orange}Brave browser${cyan}...${nc}" && \
-	sudo apt install -y apt-transport-https curl && \
-	sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
-	echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=amd64] https://brave-browser-apt-release.s3.brave.com/ stable main"|sudo tee /etc/apt/sources.list.d/brave-browser-release.list && \
-    update_ubuntu && \
-	sudo apt install -y brave-browser && \
-	echo -e "${green}Brave browser${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}dpkg${cyan}...${nc}" && \
-    sudo apt install -y dpkg && \
-    echo -e "${green}dpkg${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}zsh${cyan}...${nc}" && \
-    sudo apt install -y zsh && \
-    echo -e "${green}zsh${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}flameshot${cyan}...${nc}" && \
-    sudo apt install -y flameshot && \
-    echo -e "${green}flameshot${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}i3wm${cyan}...${nc}" && \
-    sudo apt install -y i3 && \
-    echo -e "${green}i3wm${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}tox${cyan}...${nc}" && \
-    pip install tox && \
-    echo -e "${green}tox${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}arandr${cyan}...${nc}" && \
-    sudo apt install -y arandr && \
-    echo -e "${green}arandr${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}rofi${cyan}...${nc}" && \
-    sudo apt install -y rofi && \
-    echo -e "${green}rofi${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}docker${cyan}...${nc}" && \
-	sudo apt-get install \
-		ca-certificates \
-		curl \
-		gnupg \
-		lsb-release && \
-	sudo mkdir -p /etc/apt/keyrings && \
-	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
-	if ! grep -q docker /etc/group; then
-        sudo groupadd docker
-    fi
-    if ! groups $USER | grep -q '\bdocker\b'; then
-        sudo usermod -aG docker $USER
-    fi
-	echo -e "${green}docker${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}playerctl${cyan}...${nc}" && \
-    sudo apt install -y playerctl && \
-    echo -e "${green}playerctl${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}scrub${cyan}...${nc}" && \
-    sudo apt install -y scrub && \
-    echo -e "${green}scrub${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}coreutils${cyan}...${nc}" && \
-    sudo apt install -y coreutils && \
-    echo -e "${green}coreutils${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}xclip${cyan}...${nc}" && \
-    sudo apt install -y xclip && \
-    echo -e "${green}xclip${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}polybar${cyan}...${nc}" && \
-    sudo apt install -y polybar && \
-    echo -e "${green}polybar${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}kdenlive${cyan}...${nc}" && \
-    sudo apt install -y kdenlive && \
-    echo -e "${green}kdenlive${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}vlc${cyan}...${nc}" && \
-    sudo apt install -y vlc && \
-    echo -e "${green}vlc${cyan} installed!${nc}\n"
+    echo -e "\n${green}Dependencies installed!${nc}\n"
 }
 
 function install_fedora_dependencies {
-    echo -e "\n${orange}Installing dependencies...${nc}\n" && \
-    echo -e "Installing ${orange}Visual Studio Code${cyan}...${nc}" && \
-    sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc && \
-	sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo' && \
-	dnf check-update && \
-	sudo dnf install -y code && \
-    echo -e "${green}Visual Studio Code${cyan} installed!${nc}\n" && \
+    echo -e "\n${orange}Installing dependencies:${nc}\n" && \
+    echo -e "\t- ${cyan}Visual Studio Code${nc}" && \
+    echo -e "\t- ${cyan}neofetch${nc}" && \
+    echo -e "\t- ${cyan}Brave browser${nc}" && \
+    echo -e "\t- ${cyan}dpkg${nc}" && \
+    echo -e "\t- ${cyan}zsh${nc}" && \
+    echo -e "\t- ${cyan}flameshot${nc}" && \
+    echo -e "\t- ${cyan}i3wm${nc}" && \
+    echo -e "\t- ${cyan}tox${nc}" && \
+    echo -e "\t- ${cyan}arandr${nc}" && \
+    echo -e "\t- ${cyan}rofi${nc}" && \
+    echo -e "\t- ${cyan}docker${nc}" && \
+    echo -e "\t- ${cyan}playerctl${nc}" && \
+    echo -e "\t- ${cyan}scrub${nc}" && \
+    echo -e "\t- ${cyan}coreutils${nc}" && \
+    echo -e "\t- ${cyan}xclip${nc}" && \
+    echo -e "\t- ${cyan}polybar${nc}" && \
+    echo -e "\t- ${cyan}vlc${nc}" && \
+    echo -e "\n" && \
 
-    echo -e "Installing ${orange}neofetch${cyan}...${nc}" && \
-    sudo dnf install -y neofetch && \
-    echo -e "${green}neofetch${cyan} installed!${nc}\n" && \
+    sudo dnf install -y \
+        code \
+        neofetch \
+        brave-browser \
+        dpkg \
+        zsh \
+        flameshot \
+        i3 \
+        tox \
+        arandr \
+        rofi \
+        docker \
+        playerctl \
+        scrub \
+        coreutils \
+        xclip \
+        polybar \
+        vlc && \
 
-    echo -e "Installing ${orange}Brave browser${cyan}...${nc}" && \
-    sudo dnf config-manager --add-repo https://brave-browser-rpm-release.s3.brave.com/x86_64/ && \
-	sudo rpm --import https://brave-browser-rpm-release.s3.brave.com/brave-core.asc && \
-	sudo dnf install -y brave-browser && \
-    echo -e "${green}Brave browser${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}dpkg${cyan}...${nc}" && \
-    sudo dnf install -y dpkg && \
-    echo -e "${green}dpkg${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}zsh${cyan}...${nc}" && \
-    sudo dnf install -y zsh && \
-    echo -e "${green}zsh${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}flameshot${cyan}...${nc}" && \
-    sudo dnf install -y flameshot && \
-    echo -e "${green}flameshot${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}i3wm${cyan}...${nc}" && \
-    sudo dnf install -y i3 && \
-    echo -e "${green}i3wm${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}tox${cyan}...${nc}" && \
-    pip install tox && \
-    echo -e "${green}tox${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}arandr${cyan}...${nc}" && \
-    sudo dnf install -y arandr && \
-    echo -e "${green}arandr${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}rofi${cyan}...${nc}" && \
-    sudo dnf install -y rofi && \
-    echo -e "${green}rofi${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}docker${cyan}...${nc}" && \
-    sudo dnf install -y dnf-plugins-core && \
-	sudo dnf config-manager \
-		--add-repo \
-		https://download.docker.com/linux/fedora/docker-ce.repo && \
-	sudo dnf install docker-ce docker-ce-cli containerd.io docker-compose-plugin && \
-    if ! grep -q docker /etc/group; then
-        sudo groupadd docker
-    fi
-    if ! groups $USER | grep -q '\bdocker\b'; then
-        sudo usermod -aG docker $USER
-    fi
-    echo -e "${green}docker${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}playerctl${cyan}...${nc}" && \
-    sudo dnf install -y playerctl && \
-    echo -e "${green}playerctl${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}scrub${cyan}...${nc}" && \
-    sudo dnf install -y scrub && \
-    echo -e "${green}scrub${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}coreutils${cyan}...${nc}" && \
-    sudo dnf install -y coreutils && \
-    echo -e "${green}coreutils${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}xclip${cyan}...${nc}" && \
-    sudo dnf install -y xclip && \
-    echo -e "${green}xclip${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}polybar${cyan}...${nc}" && \
-    sudo dnf install -y polybar && \
-    echo -e "${green}polybar${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}vlc${cyan}...${nc}" && \
-    sudo dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm && \
-    sudo dnf install -y 'https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-38.noarch.rpm' && \
-    sudo dnf install -y vlc && \
-    echo -e "${green}vlc${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}ffmpeg${cyan}...${nc}" && \
-    sudo dnf -y install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm && \
-    sudo dnf -y install https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
-    sudo dnf -y install ffmpeg --allowerasing && \
-    sudo dnf -y install ffmpeg-devel && \
-    echo -e "${green}ffmpeg${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}Nvidia drivers${cyan}...${nc}" && \
-    sudo dnf install -y https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm && \
-    sudo dnf install -y https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
-    sudo dnf install -y akmod-nvidia && \
-    sudo dnf install -y nvidia-settings && \
-    echo -e "${green}Nvidia drivers${cyan} installed!${nc}\n" && \
-
-    echo -e "Installing ${orange}kf5-kirigami2${cyan}...${nc}" && \
-    sudo dnf install -y kf5-kirigami2 && \
-    echo -e "${green}kf5-kirigami2${cyan} installed!${nc}\n"
+    echo -e "\n${green}Dependencies installed!${nc}\n"
 }
 
 ############################
@@ -268,9 +160,9 @@ function configure_ubuntu_terminal {
     echo -e "${green}tldr${orange} installed!${nc}\n" && \
 
     echo -e "\n${orange}Installing ${orange}lsd${orange}...${nc}" && \
-    wget https://github.com/Peltoche/lsd/releases/download/0.23.1/lsd-musl_0.23.1_i686.deb && \
-    sudo dpkg -i lsd-musl_0.23.1_i686.deb && \
-    rm lsd-musl_0.23.1_i686.deb && \
+    wget https://github.com/Peltoche/lsd/releases/download/1.1.2/lsd-musl_1.1.2_i686.deb && \
+    sudo dpkg -i lsd-musl_1.1.2_i686.deb && \
+    rm lsd-musl_1.1.2_i686.deb && \
     echo -e "${green}lsd${orange} installed!${nc}\n" && \
 
     echo -e "\n${orange}Installing ${orange}bat${orange}...${nc}" && \
