@@ -40,7 +40,7 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec kitty
+bindsym $mod+Return exec warp-terminal
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -160,6 +160,9 @@ bindsym $mod+Shift+h exec "${HOME}/.screenlayout/home.sh"
 
 # execute the screen configuration for the office
 bindsym $mod+Shift+g exec "${HOME}/.screenlayout/office.sh"
+
+# execute the screen configuration for mirror screen
+bindsym $mod+Shift+m exec "${HOME}/.screenlayout/mirror.sh"
 
 # execute vs code
 bindsym $mod+Shift+v exec code

@@ -1,3 +1,15 @@
+# Get system architecture
+ARCH=$(uname -m)
+
+# Map architecture to the corresponding deb file architecture
+if [ "$ARCH" == "x86_64" ]; then
+    DEB_ARCH="amd64"
+elif [ "$ARCH" == "i686" ]; then
+    DEB_ARCH="i386"
+else
+    echo "Unsupported architecture: $ARCH"
+    exit 1
+fi
 
 ###################
 ## System update ##
@@ -43,7 +55,7 @@ function install_ubuntu_dependencies {
 
     sudo apt install -y software-properties-common apt-transport-https wget && \
     wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add - && \
-    sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" && \
+    sudo add-apt-repository "deb [arch=${DEB_ARCH}] https://packages.microsoft.com/repos/vscode stable main" && \
 	sudo apt install -y \
         code \
         neofetch \
@@ -140,35 +152,30 @@ function configure_zsh_plugins {
     echo -e "${green}Done!${nc}"
 }
 
-function configure_kitty {
-    echo -e "\n${orange}Configuring ${green}Kitty${orange}...${nc}" && \
-    mkdir -p $HOME/.config/kitty && \
-    cp terminal/color.ini $HOME/.config/kitty && \
-    cp terminal/kitty.conf $HOME/.config/kitty && \
-    echo -e "${green}Done!${nc}"
-}
-
 function configure_ubuntu_terminal {
-    echo -e "\n${orange}Installing ${orange}kitty${orange}...${nc}" && \
-    sudo add-apt-repository universe && \
-    sudo apt update -y && \
-    sudo apt install -y kitty && \
-    echo -e "${green}kitty${orange} installed!${nc}\n" && \
+    echo -e "\n${orange}Installing ${orange}warp-terminal${orange}...${nc}" && \
+    sudo apt-get install wget gpg
+    wget -qO- https://releases.warp.dev/linux/keys/warp.asc | gpg --dearmor > warpdotdev.gpg
+    sudo install -D -o root -g root -m 644 warpdotdev.gpg /etc/apt/keyrings/warpdotdev.gpg
+    sudo sh -c "echo 'deb [arch=${DEB_ARCH} signed-by=/etc/apt/keyrings/warpdotdev.gpg] https://releases.warp.dev/linux/deb stable main' > /etc/apt/sources.list.d/warpdotdev.list"
+    rm warpdotdev.gpg
+    sudo apt update && sudo apt install warp-terminal
+    echo -e "${green}warp-terminal${orange} installed!${nc}\n" && \
 
     echo -e "\n${orange}Installing ${orange}tldr${orange}...${nc}" && \
     sudo apt install -y tldr && \
     echo -e "${green}tldr${orange} installed!${nc}\n" && \
 
     echo -e "\n${orange}Installing ${orange}lsd${orange}...${nc}" && \
-    wget https://github.com/Peltoche/lsd/releases/download/1.1.2/lsd-musl_1.1.2_i686.deb && \
-    sudo dpkg -i lsd-musl_1.1.2_i686.deb && \
-    rm lsd-musl_1.1.2_i686.deb && \
+    wget https://github.com/lsd-rs/lsd/releases/download/v1.1.5/lsd-musl_${DEB_ARCH}.deb && \
+    sudo dpkg -i lsd-musl_${DEB_ARCH}.deb && \
+    rm lsd-musl_${DEB_ARCH}.deb && \
     echo -e "${green}lsd${orange} installed!${nc}\n" && \
 
     echo -e "\n${orange}Installing ${orange}bat${orange}...${nc}" && \
-    wget https://github.com/sharkdp/bat/releases/download/v0.22.1/bat-musl_0.22.1_amd64.deb && \
-    sudo dpkg -i bat-musl_0.22.1_amd64.deb && \
-    rm bat-musl_0.22.1_amd64.deb && \
+    wget https://github.com/sharkdp/bat/releases/download/v0.22.1/bat-musl_0.22.1_${DEB_ARCH}.deb && \
+    sudo dpkg -i bat-musl_0.22.1_${DEB_ARCH}.deb && \
+    rm bat-musl_0.22.1_${DEB_ARCH}.deb && \
     echo -e "${green}bat${orange} installed!${nc}\n" && \
 
     echo -e "\n${orange}Installing ${orange}fzf${orange}...${nc}" && \
@@ -182,9 +189,11 @@ function configure_ubuntu_terminal {
 }
 
 function configure_fedora_terminal {
-    echo -e "\n${orange}Installing ${orange}kitty${orange}...${nc}" && \
-    sudo dnf install -y kitty && \
-    echo -e "${green}kitty${orange} installed!${nc}\n" && \
+    echo -e "\n${orange}Installing ${orange}warp-terminal${orange}...${nc}" && \
+    sudo rpm --import https://releases.warp.dev/linux/keys/warp.asc
+    sudo sh -c 'echo -e "[warpdotdev]\nname=warpdotdev\nbaseurl=https://releases.warp.dev/linux/rpm/stable\nenabled=1\ngpgcheck=1\ngpgkey=https://releases.warp.dev/linux/keys/warp.asc" > /etc/yum.repos.d/warpdotdev.repo'
+    sudo dnf install warp-terminal
+    echo -e "${green}warp-terminal${orange} installed!${nc}\n" && \
 
     echo -e "\n${orange}Installing ${orange}tldr${orange}...${nc}" && \
     sudo dnf install -y tldr && \
