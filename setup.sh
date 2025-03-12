@@ -50,6 +50,8 @@ function install_ubuntu_dependencies {
     echo -e "\t- ${cyan}coreutils${nc}" && \
     echo -e "\t- ${cyan}xclip${nc}" && \
     echo -e "\t- ${cyan}polybar${nc}" && \
+    echo -e "\t- ${cyan}wget${nc}" && \
+    echo -e "\t- ${cyan}gpg${nc}" && \
     echo -e "\t- ${cyan}vlc${nc}" && \
     echo -e "\n" && \
 
@@ -73,6 +75,8 @@ function install_ubuntu_dependencies {
         coreutils \
         xclip \
         polybar \
+        wget \
+        gpg \
         vlc && \
 
     echo -e "\n${green}Dependencies installed!${nc}\n"
@@ -96,6 +100,8 @@ function install_fedora_dependencies {
     echo -e "\t- ${cyan}coreutils${nc}" && \
     echo -e "\t- ${cyan}xclip${nc}" && \
     echo -e "\t- ${cyan}polybar${nc}" && \
+    echo -e "\t- ${cyan}wget${nc}" && \
+    echo -e "\t- ${cyan}gpg${nc}" && \
     echo -e "\t- ${cyan}vlc${nc}" && \
     echo -e "\n" && \
 
@@ -116,6 +122,8 @@ function install_fedora_dependencies {
         coreutils \
         xclip \
         polybar \
+        wget \
+        gpg \
         vlc && \
 
     echo -e "\n${green}Dependencies installed!${nc}\n"
@@ -167,9 +175,7 @@ function configure_ubuntu_terminal {
     echo -e "${green}tldr${orange} installed!${nc}\n" && \
 
     echo -e "\n${orange}Installing ${orange}lsd${orange}...${nc}" && \
-    wget https://github.com/lsd-rs/lsd/releases/download/v1.1.5/lsd-musl_${DEB_ARCH}.deb && \
-    sudo dpkg -i lsd-musl_${DEB_ARCH}.deb && \
-    rm lsd-musl_${DEB_ARCH}.deb && \
+    sudo apt install -y lsd && \
     echo -e "${green}lsd${orange} installed!${nc}\n" && \
 
     echo -e "\n${orange}Installing ${orange}bat${orange}...${nc}" && \
