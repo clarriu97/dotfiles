@@ -1,66 +1,100 @@
+# Dotfiles & Linux Environment Setup
 
-## Welcome
+[![OS: Linux](https://img.shields.io/badge/OS-Linux-blue)](#) [![i3: yes](https://img.shields.io/badge/i3-yes-brightgreen)](#) [![Build Status](https://img.shields.io/badge/build-passing-success)](#) [![No Spaghetti](https://img.shields.io/badge/code-no--spaghetti-red)](#) [![Works on my machine](https://img.shields.io/badge/works-on%20my%20machine-lightgrey)](#) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
 
-This repository is meant to store all the files and configurations needed to instantly setup my Linux working environment to my liking.
+![ScreenRecord](images/screenrecord.gif)
 
-This tool can configure two main things:
+This repository contains all the files and configurations needed to quickly set up a Linux working environment with a customized **ZSH** (with [powerlevel10k](https://github.com/romkatv/powerlevel10k), and plugins), [Warp](https://www.warp.dev/) (as a modern, GPU-accelerated terminal) and an **i3wm** (with [polybar](https://github.com/polybar/polybar)) setup.
 
-- Your terminal: using `zsh`, [`powerlevel10k`](https://github.com/romkatv/powerlevel10k) and some `zsh` plugins.
-- Your Windows Manager: using [i3wm](https://i3wm.org/) and the [polybar](https://github.com/polybar/polybar).
+---
+
+## Table of Contents
+
+1. [Overview](#overview)  
+2. [Terminal View](#terminal-view)  
+3. [Supported Distributions](#supported-distributions)  
+4. [Requirements](#requirements)  
+5. [Installation](#installation)  
+6. [Post-install Configuration](#post-install-configuration)  
+7. [Keyboard Shortcuts](#keyboard-shortcuts)  
+   - [i3wm Shortcuts](#i3wm-shortcuts)  
+   - [Terminal Shortcuts (Warp/ZSH)](#terminal-shortcuts-warpzsh)  
+8. [Useful Aliases](#useful-aliases)  
+9. [Contributing](#contributing)  
+10. [License](#license)  
+
+---
 
 ## Overview
 
-This is how your environment will look like if you install everything.
+**Goal**: Provide an easy way to replicate your Linux dev environment by automatically configuring:
+- **Terminal**: ZSH + [powerlevel10k](https://github.com/romkatv/powerlevel10k) + helpful plugins.
+- **Window Manager**: [i3wm](https://i3wm.org/) + [polybar](https://github.com/polybar/polybar).
 
-![terminal](images/terminal.png)
+Key features:
+1. A stylish, high-performance prompt.
+2. Plugin integrations to enhance command-line experience.
+3. A minimal yet powerful tiling window manager setup with a customizable status bar.
 
-## Support
+---
 
-The tool supports the following Linux distributions:
+
+## Terminal View
+
+![Terminal Demo](images/terminalrecord.gif)
+*An example of the terminal with ZSH + powerlevel10k.*
+
+## Supported Distributions
 
 - [Fedora 36-38](https://getfedora.org/)
 - [Ubuntu 20.04](https://ubuntu.com/)
 
-## Needs
+---
 
-To automate the process and to avoid problems, you should have the following tools installed:
+## Requirements
 
+Make sure you have the following before starting:
 - [Git](https://git-scm.com/)
 
-## Get started
+---
 
-> In the installation process there will be actions that require super user permissions
-> and the process will reboot your system when it finishes.
+## Installation
 
-To start the installation of all tools and configurations, simply run the following command:
+> **Warning**: The installation process will require superuser privileges and will reboot your system upon completion to ensure all changes take effect.
+
+To clone the repository and launch the setup:
 
 ```bash
 git clone https://github.com/clarriu97/dotfiles /tmp/dotfiles
-chmod +x /tmp/dotfiles/setup.sh 
+chmod +x /tmp/dotfiles/setup.sh
 /tmp/dotfiles/setup.sh
 ```
 
-You will be asked about the Linux distro you are using, and the tools you want to configure.
-You can choose between:
+1. **Distribution Selection**: The script will ask which distro you use.
+2. **Installation Options**:
+   - Only terminal (ZSH + powerlevel10k + plugins).
+   - Only i3wm + polybar.
+   - Both terminal and i3wm.
 
-1. Only the terminal.
-2. Only the windows manager.
-3. Both the terminal and the windows manager.
+Example of what you will see in the terminal:
 
-![example_questions](images/example_questions.png)
+![Installation Example](images/example_questions.png)
 
-Once you have selected the options that best fit your needs, the installation and
-configuration process will begin.
+Once you select your desired options, the automatic installation and configuration will begin.
 
-### Disclaimer
+## Post-install Configuration
 
-For the polybar configuration, you will need to check ad-hoc your own network interface, and
-change the `interface` values from the `etc` and `wlan` modules in the
-`/home/<user>/.config/polybar/config.ini` file.
+### Polybar Network Interfaces
+
+You need to update the network interface names in the `etc` and `wlan` modules inside:
+
+```
+/home/<user>/.config/polybar/config.ini
+```
 
 For example:
 
-```
+```ini
 [module/wlan]
 inherit = network-base
 interface-type = wireless
@@ -74,48 +108,82 @@ interface = enp0s31f6
 label-connected = %{F#F0C674}%{F-}  %local_ip% %{F#F0C674}  %downspeed:1%  %upspeed:1%%{F-}
 ```
 
-## User guide and shortcuts
+Replace `wlp5s0` and `enp0s31f6` with the correct interface names on your system.  
+> *Tip: run `ip link show` to see your interfaces.*
 
-`i3wm` is a windows manager with which we will be able to manage all our windows environment
-with the keyboard. For that purpose, every command will be a combination of the `$mod` key plus
-any other keys. In my case, the `$mod` key is the `Windows` key:
+---
 
-![winkey](images/win_key.jpg)
+## Keyboard Shortcuts
 
-The shortcuts related to the windows manager are:
+### i3wm Shortcuts
 
-- `Win` + `Enter`: open the terminal emulator (`kitty`).
-- `Win` + number(`n`): move to window `n`.
-- `Win` + `Shift` + number(`n`): move the window you are working on, to window `n`.
-- `Win` + `Tab`: move to the last window you were working on.
-- `Win` + `Shift` + `Q`: close the window you are working on.
-- `Win` + `Shift` + `H`: uses `xrandr` to place the screens in the home layout, adapting the orientation and resolution of these screens.
-- `Win` + `Shift` + `G`: uses `xrandr` to place the screens in the office layout, adapting the orientation and resolution of these screens.
-- `Win` + `Shift` + `B`: uses `xrandr` to display only the primary screen.
-- `Win` + `R`: resize your windows (use `ESC` for escape this mode).
-- `Win` + `Ctrl` + `S`: take a screenshot using [flameshot](https://github.com/flameshot-org/flameshot).
-- `Win` + `Ctrl` + `E`: open `Files`.
-- `Win` + `Ctrl` + `R`: reboot the machine.
-- `Win` + `Ctrl` + `P`: power off the machine.
+| Action                                             | Keys                          |
+|----------------------------------------------------|-------------------------------|
+| Open terminal (Warp)                              | `Win` + `Enter`               |
+| Switch to workspace `n`                            | `Win` + `n` (number)          |
+| Send current window to workspace `n`               | `Win` + `Shift` + `n`         |
+| Switch to last used workspace/window               | `Win` + `Tab`                 |
+| Close current window                                | `Win` + `Shift` + `Q`         |
+| Home screens setup (via `xrandr`)                  | `Win` + `Shift` + `H`         |
+| Office screens setup (via `xrandr`)                | `Win` + `Shift` + `G`         |
+| Only primary screen (via `xrandr`)                 | `Win` + `Shift` + `B`         |
+| Resize mode (Press `ESC` to exit)                  | `Win` + `R`                   |
+| Screenshot ([flameshot](https://github.com/flameshot-org/flameshot)) | `Win` + `Ctrl` + `S` |
+| Open file explorer (`Files`)                       | `Win` + `Ctrl` + `E`          |
+| Reboot the system                                  | `Win` + `Ctrl` + `R`          |
+| Power off the system                                | `Win` + `Ctrl` + `P`          |
 
-The shortcuts you will be able to use in your terminal are:
-- `Ctrl` + `Shift` + `t`: open a new tab.
-- `Ctrl` + `Shift` + `Alt` + `t`: rename a tab
-- `Ctrl` + `Shift` + `Letf arrow`: move to the left tab.
-- `Ctrl` + `Shift` + `Right arrow`: move to the right tab.
-- `Ctrl` + `Shift` + `,` move a tab to the left (spanish keyboard distribution).
-- `Ctrl` + `Shift` + `.` move a tab to the right (spanish keyboard distribution).
-- `Ctrl` + `>`: forward word.
-- `Ctrl` + `<`: backward word.
-- `Alt` + `>`: end of line.
-- `Alt` + `<`: begining of line.
+### Terminal Shortcuts (Warp/ZSH)
 
-This are some of the terminal alias you can use:
+| Action                                                 | Keys                                      |
+|--------------------------------------------------------|-------------------------------------------|
+| Open a new tab                                         | `Ctrl` + `Shift` + `t`                    |
+| Rename current tab                                     | `Ctrl` + `Shift` + `Alt` + `t`            |
+| Go to the tab on the left                              | `Ctrl` + `Shift` + `←`                    |
+| Go to the tab on the right                             | `Ctrl` + `Shift` + `→`                    |
+| Move current tab to the left *(ES keyboard)*           | `Ctrl` + `Shift` + `,`                    |
+| Move current tab to the right *(ES keyboard)*          | `Ctrl` + `Shift` + `.`                    |
+| Jump forward one word in the current command line      | `Ctrl` + `>`                              |
+| Jump backward one word in the current command line     | `Ctrl` + `<`                              |
+| Go to end of the line                                  | `Alt` + `>`                               |
+| Go to start of the line                                | `Alt` + `<`                               |
+
+---
+
+## Useful Aliases
+
 - `l`: `ls -al`
 - `gs`: `git status`
 - `gd`: `git diff`
 - `catzsh`: `cat ~/.zshrc`
 - `nanozsh`: `nano ~/.zshrc`
 - `gtree`: `git log --graph --oneline --all`
-- `open` + argument: open any file with `xdg-open`
-- `sizeof` + argument: check any file or folder size with `du -sh`
+- `open <file>`: open any file with `xdg-open`
+- `sizeof <file_or_folder>`: display size via `du -sh`
+
+*(They're now integrated within Warp)*
+
+---
+
+## Contributing
+
+Contributions are welcome! To propose changes:
+
+1. Fork this repository.  
+2. Create a new branch: `git checkout -b my-feature`  
+3. Commit your changes: `git commit -m 'Add my feature'`  
+4. Push to your branch: `git push origin my-feature`  
+5. Open a Pull Request on GitHub explaining your changes.
+
+---
+
+## License
+
+Distributed under the [MIT License](https://opensource.org/licenses/MIT).  
+Feel free to use, modify, and distribute as you see fit.
+
+---
+
+**Final Note**  
+- Always back up your existing configuration files (e.g., `~/.zshrc`, `~/.config/i3`, etc.) before running any script that might overwrite them.  
+- If you encounter issues or want to request new features, please open an issue on GitHub!
