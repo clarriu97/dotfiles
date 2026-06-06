@@ -1,0 +1,122 @@
+# .aerospace.toml — i3-like tiling window manager for macOS.
+# Equivalent to the i3/config on Linux. Docs: https://nikitabobko.github.io/AeroSpace/guide
+#
+# Main modifier: 'alt' (the Option key). In i3 it was Super/Win; on Mac, Cmd
+# clashes with too many system shortcuts, so we use alt (idiomatic in AeroSpace).
+
+after-startup-command = ['exec-and-forget sketchybar']
+start-at-login = true
+
+# Container normalization (natural i3-like behavior)
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+accordion-padding = 30
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'auto'
+
+# Notify SketchyBar when the workspace changes (bar highlight)
+exec-on-workspace-change = ['/bin/bash', '-c',
+    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
+]
+
+on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
+
+# Gaps (equivalent to the i3/polybar spacing)
+[gaps]
+inner.horizontal = 8
+inner.vertical = 8
+outer.left = 8
+outer.bottom = 8
+outer.top = 8
+outer.right = 8
+
+# ===========================================================================
+#  Main mode (key bindings)
+# ===========================================================================
+[mode.main.binding]
+# Terminal (i3: $mod+Return) and app launchers
+alt-enter = 'exec-and-forget open -na Warp'
+alt-shift-v = 'exec-and-forget open -na "Visual Studio Code"'
+alt-shift-b = 'exec-and-forget open -na "Brave Browser"'
+# Note: the app launcher (rofi on i3) is covered by Spotlight (Cmd+Space) or Raycast.
+
+# Close window (i3: $mod+Shift+q)
+alt-shift-q = 'close'
+
+# Change focus (i3: $mod+h/j/k/l). Here standard hjkl = left/down/up/right.
+alt-h = 'focus left'
+alt-j = 'focus down'
+alt-k = 'focus up'
+alt-l = 'focus right'
+
+# Move window (i3: $mod+Shift+...)
+alt-shift-h = 'move left'
+alt-shift-j = 'move down'
+alt-shift-k = 'move up'
+alt-shift-l = 'move right'
+
+# Layouts (i3: stacking/tabbed/split/fullscreen)
+alt-slash = 'layout tiles horizontal vertical'   # toggle tiles orientation
+alt-comma = 'layout accordion horizontal vertical'
+alt-f = 'fullscreen'
+alt-shift-space = 'layout floating tiling'        # tiling <-> floating
+
+# Workspaces 1..10 (i3: $mod+number)
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+alt-5 = 'workspace 5'
+alt-6 = 'workspace 6'
+alt-7 = 'workspace 7'
+alt-8 = 'workspace 8'
+alt-9 = 'workspace 9'
+alt-0 = 'workspace 10'
+alt-tab = 'workspace-back-and-forth'              # i3: $mod+Tab
+
+# Move container to workspace (i3: $mod+Shift+number)
+alt-shift-1 = 'move-node-to-workspace 1'
+alt-shift-2 = 'move-node-to-workspace 2'
+alt-shift-3 = 'move-node-to-workspace 3'
+alt-shift-4 = 'move-node-to-workspace 4'
+alt-shift-5 = 'move-node-to-workspace 5'
+alt-shift-6 = 'move-node-to-workspace 6'
+alt-shift-7 = 'move-node-to-workspace 7'
+alt-shift-8 = 'move-node-to-workspace 8'
+alt-shift-9 = 'move-node-to-workspace 9'
+alt-shift-0 = 'move-node-to-workspace 10'
+
+# Move workspace between monitors (i3: $mod+Ctrl+>/<)
+alt-ctrl-l = 'move-workspace-to-monitor --wrap-around next'
+alt-ctrl-h = 'move-workspace-to-monitor --wrap-around prev'
+
+# Reload config (i3: $mod+Shift+c) and resize mode (i3: $mod+r)
+alt-shift-c = 'reload-config'
+alt-r = 'mode resize'
+
+# ===========================================================================
+#  Resize mode (i3: mode "resize")
+# ===========================================================================
+[mode.resize.binding]
+h = 'resize width -50'
+j = 'resize height +50'
+k = 'resize height -50'
+l = 'resize width +50'
+enter = 'mode main'
+esc = 'mode main'
+
+# ===========================================================================
+#  Assign apps to workspaces (i3: assign / for_window)
+# ===========================================================================
+[[on-window-detected]]
+if.app-id = 'com.brave.Browser'
+run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-id = 'com.microsoft.VSCode'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-id = 'com.spotify.client'
+run = 'move-node-to-workspace 10'

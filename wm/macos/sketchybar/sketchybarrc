@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# sketchybarrc — polybar-style status bar for macOS.
+# Tokyonight palette (consistent with shell/color.ini).
+# Integrates AeroSpace workspaces and shows the active app, CPU, RAM, battery and clock.
+
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+FONT="Hack Nerd Font"
+
+# Colors (0xAARRGGBB format). The active-workspace highlight (ACCENT) is
+# applied by the plugins/aerospace.sh plugin.
+BG=0xff1a1b26
+FG=0xffc0caf5
+GREY=0xff414868
+
+# --- Bar -------------------------------------------------------------------
+sketchybar --bar height=32 \
+                 position=top \
+                 padding_left=8 \
+                 padding_right=8 \
+                 color="$BG"
+
+# --- Defaults --------------------------------------------------------------
+sketchybar --default updates=when_shown \
+                     icon.font="$FONT:Bold:15.0" \
+                     icon.color="$FG" \
+                     label.font="$FONT:Semibold:13.0" \
+                     label.color="$FG" \
+                     padding_left=5 \
+                     padding_right=5 \
+                     background.color="$GREY" \
+                     background.corner_radius=6 \
+                     background.height=24
+
+# --- AeroSpace workspaces (left) -------------------------------------------
+sketchybar --add event aerospace_workspace_change
+
+for sid in $(aerospace list-workspaces --all); do
+    sketchybar --add item space.$sid left \
+               --subscribe space.$sid aerospace_workspace_change \
+               --set space.$sid background.drawing=off \
+                              label="$sid" \
+                              click_script="aerospace workspace $sid" \
+                              script="$PLUGIN_DIR/aerospace.sh $sid"
+done
+
+# --- Front app (left) ------------------------------------------------------
+sketchybar --add item front_app left \
+           --set front_app background.drawing=off icon.drawing=off \
+                           label.font="$FONT:Bold:13.0" \
+                           script="$PLUGIN_DIR/front_app.sh" \
+           --subscribe front_app front_app_switched
+
+# --- Clock (right) ---------------------------------------------------------
+sketchybar --add item clock right \
+           --set clock update_freq=10 \
+                       icon=" " \
+                       script="$PLUGIN_DIR/clock.sh"
+
+# --- Battery (right) -------------------------------------------------------
+sketchybar --add item battery right \
+           --set battery update_freq=120 \
+                         script="$PLUGIN_DIR/battery.sh" \
+           --subscribe battery system_woke power_source_change
+
+# --- RAM (right) -----------------------------------------------------------
+sketchybar --add item ram right \
+           --set ram update_freq=5 \
+                     icon=" " \
+                     script="$PLUGIN_DIR/ram.sh"
+
+# --- CPU (right) -----------------------------------------------------------
+sketchybar --add item cpu right \
+           --set cpu update_freq=2 \
+                     icon=" " \
+                     script="$PLUGIN_DIR/cpu.sh"
+
+# --- Apply -----------------------------------------------------------------
+sketchybar --update
