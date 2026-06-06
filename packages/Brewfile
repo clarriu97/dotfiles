@@ -1,0 +1,32 @@
+# Brewfile — macOS packages. Install with: brew bundle --file=packages/Brewfile
+# macOS equivalents of the repo's Linux tools.
+
+# --- Taps ------------------------------------------------------------------
+tap "nikitabobko/tap"      # AeroSpace (i3-like window manager)
+tap "FelixKratz/formulae"  # SketchyBar (polybar-like bar)
+
+# --- CLI tools -------------------------------------------------------------
+brew "git"
+brew "lsd"                 # modern 'ls'
+brew "bat"                 # 'cat' with syntax highlighting
+brew "fzf"                 # fuzzy finder
+brew "tealdeer"            # provides the 'tldr' command
+brew "fastfetch"           # neofetch replacement
+brew "stow"                # symlink manager (alternative to the built-in helper)
+brew "powerlevel10k"       # prompt
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
+brew "sketchybar"          # status bar
+brew "opencode"            # terminal AI agent
+
+# --- Applications (casks) --------------------------------------------------
+cask "warp"                       # terminal
+cask "visual-studio-code"
+cask "brave-browser"
+cask "font-hack-nerd-font"        # icon font (Nerd Font)
+cask "aerospace"                  # tiling window manager (no need to disable SIP)
+cask "flameshot"                  # screenshots (same tool as on Linux)
+
+# --- Optional (uncomment if you want them) ---------------------------------
+# cask "docker"                   # Docker Desktop
+# cask "claude-code"              # Claude Code (if you prefer managing it via brew)

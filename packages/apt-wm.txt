@@ -1,0 +1,11 @@
+# Window manager packages (WM option) for Ubuntu/Debian.
+i3
+i3lock
+polybar
+rofi
+arandr
+feh
+flameshot
+playerctl
+scrub
+vlc

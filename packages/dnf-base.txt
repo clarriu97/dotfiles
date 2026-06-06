@@ -1,0 +1,16 @@
+# Base packages (Terminal option) for Fedora/RHEL.
+# Packages needing external repos (VS Code, Brave, Warp) are handled in lib/fedora.sh.
+zsh
+git
+wget
+curl
+gnupg2
+unzip
+fontconfig
+tox
+xclip
+lsd
+fzf
+tldr
+bat
+neofetch
