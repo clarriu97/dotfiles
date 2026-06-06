@@ -1,0 +1,5 @@
+# Local-only documentation (kept on disk, not versioned)
+docs/
+
+# Backups created by the installer's link_file helper
+*.bak-*
