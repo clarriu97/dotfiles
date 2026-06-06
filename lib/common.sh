@@ -3,15 +3,15 @@
 # Meant to be sourced, not executed directly.
 
 # --- Colors ----------------------------------------------------------------
-export black='\e[0;30m'
-export red='\e[0;31m'
-export green='\e[0;32m'
-export orange='\e[0;33m'
-export blue='\e[0;34m'
-export purple='\e[0;35m'
-export cyan='\e[0;36m'
-export white='\e[0;37m'
-export nc='\e[0m' # No Color
+export black='\033[0;30m'
+export red='\033[0;31m'
+export green='\033[0;32m'
+export orange='\033[0;33m'
+export blue='\033[0;34m'
+export purple='\033[0;35m'
+export cyan='\033[0;36m'
+export white='\033[0;37m'
+export nc='\033[0m' # No Color
 
 # --- Logging ---------------------------------------------------------------
 log()  { echo -e "${orange}$*${nc}"; }
