@@ -3,3 +3,6 @@ docs/
 
 # Backups created by the installer's link_file helper
 *.bak-*
+
+# macOS metadata
+.DS_Store
