@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Lock the screen with i3lock using the padlock image.
+# Invoked from i3 with: bindsym $mod+Shift+x exec ${HOME}/.config/i3/scripts/lock
+
+LOCK_IMG="$HOME/Pictures/candado.png"
+
+if [[ -f "$LOCK_IMG" ]]; then
+    i3lock -i "$LOCK_IMG"
+else
+    # Fallback: solid-color lock if the image is missing.
+    i3lock -c 1a1b26
+fi
