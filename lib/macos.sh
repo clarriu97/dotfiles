@@ -18,7 +18,22 @@ macos_install_homebrew() {
     fi
 }
 
+# Homebrew 6.0+ refuses to install from third-party taps until they are trusted
+# (supply-chain safeguard). Trust the two we use: AeroSpace (nikitabobko/tap) and
+# SketchyBar/JankyBorders (felixkratz/formulae). No-op on older Homebrew.
+macos_trust_taps() {
+    has_cmd brew || return 0
+    brew trust --help >/dev/null 2>&1 || return 0   # older Homebrew: no trust gate
+    log "Trusting third-party taps (AeroSpace, SketchyBar/JankyBorders)..."
+    local t
+    for t in nikitabobko/tap felixkratz/formulae; do
+        brew tap  "$t" >/dev/null 2>&1 || true
+        brew trust "$t" >/dev/null 2>&1 || warn "Could not trust tap $t (run: brew trust $t)"
+    done
+}
+
 macos_brew_bundle() {
+    macos_trust_taps
     log "Installing packages with brew bundle..."
     brew bundle --file="$DOTFILES_DIR/packages/Brewfile" || \
         warn "A package in the Brewfile failed; check the output."
