@@ -17,6 +17,7 @@ brew "powerlevel10k"       # prompt
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 brew "sketchybar"          # status bar
+brew "borders"             # colored border around the focused window (JankyBorders)
 brew "opencode"            # terminal AI agent
 
 # --- Applications (casks) --------------------------------------------------
@@ -25,6 +26,7 @@ cask "visual-studio-code"
 cask "brave-browser"
 cask "font-hack-nerd-font"        # icon font (Nerd Font)
 cask "aerospace"                  # tiling window manager (no need to disable SIP)
+cask "karabiner-elements"         # key remapper: Left Option -> WM modifier, Right Option -> ES symbols
 cask "flameshot"                  # screenshots (same tool as on Linux)
 
 # --- Optional (uncomment if you want them) ---------------------------------

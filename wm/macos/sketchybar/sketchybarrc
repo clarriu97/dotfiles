@@ -1,23 +1,42 @@
 #!/usr/bin/env bash
-# sketchybarrc — polybar-style status bar for macOS.
-# Tokyonight palette (consistent with shell/color.ini).
-# Integrates AeroSpace workspaces and shows the active app, CPU, RAM, battery and clock.
+# sketchybarrc — polybar-style status bar for macOS (Tokyonight palette,
+# consistent with shell/color.ini). Integrates AeroSpace workspaces + the
+# focused app, and shows CPU, RAM, Wi-Fi, volume, battery and the clock.
+# Docs: https://felixkratz.github.io/SketchyBar
+
+# Homebrew tools (aerospace, sketchybar) may not be on PATH when launched by
+# launchd/AeroSpace, so make sure they resolve here and in the plugins.
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 
 PLUGIN_DIR="$CONFIG_DIR/plugins"
 FONT="Hack Nerd Font"
 
-# Colors (0xAARRGGBB format). The active-workspace highlight (ACCENT) is
-# applied by the plugins/aerospace.sh plugin.
-BG=0xff1a1b26
-FG=0xffc0caf5
-GREY=0xff414868
+# --- Tokyonight palette (0xAARRGGBB) ---------------------------------------
+BG=0xf01a1b26      # bar background (slightly translucent, paired with blur)
+FG=0xffc0caf5      # default foreground
+GREY=0xff2a2e42    # item pill background
+BLUE=0xff7aa2f7
+CYAN=0xff7dcfff
+YELLOW=0xffe0af68
+RED=0xfff7768e
+MAGENTA=0xffbb9af7
+
+# --- Nerd Font icons (UTF-8 bytes via printf; works on macOS' bash 3.2) ----
+CLOCK_ICON=$(printf '\xef\x80\x97')   # nf-fa-clock_o    (U+F017)
+CPU_ICON=$(printf '\xef\x8b\x9b')     # nf-fa-microchip  (U+F2DB)
+RAM_ICON=$(printf '\xef\x88\xb3')     # nf-fa-server     (U+F233)
 
 # --- Bar -------------------------------------------------------------------
-sketchybar --bar height=32 \
+# topmost=window keeps the bar above windows (so it never disappears behind
+# one); the per-monitor top gaps in .aerospace.toml reserve the space below.
+sketchybar --bar height=40 \
                  position=top \
-                 padding_left=8 \
-                 padding_right=8 \
-                 color="$BG"
+                 topmost=window \
+                 blur_radius=25 \
+                 padding_left=12 \
+                 padding_right=12 \
+                 color="$BG" \
+                 display=all
 
 # --- Defaults --------------------------------------------------------------
 sketchybar --default updates=when_shown \
@@ -25,27 +44,44 @@ sketchybar --default updates=when_shown \
                      icon.color="$FG" \
                      label.font="$FONT:Semibold:13.0" \
                      label.color="$FG" \
-                     padding_left=5 \
-                     padding_right=5 \
+                     padding_left=4 \
+                     padding_right=4 \
+                     icon.padding_left=8 \
+                     icon.padding_right=4 \
+                     label.padding_left=4 \
+                     label.padding_right=8 \
                      background.color="$GREY" \
-                     background.corner_radius=6 \
-                     background.height=24
+                     background.corner_radius=8 \
+                     background.height=28
 
 # --- AeroSpace workspaces (left) -------------------------------------------
+# Workspaces 1..10 are hard-coded so all ten slots always show (like i3),
+# without depending on AeroSpace answering at bar-startup time. The per-item
+# script fills in focus/occupied state on the aerospace_workspace_change event.
 sketchybar --add event aerospace_workspace_change
 
-for sid in $(aerospace list-workspaces --all); do
+for sid in 1 2 3 4 5 6 7 8 9 10; do
     sketchybar --add item space.$sid left \
                --subscribe space.$sid aerospace_workspace_change \
                --set space.$sid background.drawing=off \
-                              label="$sid" \
-                              click_script="aerospace workspace $sid" \
-                              script="$PLUGIN_DIR/aerospace.sh $sid"
+                                icon.drawing=off \
+                                label="$sid" \
+                                label.padding_left=9 \
+                                label.padding_right=9 \
+                                click_script="aerospace workspace $sid" \
+                                script="$PLUGIN_DIR/aerospace.sh $sid"
 done
 
-# --- Front app (left) ------------------------------------------------------
-sketchybar --add item front_app left \
-           --set front_app background.drawing=off icon.drawing=off \
+# --- Front app: real macOS icon + name (left) ------------------------------
+sketchybar --add item front_app_icon left \
+           --set front_app_icon background.drawing=on \
+                                 background.color=0x00000000 \
+                                 background.image.scale=0.6 \
+                                 icon.drawing=off \
+                                 label.drawing=off \
+           --add item front_app left \
+           --set front_app background.drawing=off \
+                           icon.drawing=off \
                            label.font="$FONT:Bold:13.0" \
                            script="$PLUGIN_DIR/front_app.sh" \
            --subscribe front_app front_app_switched
@@ -53,7 +89,8 @@ sketchybar --add item front_app left \
 # --- Clock (right) ---------------------------------------------------------
 sketchybar --add item clock right \
            --set clock update_freq=10 \
-                       icon=" " \
+                       icon="$CLOCK_ICON" \
+                       icon.color="$MAGENTA" \
                        script="$PLUGIN_DIR/clock.sh"
 
 # --- Battery (right) -------------------------------------------------------
@@ -62,16 +99,30 @@ sketchybar --add item battery right \
                          script="$PLUGIN_DIR/battery.sh" \
            --subscribe battery system_woke power_source_change
 
+# --- Volume (right) --------------------------------------------------------
+sketchybar --add item volume right \
+           --set volume icon.color="$CYAN" \
+                        script="$PLUGIN_DIR/volume.sh" \
+           --subscribe volume volume_change
+
+# --- Wi-Fi (right) ---------------------------------------------------------
+sketchybar --add item wifi right \
+           --set wifi update_freq=15 \
+                      icon.color="$BLUE" \
+                      script="$PLUGIN_DIR/wifi.sh"
+
 # --- RAM (right) -----------------------------------------------------------
 sketchybar --add item ram right \
            --set ram update_freq=5 \
-                     icon=" " \
+                     icon="$RAM_ICON" \
+                     icon.color="$YELLOW" \
                      script="$PLUGIN_DIR/ram.sh"
 
 # --- CPU (right) -----------------------------------------------------------
 sketchybar --add item cpu right \
            --set cpu update_freq=2 \
-                     icon=" " \
+                     icon="$CPU_ICON" \
+                     icon.color="$RED" \
                      script="$PLUGIN_DIR/cpu.sh"
 
 # --- Apply -----------------------------------------------------------------

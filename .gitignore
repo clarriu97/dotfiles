@@ -4,5 +4,8 @@ docs/
 # Backups created by the installer's link_file helper
 *.bak-*
 
+# Git bundles (transfer artifacts, not versioned)
+*.bundle
+
 # macOS metadata
 .DS_Store

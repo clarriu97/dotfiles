@@ -19,6 +19,8 @@ The installer **auto-detects the operating system** and links the configuration 
 |--------------------|----------------------------|-------------------------------|
 | Window manager     | [i3wm](https://i3wm.org/)  | [AeroSpace](https://github.com/nikitabobko/AeroSpace) (i3-like, no SIP disable) |
 | Status bar         | [polybar](https://github.com/polybar/polybar) | [SketchyBar](https://github.com/FelixKratz/SketchyBar) |
+| Focus border       | i3 (native)                | [JankyBorders](https://github.com/FelixKratz/JankyBorders) |
+| Key remapping      | — (Super is a free key)    | [Karabiner-Elements](https://karabiner-elements.pqrs.org/) (Left Option → modifier) |
 | Package manager    | apt / dnf                  | [Homebrew](https://brew.sh) (`Brewfile`) |
 | Terminal           | Warp                       | Warp                          |
 | Prompt             | ZSH + powerlevel10k        | ZSH + powerlevel10k           |
@@ -39,7 +41,7 @@ packages/             # declarative lists: Brewfile, apt-*.txt, dnf-*.txt
 shell/                # .zshrc (common) + zshrc.{linux,macos}.sh fragments + .p10k.zsh + plugins
 wm/
   linux/              # i3 (+ scripts/lock) and polybar
-  macos/              # aerospace/.aerospace.toml and sketchybar/
+  macos/              # aerospace/, sketchybar/ (+ plugins) and karabiner/
 docs/manual-bringup.md  # step-by-step guide for macOS
 ```
 
@@ -57,7 +59,9 @@ cd dotfiles
 You can clone the repo **anywhere** — `install.sh` resolves its own location and
 creates all symlinks relative to it. The script asks what to install: **terminal**, **window manager** or **both**.
 
-> **macOS:** **AeroSpace** needs Accessibility permission (System Settings → Privacy & Security → Accessibility).
+> **macOS permissions (one-time):** **AeroSpace** needs *Accessibility* and
+> **Karabiner-Elements** needs *Input Monitoring* (both under System Settings →
+> Privacy & Security). The installer opens both apps so the prompts appear.
 
 ### Automatic backups
 
@@ -73,26 +77,41 @@ Keep secrets, tokens and per-machine PATHs **out of the repo** in `~/.zshrc.loca
 
 ## Window manager shortcuts
 
-Modifier: **`Win`** on i3 (Linux) · **`alt`/Option** on AeroSpace (macOS).
+**Modifier — i3 (Linux):** the `Win`/Super key.
+**Modifier — AeroSpace (macOS):** the **LEFT Option** key. Karabiner-Elements
+remaps it, so you hold it like i3's Super. The **RIGHT Option** key stays
+completely free for the Spanish symbols `@ # [ ] { } \ | ~` — exactly like
+**AltGr** on Linux.
 
-| Action                              | i3 (Linux)            | AeroSpace (macOS)        |
-|-------------------------------------|-----------------------|--------------------------|
-| Open terminal                       | `Win`+`Enter`         | `alt`+`Enter`            |
-| Switch to workspace *n*             | `Win`+`n`             | `alt`+`n`                |
-| Send window to workspace *n*        | `Win`+`Shift`+`n`     | `alt`+`Shift`+`n`        |
-| Move focus                          | `Win`+`h/j/k/l`       | `alt`+`h/j/k/l`          |
-| Move window                         | `Win`+`Shift`+`h/j/k/l` | `alt`+`Shift`+`h/j/k/l` |
-| Fullscreen                          | `Win`+`f`             | `alt`+`f`                |
-| Close window                        | `Win`+`Shift`+`q`     | `alt`+`Shift`+`q`        |
-| Floating / tiling                   | `Win`+`Shift`+`Space` | `alt`+`Shift`+`Space`    |
-| Resize mode                         | `Win`+`r`             | `alt`+`r`                |
-| Reload config                       | `Win`+`Shift`+`c`     | `alt`+`Shift`+`c`        |
-| Open VS Code                        | `Win`+`Shift`+`v`     | `alt`+`Shift`+`v`        |
-| App launcher                        | `Win`+`d` (rofi)      | `Cmd`+`Space` (Spotlight/Raycast) |
+| Action                          | i3 (Linux)              | AeroSpace (macOS)            |
+|---------------------------------|-------------------------|------------------------------|
+| Open terminal                   | `Win`+`Enter`           | `Left⌥`+`Enter`              |
+| Switch to workspace *n*         | `Win`+`n`               | `Left⌥`+`n`                  |
+| Send window to workspace *n*    | `Win`+`Shift`+`n`       | `Left⌥`+`Shift`+`n`          |
+| Move focus                      | `Win`+`h/j/k/l`         | `Left⌥`+`h/j/k/l`            |
+| Move window                     | `Win`+`Shift`+`h/j/k/l` | `Left⌥`+`Shift`+`h/j/k/l`    |
+| Move workspace to next/prev monitor | `Win`+`Ctrl`+`</>`  | `Left⌥`+`Cmd`+`h/l`          |
+| Fullscreen                      | `Win`+`f`               | `Left⌥`+`f`                  |
+| Close window                    | `Win`+`Shift`+`q`       | `Left⌥`+`Shift`+`q`          |
+| Floating / tiling               | `Win`+`Shift`+`Space`   | `Left⌥`+`Shift`+`Space`      |
+| Resize mode                     | `Win`+`r`               | `Left⌥`+`r`                  |
+| Reload config                   | `Win`+`Shift`+`c`       | `Left⌥`+`Shift`+`c`          |
+| Open VS Code                    | `Win`+`Shift`+`v`       | `Left⌥`+`Shift`+`v`          |
+| Open Brave                      | —                       | `Left⌥`+`Shift`+`b`          |
+| Screenshot (flameshot)          | `Win`+`Ctrl`+`s`        | `Left⌥`+`Shift`+`s`          |
+| App launcher                    | `Win`+`d` (rofi)        | `Cmd`+`Space` (Spotlight/Raycast) |
 
 > On macOS, brightness, volume and power/restart use the native system keys/shortcuts.
-> Screenshots use flameshot — run `ss` (or `flameshot gui`); it needs Screen Recording
-> permission (System Settings > Privacy & Security > Screen Recording).
+> Screenshots use flameshot; it needs Screen Recording permission
+> (System Settings > Privacy & Security > Screen Recording).
+
+### Keyboard (Spanish layout) on macOS
+
+- The **ñ** and accents work once the input source is **`Spanish - ISO`**
+  (System Settings → Keyboard → Text Input → Input Sources → *Edit* → **+** →
+  *Spanish* → **Spanish - ISO**). macOS does not set this automatically.
+- Type `@ # [ ] { } \ | ~` with the **RIGHT Option** key (Karabiner leaves it
+  untouched). The **LEFT Option** key is the window-manager modifier.
 
 ---
 

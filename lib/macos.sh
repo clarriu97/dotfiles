@@ -58,21 +58,53 @@ macos_configure_terminal() {
     ok "Terminal configured. Select 'Hack Nerd Font' in Warp/VS Code."
 }
 
-# --- Window manager (AeroSpace + SketchyBar) -------------------------------
+# --- Window manager (AeroSpace + SketchyBar + Karabiner) -------------------
 macos_link_wm() {
-    log "Linking AeroSpace and SketchyBar..."
-    link_file "$DOTFILES_DIR/wm/macos/aerospace/.aerospace.toml" "$HOME/.aerospace.toml"
-    link_file "$DOTFILES_DIR/wm/macos/sketchybar"                "$HOME/.config/sketchybar"
+    log "Linking AeroSpace, SketchyBar and Karabiner..."
+    link_file "$DOTFILES_DIR/wm/macos/aerospace/.aerospace.toml"  "$HOME/.aerospace.toml"
+    link_file "$DOTFILES_DIR/wm/macos/sketchybar"                 "$HOME/.config/sketchybar"
+    link_file "$DOTFILES_DIR/wm/macos/karabiner/karabiner.json"   "$HOME/.config/karabiner/karabiner.json"
+}
+
+# Auto-hide the native macOS menu bar so SketchyBar is the only top bar.
+macos_hide_menu_bar() {
+    log "Auto-hiding the native macOS menu bar (SketchyBar replaces it)..."
+    defaults write NSGlobalDomain _HIHideMenuBar -bool true
+    killall SystemUIServer 2>/dev/null || true
+    info "Revert with: defaults write NSGlobalDomain _HIHideMenuBar -bool false; killall SystemUIServer"
 }
 
 macos_configure_wm() {
     macos_link_wm
-    if has_cmd brew; then
-        log "Starting SketchyBar as a service..."
-        brew services start sketchybar || warn "Could not start sketchybar; start it manually."
+    macos_hide_menu_bar
+
+    # Launch the apps first (so macOS shows their permission prompts, and so
+    # AeroSpace is up before SketchyBar reloads and reads the workspaces).
+    if has_cmd open; then
+        open -a "Karabiner-Elements" 2>/dev/null || true
+        open -a AeroSpace 2>/dev/null || true
     fi
-    warn "AeroSpace needs Accessibility permission: System Settings > Privacy & Security > Accessibility."
-    warn "Open the AeroSpace app (or run 'open -a AeroSpace') and grant it permission."
+
+    if has_cmd brew; then
+        log "Restarting SketchyBar as a service..."
+        brew services restart sketchybar 2>/dev/null || brew services start sketchybar || \
+            warn "Could not start sketchybar; start it manually."
+    fi
+
+    warn "MANUAL STEPS on this Mac (one-time):"
+    warn "  1) AeroSpace  -> Accessibility permission:"
+    warn "       System Settings > Privacy & Security > Accessibility > enable AeroSpace."
+    warn "  2) Karabiner-Elements -> approve its driver extension AND grant Input"
+    warn "       Monitoring on first launch (macOS prompts you; click Allow/Open Settings):"
+    warn "       System Settings > Privacy & Security > Input Monitoring > enable Karabiner,"
+    warn "       and Login Items & Extensions > Driver Extensions > enable Karabiner."
+    warn "       It maps LEFT Option -> window-manager modifier; RIGHT Option stays free"
+    warn "       for the Spanish symbols (@ # [ ] { } ...), like AltGr on Linux."
+    warn "  3) Spanish keyboard (ñ) -> set the input source to 'Spanish - ISO':"
+    warn "       System Settings > Keyboard > Text Input > Input Sources > Edit >"
+    warn "       + > Spanish > 'Spanish - ISO'  (then remove others you don't use)."
+    warn "  4) Screenshots (flameshot) -> Screen Recording permission:"
+    warn "       System Settings > Privacy & Security > Screen Recording."
 }
 
 # --- Dispatch --------------------------------------------------------------
