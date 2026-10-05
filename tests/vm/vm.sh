@@ -2,7 +2,8 @@
 # tests/vm/vm.sh — disposable macOS VMs (tart) for testing the dotfiles.
 #
 #   tests/vm/vm.sh base                 vanilla macOS -> dotfiles-base (SSH key, Spanish ISO)
-#   tests/vm/vm.sh golden               base -> dotfiles-golden (a human approves permissions once)
+#   tests/vm/vm.sh golden               base -> dotfiles-golden with everything installed
+#   tests/vm/vm.sh approve              opens the golden VM so a human approves the permissions once
 #   tests/vm/vm.sh run <scenario> [base|golden]
 #                                       clone, boot, push the repo, run tests/vm/scenarios/<scenario>.sh,
 #                                       collect results in tests/vm/out/<scenario>/, destroy the clone
@@ -179,18 +180,26 @@ cmd_golden() {
     tart clone dotfiles-base dotfiles-golden
     up dotfiles-golden
     push_repo dotfiles-golden
-    log "Installing the wm + keyboard components (no permissions yet)..."
-    vm_ssh dotfiles-golden 'cd ~/dotfiles && ./install.sh --yes --only wm,keyboard' > "$OUT/golden-install.log" 2>&1
+    log "Installing every component (no permissions yet)..."
+    vm_ssh dotfiles-golden 'cd ~/dotfiles && ./install.sh --yes' > "$OUT/golden-install.log" 2>&1 ||
+        log "install.sh reported errors, see $OUT/golden-install.log"
+    vm_ssh dotfiles-golden 'open -a AeroSpace; open -a Karabiner-Elements' || true
+    sleep 5
     down dotfiles-golden
+    log "dotfiles-golden prepared. Next: tests/vm/vm.sh approve"
+}
+
+cmd_approve() {
+    require
+    tart list --quiet | grep -qx dotfiles-golden || die "Run 'vm.sh golden' first."
     cat <<EOF
 
-Now approve the permissions ONCE, by hand, in the VM window that opens:
-  1. AeroSpace:  System Settings > Privacy & Security > Accessibility > enable AeroSpace
-  2. Karabiner:  System Settings > General > Login Items & Extensions > Driver Extensions > enable
+A window with the VM opens now. Approve, once (VM password: admin):
+  1. AeroSpace   System Settings > Privacy & Security > Accessibility > enable AeroSpace
+  2. Karabiner   System Settings > General > Login Items & Extensions > Driver Extensions > enable
                  System Settings > Privacy & Security > Input Monitoring > enable karabiner_grabber
-                 and karabiner_observer
-  The VM password is: admin
-Then shut the VM down from the Apple menu. Every 'golden' scenario clones this image.
+                 (and karabiner_observer if listed)
+Then shut the VM down from the Apple menu (Shut Down...). Every 'golden' scenario clones it.
 
 EOF
     tart run dotfiles-golden
@@ -208,6 +217,7 @@ cmd_run() {
     down "$vm"
     tart delete "$vm" >/dev/null 2>&1 || true
     tart clone "dotfiles-$source" "$vm"
+    tart set "$vm" --memory "${DOTFILES_VM_MEMORY:-4096}"
     CLEANUP_VM="$vm"
     trap 'down "$CLEANUP_VM"; [[ -n "${KEEP_VM:-}" ]] || tart delete "$CLEANUP_VM" >/dev/null 2>&1 || true' EXIT
     up "$vm"
@@ -230,6 +240,7 @@ main() {
     case "$cmd" in
         base)   cmd_base ;;
         golden) cmd_golden ;;
+        approve) cmd_approve ;;
         run)    cmd_run "$@" ;;
         up)     require; up "$1" ;;
         down)   down "$1" ;;

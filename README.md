@@ -112,7 +112,8 @@ VM scenarios (`tests/vm/scenarios/`):
 
 ```bash
 tests/vm/vm.sh base             # once: vanilla macOS -> dotfiles-base
-tests/vm/vm.sh golden           # once: approve permissions by hand in the VM window
+tests/vm/vm.sh golden           # once: install everything in dotfiles-golden
+tests/vm/vm.sh approve          # once: approve permissions by hand in the VM window
 tests/vm/vm.sh run fresh        # from dotfiles-base
 tests/vm/vm.sh run golden golden
 ```
