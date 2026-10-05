@@ -156,7 +156,11 @@ if want terminal; then
     fi
     check_zsh_startup
     expect "zsh: zoxide 'z' command" zsh -i -c 'whence z' </dev/null
-    expect "zsh: fzf Alt-C (cd widget) bound" fzf_cd_bound
+    if fzf --zsh >/dev/null 2>&1 || [[ -r /usr/share/doc/fzf/examples/key-bindings.zsh || -r /usr/share/fzf/shell/key-bindings.zsh ]]; then
+        expect "zsh: fzf Alt-C (cd widget) bound" fzf_cd_bound
+    else
+        warn "fzf key bindings not shipped by this system's fzf package (minimal image?)"
+    fi
     if [[ "$OS" == macos ]]; then
         expect_app Ghostty
         expect_link "$HOME/.config/ghostty/config" terminal/ghostty/config

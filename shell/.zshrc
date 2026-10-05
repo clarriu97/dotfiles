@@ -105,8 +105,10 @@ export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border \
 if (( $+commands[fzf] )) && [[ -t 0 ]]; then
     if fzf --zsh >/dev/null 2>&1; then
         source <(fzf --zsh)
-    elif [[ -r /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
-        source /usr/share/doc/fzf/examples/key-bindings.zsh
+    else
+        for f in /usr/share/doc/fzf/examples/key-bindings.zsh /usr/share/fzf/shell/key-bindings.zsh; do
+            [[ -r "$f" ]] && source "$f" && break
+        done
     fi
 fi
 

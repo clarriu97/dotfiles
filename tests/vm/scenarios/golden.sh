@@ -6,7 +6,7 @@
 # shellcheck disable=SC2016
 ALL=terminal,apps,wm,keyboard,desktop,claude
 
-focused() { remote 'aerospace list-workspaces --focused' 2>/dev/null; }
+focused() { remote 'aerospace list-workspaces --focused' 2>/dev/null || true; }
 
 expect_workspace() {
     local want="$1" got
