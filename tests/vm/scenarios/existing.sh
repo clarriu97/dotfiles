@@ -15,7 +15,8 @@ if remote 'eval "$(/opt/homebrew/bin/brew shellenv)"
     brew install --cask warp visual-studio-code claude-code font-hack-nerd-font
     brew install fzf bat lsd fastfetch tealdeer
     for c in brave-browser claude; do
-        file="$(brew fetch --cask "$c" 2>/dev/null | sed -n "s/^Downloaded to: //p; s/^Already downloaded: //p" | tail -1)"
+        brew fetch --cask "$c" >/dev/null
+        file="$(brew --cache --cask "$c")"
         case "$file" in
             *.zip) ditto -xk "$file" /Applications/ ;;
             *)     mnt="$(hdiutil attach -nobrowse "$file" | tail -1 | cut -f3-)"
@@ -38,7 +39,7 @@ step "Phase 1: terminal + claude"
 install_dotfiles terminal,claude
 doctor terminal,claude
 expect_remote "duplicate Homebrew claude-code cask removed" '[ ! -d /opt/homebrew/Caskroom/claude-code ]'
-expect_remote "zsh resolves claude to the native install" '[ "$(zsh -i -c "command -v claude" </dev/null 2>/dev/null)" = "$HOME/.local/bin/claude" ]'
+expect_remote "zsh resolves claude to the native install" '[ "$(zsh -i -c "command -v claude" </dev/null 2>/dev/null | tail -1)" = "$HOME/.local/bin/claude" ]'
 expect_remote "original ~/.zshrc backed up" 'grep -q original-zshrc ~/.zshrc.bak-*'
 expect_remote "original Claude settings backed up" 'grep -q original-claude-settings ~/.claude/settings.json.bak-*'
 
