@@ -5,65 +5,47 @@
 # shellcheck source=lib/linux-common.sh
 . "$DOTFILES_DIR/lib/linux-common.sh"
 
-ubuntu_update() {
-    log "Updating the system (apt)..."
-    sudo apt-get update -y && sudo apt-get upgrade -y
+pkg_refresh() {
+    log "Refreshing package index (apt)..."
+    as_root apt-get update -y
 }
 
-# External repos + packages not available in the default repos.
-ubuntu_install_extra_repos() {
-    log "Configuring external repos (VS Code, Brave, Warp)..."
-    sudo apt-get install -y software-properties-common apt-transport-https wget gpg
-
-    # VS Code
-    if ! has_cmd code; then
-        wget -qO- https://packages.microsoft.com/keys/microsoft.asc \
-            | gpg --dearmor | sudo tee /usr/share/keyrings/microsoft.gpg >/dev/null
-        echo "deb [arch=${DEB_ARCH} signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" \
-            | sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null
-    fi
-
-    # Brave
-    if ! has_cmd brave-browser; then
-        sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg \
-            https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-        echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" \
-            | sudo tee /etc/apt/sources.list.d/brave-browser-release.list >/dev/null
-    fi
-
-    # Warp
-    if ! has_cmd warp-terminal; then
-        wget -qO- https://releases.warp.dev/linux/keys/warp.asc \
-            | gpg --dearmor | sudo tee /etc/apt/keyrings/warpdotdev.gpg >/dev/null
-        echo "deb [arch=${DEB_ARCH} signed-by=/etc/apt/keyrings/warpdotdev.gpg] https://releases.warp.dev/linux/deb stable main" \
-            | sudo tee /etc/apt/sources.list.d/warpdotdev.list >/dev/null
-    fi
-
-    sudo apt-get update -y
-    sudo apt-get install -y code brave-browser warp-terminal || \
-        warn "An external-repo package failed; check the output."
+pkg_install() {
+    as_root env DEBIAN_FRONTEND=noninteractive apt-get install -y "$@"
 }
 
-ubuntu_install_base() {
-    log "Installing base packages (terminal)..."
-    # shellcheck disable=SC2046
-    sudo apt-get install -y $(read_pkgs "$DOTFILES_DIR/packages/apt-base.txt")
-    ubuntu_install_extra_repos
+# apt_repo <name> <key-url> <deb-line-without-signed-by>
+apt_repo() {
+    local name="$1" key_url="$2" line="$3" keyring="/etc/apt/keyrings/$1.gpg"
+    [[ -f "/etc/apt/sources.list.d/$name.list" ]] && return 0
+    install_key "$key_url" "$keyring"
+    write_root_file "/etc/apt/sources.list.d/$name.list" "deb [arch=${DEB_ARCH} signed-by=${keyring}] $line"
+    pkg_refresh
 }
 
-ubuntu_install_wm() {
+component_terminal() {
+    log "Installing terminal packages..."
+    pkg_install ca-certificates curl gpg
+    linux_install_list "$DOTFILES_DIR/packages/apt-terminal.txt"
+    apt_repo warpdotdev https://releases.warp.dev/linux/keys/warp.asc \
+        "https://releases.warp.dev/linux/deb stable main"
+    pkg_install warp-terminal || warn "Could not install Warp."
+    linux_configure_terminal
+}
+
+component_apps() {
+    log "Installing apps (VS Code, Brave)..."
+    pkg_install ca-certificates curl gpg
+    apt_repo vscode https://packages.microsoft.com/keys/microsoft.asc \
+        "https://packages.microsoft.com/repos/code stable main"
+    apt_repo brave-browser https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg \
+        "https://brave-browser-apt-release.s3.brave.com/ stable main"
+    pkg_install code || warn "Could not install VS Code."
+    pkg_install brave-browser || warn "Could not install Brave."
+}
+
+component_wm() {
     log "Installing window manager packages..."
-    # shellcheck disable=SC2046
-    sudo apt-get install -y $(read_pkgs "$DOTFILES_DIR/packages/apt-wm.txt")
-}
-
-install_main() {
-    local option="$1"
-    ubuntu_update
-    case "$option" in
-        terminal) ubuntu_install_base && linux_configure_terminal ;;
-        wm)       ubuntu_install_wm   && linux_configure_wm ;;
-        both)     ubuntu_install_base && ubuntu_install_wm \
-                      && linux_configure_terminal && linux_configure_wm ;;
-    esac
+    linux_install_list "$DOTFILES_DIR/packages/apt-wm.txt"
+    linux_configure_wm
 }

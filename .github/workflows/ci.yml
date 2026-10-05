@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SHELLCHECK_VERSION: 0.11.0
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - run: sudo apt-get update && sudo apt-get install -y zsh jq i3-wm
+      - name: Install shellcheck ${{ env.SHELLCHECK_VERSION }}
+        run: |
+          curl -fsSL "https://github.com/koalaman/shellcheck/releases/download/v${SHELLCHECK_VERSION}/shellcheck-v${SHELLCHECK_VERSION}.linux.x86_64.tar.xz" | tar -xJ
+          sudo mv "shellcheck-v${SHELLCHECK_VERSION}/shellcheck" /usr/local/bin/
+          shellcheck --version
+      - run: npm install -g @taplo/cli
+      - run: make lint
+
+  unit:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-26]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y bats
+      - if: runner.os == 'macOS'
+        run: brew install bats-core
+      - run: make test-unit

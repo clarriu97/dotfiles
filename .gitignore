@@ -9,3 +9,7 @@ docs/
 
 # macOS metadata
 .DS_Store
+
+# Environment files
+.env
+.env.*

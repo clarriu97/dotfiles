@@ -3,9 +3,11 @@
 # Exports: OS (macos|ubuntu|fedora), OS_RAW, ARCH, DEB_ARCH.
 # Meant to be sourced.
 
+: "${OS_RELEASE_FILE:=/etc/os-release}"
+
 detect_os() {
     local uname_s
-    uname_s="$(uname -s)"
+    uname_s="${UNAME_S:-$(uname -s)}"
 
     if [[ "$uname_s" == "Darwin" ]]; then
         OS="macos"
@@ -13,11 +15,11 @@ detect_os() {
         return 0
     fi
 
-    if [[ -r /etc/os-release ]]; then
+    if [[ -r "$OS_RELEASE_FILE" ]]; then
         # ID and ID_LIKE come from /etc/os-release (e.g. ID=ubuntu, ID_LIKE=debian)
         local ID="" ID_LIKE=""
-        # shellcheck disable=SC1091
-        . /etc/os-release
+        # shellcheck disable=SC1090
+        . "$OS_RELEASE_FILE"
         OS_RAW="${ID:-unknown}"
         case "${ID}:${ID_LIKE}" in
             ubuntu:*|debian:*|*:*debian*|*:*ubuntu*) OS="ubuntu" ;;

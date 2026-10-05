@@ -1,4 +1,4 @@
-# Window manager packages (WM option) for Fedora/RHEL.
+# Window manager component packages for Fedora/RHEL.
 i3
 i3lock
 polybar

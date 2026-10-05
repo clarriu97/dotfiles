@@ -1,16 +1,11 @@
 #!/usr/bin/env bash
-# lib/macos.sh — install and configure on macOS (Homebrew + AeroSpace + SketchyBar).
+# lib/macos.sh — install and configure on macOS (Homebrew + AeroSpace + Karabiner).
 # Sourced from install.sh.
 
+BREWFILES="$DOTFILES_DIR/packages/macos"
+
 # --- Homebrew --------------------------------------------------------------
-macos_install_homebrew() {
-    if has_cmd brew; then
-        info "Homebrew already installed."
-    else
-        log "Installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    fi
-    # Load brew into this session's PATH (Apple Silicon or Intel).
+macos_load_brew() {
     if [[ -x /opt/homebrew/bin/brew ]]; then
         eval "$(/opt/homebrew/bin/brew shellenv)"
     elif [[ -x /usr/local/bin/brew ]]; then
@@ -18,118 +13,103 @@ macos_install_homebrew() {
     fi
 }
 
+macos_install_homebrew() {
+    macos_load_brew
+    if has_cmd brew; then
+        info "Homebrew already installed."
+        return 0
+    fi
+    if [[ "$DRY_RUN" == 1 ]]; then
+        info "[dry-run] install Homebrew"
+        return 0
+    fi
+    log "Installing Homebrew..."
+    NONINTERACTIVE="$ASSUME_YES" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    macos_load_brew
+}
+
 # Homebrew 6.0+ refuses to install from third-party taps until they are trusted
-# (supply-chain safeguard). Trust the two we use: AeroSpace (nikitabobko/tap) and
-# SketchyBar/JankyBorders (felixkratz/formulae). No-op on older Homebrew.
+# (supply-chain safeguard). No-op on older Homebrew.
 macos_trust_taps() {
-    has_cmd brew || return 0
-    brew trust --help >/dev/null 2>&1 || return 0   # older Homebrew: no trust gate
-    log "Trusting third-party taps (AeroSpace, SketchyBar/JankyBorders)..."
-    local t
-    for t in nikitabobko/tap felixkratz/formulae; do
-        brew tap  "$t" >/dev/null 2>&1 || true
-        brew trust "$t" >/dev/null 2>&1 || warn "Could not trust tap $t (run: brew trust $t)"
+    local brewfile="$1" t
+    if [[ "$DRY_RUN" != 1 ]]; then
+        has_cmd brew || return 0
+        brew trust --help >/dev/null 2>&1 || return 0
+    fi
+    sed -n 's/^tap "\([^"]*\)".*/\1/p' "$brewfile" | while read -r t; do
+        run_cmd brew tap "$t"
+        run_cmd brew trust "$t"
     done
 }
 
-macos_brew_bundle() {
-    macos_trust_taps
-    log "Installing packages with brew bundle..."
-    brew bundle --file="$DOTFILES_DIR/packages/Brewfile" || \
-        warn "A package in the Brewfile failed; check the output."
-}
-
-macos_install_ai_clis() {
-    # opencode is installed via the Brewfile. Claude Code: official installer if missing.
-    if ! has_cmd claude; then
-        log "Installing Claude Code CLI..."
-        curl -fsSL https://claude.ai/install.sh | sh || warn "Failed to install claude; install it manually."
-    else
-        info "Claude CLI already installed."
-    fi
+# macos_bundle <component>: installs packages/macos/<component>.Brewfile.
+macos_bundle() {
+    local brewfile="$BREWFILES/$1.Brewfile"
+    log "Installing $1 packages (brew bundle)..."
+    macos_trust_taps "$brewfile"
+    run_cmd brew bundle --no-upgrade --file="$brewfile"
 }
 
 # --- Terminal --------------------------------------------------------------
-macos_link_terminal() {
+macos_set_default_shell() {
+    if [[ "${SHELL:-}" != */zsh ]]; then
+        log "Setting zsh as the default shell..."
+        run_cmd chsh -s /bin/zsh || warn "Could not change the shell (do it manually: chsh -s /bin/zsh)."
+    fi
+}
+
+component_terminal() {
+    macos_bundle terminal
+    macos_set_default_shell
     log "Linking terminal configuration..."
     link_file "$DOTFILES_DIR/shell/.zshrc"         "$HOME/.zshrc"
     link_file "$DOTFILES_DIR/shell/.p10k.zsh"      "$HOME/.p10k.zsh"
     link_file "$DOTFILES_DIR/shell/zshrc.macos.sh" "$HOME/.config/zsh/zshrc.macos.sh"
-}
-
-macos_set_default_shell() {
-    local zsh_path="/bin/zsh"
-    has_cmd brew && [[ -x "$(brew --prefix)/bin/zsh" ]] && zsh_path="$(brew --prefix)/bin/zsh"
-    if [[ "$SHELL" != "$zsh_path" ]]; then
-        log "Setting zsh as the default shell..."
-        chsh -s "$zsh_path" || warn "Could not change the shell (do it manually: chsh -s $zsh_path)."
-    fi
-}
-
-macos_configure_terminal() {
-    macos_set_default_shell
-    macos_link_terminal
-    macos_install_ai_clis
     ok "Terminal configured. Select 'Hack Nerd Font' in Warp/VS Code."
 }
 
-# --- Window manager (AeroSpace + SketchyBar + Karabiner) -------------------
-macos_link_wm() {
-    log "Linking AeroSpace, SketchyBar and Karabiner..."
-    link_file "$DOTFILES_DIR/wm/macos/aerospace/.aerospace.toml"  "$HOME/.aerospace.toml"
-    link_file "$DOTFILES_DIR/wm/macos/sketchybar"                 "$HOME/.config/sketchybar"
-    link_file "$DOTFILES_DIR/wm/macos/karabiner/karabiner.json"   "$HOME/.config/karabiner/karabiner.json"
+# --- Apps ------------------------------------------------------------------
+component_apps() {
+    macos_bundle apps
 }
 
-# Auto-hide the native macOS menu bar so SketchyBar is the only top bar.
-macos_hide_menu_bar() {
-    log "Auto-hiding the native macOS menu bar (SketchyBar replaces it)..."
-    defaults write NSGlobalDomain _HIHideMenuBar -bool true
-    killall SystemUIServer 2>/dev/null || true
-    info "Revert with: defaults write NSGlobalDomain _HIHideMenuBar -bool false; killall SystemUIServer"
+# --- Window manager (AeroSpace) --------------------------------------------
+component_wm() {
+    macos_bundle wm
+    log "Linking AeroSpace and SketchyBar..."
+    link_file "$DOTFILES_DIR/wm/macos/aerospace/.aerospace.toml" "$HOME/.aerospace.toml"
+    link_file "$DOTFILES_DIR/wm/macos/sketchybar"                "$HOME/.config/sketchybar"
+
+    warn "MANUAL STEP (one-time): open AeroSpace and grant Accessibility:"
+    warn "  System Settings > Privacy & Security > Accessibility > enable AeroSpace."
 }
 
-macos_configure_wm() {
-    macos_link_wm
-    macos_hide_menu_bar
+# --- Keyboard (Karabiner-Elements) -----------------------------------------
+component_keyboard() {
+    macos_bundle keyboard
+    log "Linking Karabiner configuration..."
+    link_file "$DOTFILES_DIR/wm/macos/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
 
-    # Launch the apps first (so macOS shows their permission prompts, and so
-    # AeroSpace is up before SketchyBar reloads and reads the workspaces).
-    if has_cmd open; then
-        open -a "Karabiner-Elements" 2>/dev/null || true
-        open -a AeroSpace 2>/dev/null || true
+    warn "MANUAL STEPS (one-time) for Karabiner-Elements:"
+    warn "  System Settings > General > Login Items & Extensions > Driver Extensions > enable Karabiner."
+    warn "  System Settings > Privacy & Security > Input Monitoring > enable karabiner_grabber."
+    warn "  Input source must be 'Spanish - ISO' (System Settings > Keyboard > Text Input)."
+}
+
+# --- Claude Code -----------------------------------------------------------
+component_claude() {
+    if has_cmd claude; then
+        info "Claude CLI already installed."
+    else
+        install_with_script "Claude Code CLI" https://claude.ai/install.sh
     fi
-
-    if has_cmd brew; then
-        log "Restarting SketchyBar as a service..."
-        brew services restart sketchybar 2>/dev/null || brew services start sketchybar || \
-            warn "Could not start sketchybar; start it manually."
-    fi
-
-    warn "MANUAL STEPS on this Mac (one-time):"
-    warn "  1) AeroSpace  -> Accessibility permission:"
-    warn "       System Settings > Privacy & Security > Accessibility > enable AeroSpace."
-    warn "  2) Karabiner-Elements -> approve its driver extension AND grant Input"
-    warn "       Monitoring on first launch (macOS prompts you; click Allow/Open Settings):"
-    warn "       System Settings > Privacy & Security > Input Monitoring > enable Karabiner,"
-    warn "       and Login Items & Extensions > Driver Extensions > enable Karabiner."
-    warn "       It maps LEFT Option -> window-manager modifier; RIGHT Option stays free"
-    warn "       for the Spanish symbols (@ # [ ] { } ...), like AltGr on Linux."
-    warn "  3) Spanish keyboard (ñ) -> set the input source to 'Spanish - ISO':"
-    warn "       System Settings > Keyboard > Text Input > Input Sources > Edit >"
-    warn "       + > Spanish > 'Spanish - ISO'  (then remove others you don't use)."
-    warn "  4) Screenshots (flameshot) -> Screen Recording permission:"
-    warn "       System Settings > Privacy & Security > Screen Recording."
 }
 
 # --- Dispatch --------------------------------------------------------------
 install_main() {
-    local option="$1"
+    local c
     macos_install_homebrew
-    macos_brew_bundle
-    case "$option" in
-        terminal) macos_configure_terminal ;;
-        wm)       macos_configure_wm ;;
-        both)     macos_configure_terminal && macos_configure_wm ;;
-    esac
+    for c in "$@"; do
+        "component_$c"
+    done
 }

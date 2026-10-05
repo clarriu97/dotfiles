@@ -1,4 +1,4 @@
-# Window manager packages (WM option) for Ubuntu/Debian.
+# Window manager component packages for Ubuntu/Debian.
 i3
 i3lock
 polybar
