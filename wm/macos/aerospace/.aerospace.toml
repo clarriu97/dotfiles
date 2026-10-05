@@ -66,7 +66,7 @@ outer.top = [
 ctrl-alt-enter = 'exec-and-forget open -na Warp'
 ctrl-alt-shift-v = 'exec-and-forget open -na "Visual Studio Code"'
 ctrl-alt-shift-b = 'exec-and-forget open -na "Brave Browser"'
-ctrl-alt-shift-s = 'exec-and-forget flameshot gui'   # screenshot (i3: $mod+Ctrl+s)
+ctrl-alt-shift-s = 'exec-and-forget screencapture -ic'  # interactive screenshot to the clipboard
 # Note: the app launcher (rofi on i3) is covered by Spotlight (Cmd+Space) or Raycast.
 
 # Close window (i3: $mod+Shift+q)

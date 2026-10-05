@@ -37,4 +37,4 @@ alias getclip="pbpaste"
 
 # --- macOS-specific functions ----------------------------------------------
 # 'open' is already native on macOS, no need to redefine it.
-function ss() { flameshot gui; }                        # screenshot (same as Linux)
+function ss() { screencapture -ic; }                     # interactive screenshot to the clipboard
