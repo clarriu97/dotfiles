@@ -8,7 +8,7 @@ ZSH_PLUGINS="$HOME/.local/share/zsh-plugins"
 
 # Autosuggestions, syntax highlighting and Powerlevel10k: Warp ships these out
 # of the box, so they are only loaded outside Warp (e.g. the VS Code terminal).
-if [[ "$TERM_PROGRAM" != "WarpTerminal" ]]; then
+if [[ "$TERM_PROGRAM" != "WarpTerminal" && -t 0 ]]; then
     [[ -r "$ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
         source "$ZSH_PLUGINS/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     [[ -r "$ZSH_PLUGINS/zsh-autosuggestions.zsh" ]] && \

@@ -1,7 +1,7 @@
 # Warp ships its own prompt, autosuggestions and syntax highlighting. So
 # Powerlevel10k and those plugins are only enabled OUTSIDE Warp (e.g. in the
 # VS Code integrated terminal, SSH or tmux), avoiding conflicts and duplicates.
-if [[ "$TERM_PROGRAM" != "WarpTerminal" ]]; then
+if [[ "$TERM_PROGRAM" != "WarpTerminal" && -t 0 ]]; then
   # Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
   # Code that requires input (passwords, [y/n]) must go above this block.
   if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
@@ -80,7 +80,7 @@ esac
 # ===========================================================================
 welcome
 # Powerlevel10k config (the theme is sourced by the per-OS fragment; only outside Warp).
-[[ "$TERM_PROGRAM" != "WarpTerminal" && -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
+[[ "$TERM_PROGRAM" != "WarpTerminal" && -t 0 && -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
 # ===========================================================================
 #  Key bindings
