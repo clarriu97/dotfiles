@@ -1,0 +1,7 @@
+# fixture: a hand-written ~/.zshrc that must come back intact after uninstall
+alias ll="ls -l"
+bindkey "^[[1;5C" forward-word
+setopt auto_cd
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+export FIXTURE_MARKER=original-zshrc

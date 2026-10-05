@@ -1,0 +1,24 @@
+# Ghostty — https://ghostty.org/docs/config
+theme = TokyoNight
+font-family = Hack Nerd Font
+font-size = 14
+window-padding-x = 12
+window-padding-y = 10
+window-padding-balance = true
+background-opacity = 0.96
+background-blur = 20
+macos-titlebar-style = tabs
+cursor-style = bar
+mouse-hide-while-typing = true
+copy-on-select = clipboard
+confirm-close-surface = false
+
+# Left Option acts as Alt (fzf Alt-C, Alt-B/F, Alt-.); Right Option types @ # | [ ] { } \ ~.
+# Left Option + window-manager keys never reach the terminal (Karabiner -> AeroSpace).
+macos-option-as-alt = left
+
+# Line start / end like any macOS text field (Ctrl+Left/Right still jump words).
+keybind = cmd+left=text:\x01
+keybind = cmd+right=text:\x05
+# Newline without sending, for Claude Code prompts.
+keybind = shift+enter=text:\x1b\r

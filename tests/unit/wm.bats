@@ -6,22 +6,17 @@ setup() {
     KARABINER="$REPO/wm/macos/karabiner/karabiner.json"
 }
 
-aerospace_keys() {
-    sed -nE 's/^ctrl-alt-(shift-|cmd-)?([a-z0-9]+) =.*/\2/p' "$AEROSPACE" |
-        sed -E -e 's/^enter$/return_or_enter/' -e 's/^space$/spacebar/' \
-            -e 's/^(left|right|up|down)$/\1_arrow/' | sort -u
+@test "karabiner.json is generated from the AeroSpace bindings (run generate.sh after editing .aerospace.toml)" {
+    diff <("$REPO/wm/macos/karabiner/generate.sh") "$KARABINER"
 }
 
-karabiner_keys() {
-    jq -r '.profiles[] | select(.name == "Dotfiles") | .complex_modifications.rules[].manipulators[].from.key_code' "$KARABINER" | sort -u
-}
-
-@test "every AeroSpace binding is reachable through the Karabiner layer, and nothing else is remapped" {
-    diff <(aerospace_keys) <(karabiner_keys)
+@test "Left Option combinations outside the window-manager bindings stay free" {
+    run jq -e '[.profiles[].complex_modifications.rules[].manipulators[] | select(.from.key_code == "c" and (.from.modifiers.mandatory | index("shift") | not))] | length == 0' "$KARABINER"
+    [ "$status" -eq 0 ]
 }
 
 @test "Karabiner only remaps Left Option, never Right Option" {
-    run jq -e '[.profiles[].complex_modifications.rules[].manipulators[].from.modifiers.mandatory] | flatten | unique == ["left_option"]' "$KARABINER"
+    run jq -e '[.profiles[].complex_modifications.rules[].manipulators[].from.modifiers.mandatory] | all(.[0] == "left_option" and (index("right_option") | not))' "$KARABINER"
     [ "$status" -eq 0 ]
 }
 

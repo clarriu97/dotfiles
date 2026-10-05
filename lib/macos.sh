@@ -27,7 +27,12 @@ macos_install_homebrew() {
         return 0
     fi
     log "Installing Homebrew..."
-    NONINTERACTIVE="$ASSUME_YES" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    local attempt
+    for attempt in 1 2; do
+        NONINTERACTIVE="$ASSUME_YES" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && break
+        [[ "$attempt" == 2 ]] && { err "Homebrew could not be installed (see above)."; return 1; }
+        warn "Homebrew install failed (Apple's Command Line Tools download is sometimes flaky); retrying once..."
+    done
     macos_load_brew
 }
 
@@ -46,11 +51,13 @@ macos_trust_taps() {
 }
 
 # macos_bundle <component>: installs packages/macos/<component>.Brewfile.
+# --adopt takes over apps that were installed by hand (same version) instead of failing.
 macos_bundle() {
     local brewfile="$BREWFILES/$1.Brewfile"
     log "Installing $1 packages (brew bundle)..."
     macos_trust_taps "$brewfile"
-    run_cmd brew bundle --no-upgrade --file="$brewfile" ||
+    HOMEBREW_CASK_OPTS="${HOMEBREW_CASK_OPTS:-} --adopt" run_cmd brew bundle --no-upgrade --file="$brewfile" ||
+        HOMEBREW_CASK_OPTS="${HOMEBREW_CASK_OPTS:-} --adopt" run_cmd brew bundle --no-upgrade --file="$brewfile" ||
         warn "Some $1 packages failed to install (see above); continuing. 'make doctor' reports what is missing."
 }
 
@@ -62,14 +69,54 @@ macos_set_default_shell() {
     fi
 }
 
+# Warp's cask often lags behind re-published downloads (checksum mismatch);
+# fall back to the official DMG, installed only if Gatekeeper accepts it as notarized.
+macos_ensure_warp() {
+    local tmp mnt
+    [[ -d /Applications/Warp.app ]] && return 0
+    if [[ "$DRY_RUN" == 1 ]]; then
+        info "[dry-run] download Warp from releases.warp.dev if the cask failed"
+        return 0
+    fi
+    warn "Homebrew could not install Warp; downloading the official build..."
+    tmp="$(mktemp -d)"
+    if curl -fsSL -o "$tmp/Warp.dmg" 'https://app.warp.dev/download?package=dmg' &&
+        mnt="$(hdiutil attach -nobrowse -readonly "$tmp/Warp.dmg" | tail -1 | cut -f3-)"; then
+        if spctl -a -t exec -vv "$mnt/Warp.app" 2>&1 | grep -q 'source=Notarized Developer ID'; then
+            cp -R "$mnt/Warp.app" /Applications/ && ok "Warp installed from releases.warp.dev."
+        else
+            warn "The downloaded Warp is not notarized; not installed."
+        fi
+        hdiutil detach -quiet "$mnt"
+    else
+        warn "Could not download Warp; install it from https://www.warp.dev"
+    fi
+    rm -rf "$tmp"
+}
+
 component_terminal() {
     macos_bundle terminal
+    macos_ensure_warp
     macos_set_default_shell
     log "Linking terminal configuration..."
     link_file "$DOTFILES_DIR/shell/.zshrc"         "$HOME/.zshrc"
     link_file "$DOTFILES_DIR/shell/.p10k.zsh"      "$HOME/.p10k.zsh"
     link_file "$DOTFILES_DIR/shell/zshrc.macos.sh" "$HOME/.config/zsh/zshrc.macos.sh"
-    ok "Terminal configured. Select 'Hack Nerd Font' in Warp/VS Code."
+    link_file "$DOTFILES_DIR/terminal/ghostty/config" "$HOME/.config/ghostty/config"
+    link_file "$DOTFILES_DIR/terminal/warp/themes/tokyo_night.yaml" "$HOME/.warp/themes/tokyo_night.yaml"
+    macos_free_ctrl_arrows
+    ok "Terminal configured. In Warp: Settings > Appearance > Theme 'Tokyo Night', font 'Hack Nerd Font'."
+}
+
+# Ctrl+Left/Right move between Spaces by default; free them so they jump words
+# in the terminal like on Linux (AeroSpace workspaces replace Spaces).
+macos_free_ctrl_arrows() {
+    local id
+    log "Freeing Ctrl+Left/Right from Mission Control (reverted by 'dotfiles rescue')..."
+    for id in 79 80 81 82; do
+        macos_default com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add "$id" '<dict><key>enabled</key><false/></dict>'
+    done
+    run_cmd /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null || true
 }
 
 # --- Apps ------------------------------------------------------------------
@@ -89,7 +136,7 @@ component_wm() {
 
     warn "AeroSpace is installed but NOT started. When you are ready:"
     warn "  1) open -a AeroSpace"
-    warn "  2) System Settings > Privacy & Security > Accessibility > enable AeroSpace"
+    warn "  2) System Settings > Privacy & Security > Device Control and Data Access (Accessibility) > enable AeroSpace"
     warn "  Log out and back in once so 'Displays have separate Spaces' takes effect."
     warn "  Something wrong? Run: dotfiles rescue"
 }
@@ -100,12 +147,28 @@ component_keyboard() {
     # Karabiner rewrites karabiner.json on every change, which would replace a symlink.
     install_file "$DOTFILES_DIR/wm/macos/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
 
-    warn "Karabiner-Elements only acts after these one-time approvals:"
-    warn "  System Settings > General > Login Items & Extensions > Driver Extensions > enable Karabiner"
-    warn "  System Settings > Privacy & Security > Input Monitoring > enable karabiner_grabber / karabiner_observer"
+    warn "Karabiner-Elements only acts after these one-time approvals (System Settings):"
+    warn "  General > Login Items & Extensions > Background App Activity > enable 'Karabiner-Elements Privileged Daemons v2'"
+    warn "  General > Login Items & Extensions > Extensions (By Category) > Driver Extensions > enable Karabiner"
+    warn "  Privacy & Security > Device Control and Data Access (Accessibility) > enable Karabiner-Core-Service"
     warn "  Input source: 'Spanish - ISO' (System Settings > Keyboard > Text Input)."
     warn "  Left Option + window-manager keys go to AeroSpace; Right Option keeps @ # | [ ] { } \\ ~."
     warn "  The Karabiner menu-bar icon switches to the 'Plain' profile at any time."
+}
+
+# --- Desktop (Dock, Finder, keyboard) --------------------------------------
+component_desktop() {
+    log "Dock, Finder and key repeat (reverted by 'dotfiles rescue')..."
+    macos_default com.apple.dock autohide -bool true
+    macos_default com.apple.dock autohide-delay -float 0
+    macos_default com.apple.dock show-recents -bool false
+    macos_default com.apple.dock tilesize -int 48
+    macos_default com.apple.finder ShowPathbar -bool true
+    macos_default NSGlobalDomain AppleShowAllExtensions -bool true
+    macos_default NSGlobalDomain KeyRepeat -int 2
+    macos_default NSGlobalDomain InitialKeyRepeat -int 15
+    run_cmd killall Dock Finder >/dev/null 2>&1 || true
+    info "Key repeat applies after logging out and back in."
 }
 
 # --- Dispatch --------------------------------------------------------------

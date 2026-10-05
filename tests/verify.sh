@@ -21,7 +21,7 @@ while [[ $# -gt 0 ]]; do
 done
 if [[ -z "$ONLY" ]]; then
     case "$OS" in
-        macos) ONLY="terminal,apps,wm,keyboard,claude" ;;
+        macos) ONLY="terminal,apps,wm,keyboard,desktop,claude" ;;
         *)     ONLY="terminal,apps,wm,claude" ;;
     esac
 fi
@@ -40,7 +40,18 @@ expect() {
     if "$@" >/dev/null 2>&1; then pass "$desc"; else fail "$desc"; fi
 }
 
+default_is() { [[ "$(defaults read "$1" "$2" 2>/dev/null)" == "$3" ]]; }
+
 has_font() { find "$HOME/Library/Fonts" /Library/Fonts -iname '*hack*nerd*' 2>/dev/null | grep -q .; }
+
+# Runs zsh under a pseudo-terminal, as fzf key bindings only load in a real terminal.
+fzf_cd_bound() {
+    if [[ "$OS" == macos ]]; then
+        script -q /dev/null zsh -i -c 'bindkey "\ec"' </dev/null 2>/dev/null | grep -q fzf-cd-widget
+    else
+        script -qec "zsh -i -c 'bindkey \"\\ec\"'" /dev/null </dev/null 2>/dev/null | grep -q fzf-cd-widget
+    fi
+}
 
 want() { [[ ",$ONLY," == *",$1,"* ]]; }
 
@@ -124,6 +135,9 @@ if want terminal; then
     expect_cmd fzf
     expect_cmd bat batcat
     expect_cmd tldr
+    expect_cmd zoxide
+    expect_cmd rg
+    expect_cmd fd fdfind
     optional_cmd lsd
     optional_cmd fastfetch neofetch
     case "$(login_shell)" in
@@ -141,6 +155,25 @@ if want terminal; then
         expect "Hack Nerd Font" bash -c "fc-list | grep -qi 'hack nerd font'"
     fi
     check_zsh_startup
+    expect "zsh: zoxide 'z' command" zsh -i -c 'whence z' </dev/null
+    if fzf --zsh >/dev/null 2>&1 || [[ -r /usr/share/doc/fzf/examples/key-bindings.zsh || -r /usr/share/fzf/shell/key-bindings.zsh ]]; then
+        expect "zsh: fzf Alt-C (cd widget) bound" fzf_cd_bound
+    else
+        warn "fzf key bindings not shipped by this system's fzf package (minimal image?)"
+    fi
+    if [[ "$OS" == macos ]]; then
+        expect_app Ghostty
+        expect_link "$HOME/.config/ghostty/config" terminal/ghostty/config
+        ghostty_bin=/Applications/Ghostty.app/Contents/MacOS/ghostty
+        expect "Ghostty config is valid" "$ghostty_bin" +validate-config --config-file="$HOME/.config/ghostty/config"
+        expect "Ctrl+Left/Right freed from Mission Control" bash -c \
+            "defaults read com.apple.symbolichotkeys AppleSymbolicHotKeys | grep -A1 -E '^ +79 =' | grep -q 'enabled = 0'"
+    fi
+fi
+
+if want desktop; then
+    expect "Dock auto-hides" default_is com.apple.dock autohide 1
+    expect "Finder shows extensions" default_is NSGlobalDomain AppleShowAllExtensions 1
 fi
 
 if want apps; then
@@ -179,6 +212,11 @@ if want keyboard; then
         pass "Karabiner driver extension active"
     else
         warn "Karabiner driver extension not approved yet (Login Items & Extensions > Driver Extensions)"
+    fi
+    if pgrep -u root -f Karabiner-Core-Service >/dev/null; then
+        pass "Karabiner privileged daemon running"
+    else
+        warn "Karabiner privileged daemon not running (Login Items & Extensions > Background App Activity)"
     fi
 fi
 

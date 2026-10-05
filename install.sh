@@ -22,7 +22,7 @@ export DOTFILES_DIR
 
 components_for() {
     case "$1" in
-        macos)         echo "terminal apps wm keyboard claude" ;;
+        macos)         echo "terminal apps wm keyboard desktop claude" ;;
         ubuntu|fedora) echo "terminal apps wm claude" ;;
         *)             echo "" ;;
     esac
@@ -36,6 +36,7 @@ describe_component() {
         wm:macos)       echo "AeroSpace tiling window manager" ;;
         wm:*)           echo "i3 + polybar" ;;
         keyboard:*)     echo "Karabiner-Elements: Left Option as window-manager key" ;;
+        desktop:*)      echo "Dock auto-hide, Finder extensions & path bar, fast key repeat" ;;
         claude:*)       echo "Claude Code CLI + Desktop + versioned config" ;;
     esac
 }
@@ -46,7 +47,7 @@ install.sh — cross-platform dotfiles installer
 
   -y, --yes                    Do not ask anything (all components unless --only)
   -n, --dry-run                Print every action without changing anything
-      --only <a,b,...>         Components: terminal, apps, wm, keyboard (macOS), claude
+      --only <a,b,...>         Components: terminal, apps, wm, keyboard (macOS), desktop (macOS), claude
       --os <macos|ubuntu|fedora>
                                Force the OS instead of auto-detecting
   -h, --help                   Show this help

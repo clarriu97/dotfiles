@@ -68,7 +68,7 @@ def main():
             client.mouseMove(int(x), int(y))
             client.mousePress(1)
         elif cmd == "capture":
-            client.refreshScreen()
+            client.refreshScreen(incremental=False)
             client.captureScreen(arg)
         elif cmd == "sleep":
             time.sleep(float(arg))

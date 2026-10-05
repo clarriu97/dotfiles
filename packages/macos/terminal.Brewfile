@@ -10,6 +10,10 @@ brew "powerlevel10k"       # prompt
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 brew "opencode"            # terminal AI agent
+brew "zoxide"              # `z` smart cd
+brew "ripgrep"
+brew "fd"
 
 cask "warp"                # default terminal
+cask "ghostty"             # second terminal (config in terminal/ghostty)
 cask "font-hack-nerd-font" # icon font (Nerd Font)

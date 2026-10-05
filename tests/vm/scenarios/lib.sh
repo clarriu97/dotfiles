@@ -8,7 +8,7 @@ step() { printf '\n\033[1;34m== %s\033[0m\n' "$*"; }
 pass() { printf '\033[0;32mPASS\033[0m %s\n' "$*"; }
 fail() { printf '\033[0;31mFAIL\033[0m %s\n' "$*"; FAILURES=$((FAILURES + 1)); }
 
-remote() { vm_ssh "$VM" "$@"; }
+remote() { vm_ssh "$VM" "export PATH=/opt/homebrew/bin:\$HOME/.local/bin:\$PATH; $*"; }
 
 # expect_remote <description> <remote shell command>
 expect_remote() {

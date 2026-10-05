@@ -18,7 +18,7 @@ VSCODE_BIN="/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
 # --- Autosuggestions, syntax highlighting and Powerlevel10k ----------------
 # Warp ships these out of the box, so they are only loaded outside Warp
 # (e.g. the VS Code integrated terminal).
-if [[ "$TERM_PROGRAM" != "WarpTerminal" ]]; then
+if [[ "$TERM_PROGRAM" != "WarpTerminal" && -t 0 ]]; then
     [[ -r "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]] && \
         source "$BREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
     [[ -r "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
