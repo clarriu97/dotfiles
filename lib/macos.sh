@@ -27,7 +27,12 @@ macos_install_homebrew() {
         return 0
     fi
     log "Installing Homebrew..."
-    NONINTERACTIVE="$ASSUME_YES" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    local attempt
+    for attempt in 1 2; do
+        NONINTERACTIVE="$ASSUME_YES" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && break
+        [[ "$attempt" == 2 ]] && { err "Homebrew could not be installed (see above)."; return 1; }
+        warn "Homebrew install failed (Apple's Command Line Tools download is sometimes flaky); retrying once..."
+    done
     macos_load_brew
 }
 
