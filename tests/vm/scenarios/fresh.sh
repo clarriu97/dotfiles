@@ -32,7 +32,7 @@ sleep 5
 screenshot "5-windows"
 
 step "dotfiles rescue"
-if remote '~/.local/bin/dotfiles rescue' > "$RESULTS/rescue.log" 2>&1; then pass "dotfiles rescue"; else fail "dotfiles rescue (see rescue.log)"; fi
+if remote '.local/bin/dotfiles rescue' > "$RESULTS/rescue.log" 2>&1; then pass "dotfiles rescue"; else fail "dotfiles rescue (see rescue.log)"; fi
 expect_remote "AeroSpace not running" '! pgrep -x AeroSpace'
 expect_remote "AeroSpace config is the rescue config" 'grep -qx "start-at-login = false" ~/.aerospace.toml && [ ! -L ~/.aerospace.toml ]'
 expect_remote "Mission Control 'group by app' back to stock" '! defaults read com.apple.dock expose-group-apps >/dev/null 2>&1'
@@ -40,7 +40,7 @@ expect_remote "'Displays have separate Spaces' back to stock" '! defaults read c
 desktop_is_usable "6-after-rescue"
 
 step "dotfiles uninstall"
-if remote '~/.local/bin/dotfiles uninstall' > "$RESULTS/uninstall.log" 2>&1; then pass "dotfiles uninstall"; else fail "dotfiles uninstall (see uninstall.log)"; fi
+if remote '.local/bin/dotfiles uninstall' > "$RESULTS/uninstall.log" 2>&1; then pass "dotfiles uninstall"; else fail "dotfiles uninstall (see uninstall.log)"; fi
 expect_remote "no links into ~/dotfiles remain" '[ -z "$(find ~ -maxdepth 4 -type l -lname "$HOME/dotfiles/*" 2>/dev/null)" ]'
 expect_remote "karabiner.json removed" '[ ! -e ~/.config/karabiner/karabiner.json ]'
 
