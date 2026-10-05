@@ -47,14 +47,15 @@ macos_bundle() {
     local brewfile="$BREWFILES/$1.Brewfile"
     log "Installing $1 packages (brew bundle)..."
     macos_trust_taps "$brewfile"
-    run_cmd brew bundle --no-upgrade --file="$brewfile"
+    run_cmd brew bundle --no-upgrade --file="$brewfile" ||
+        warn "Some $1 packages failed to install (see above); continuing. 'make doctor' reports what is missing."
 }
 
 # --- Terminal --------------------------------------------------------------
 macos_set_default_shell() {
     if [[ "${SHELL:-}" != */zsh ]]; then
         log "Setting zsh as the default shell..."
-        run_cmd chsh -s /bin/zsh || warn "Could not change the shell (do it manually: chsh -s /bin/zsh)."
+        as_root chsh -s /bin/zsh "$(id -un)" || warn "Could not change the shell (do it manually: chsh -s /bin/zsh)."
     fi
 }
 

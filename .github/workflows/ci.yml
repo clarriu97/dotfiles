@@ -40,3 +40,32 @@ jobs:
       - if: runner.os == 'macOS'
         run: brew install bats-core
       - run: make test-unit
+
+  linux-install:
+    needs: [lint, unit]
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [ubuntu:22.04, ubuntu:24.04, ubuntu:26.04, debian:12, fedora:latest]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - run: tests/linux/run.sh "${{ matrix.image }}" terminal,apps,wm,claude
+
+  macos-install:
+    needs: [lint, unit]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-26, macos-15]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install every component
+        run: ./install.sh --yes
+      - name: Second run is a no-op for links
+        run: |
+          ./install.sh --yes | tee second.log
+          ! grep "linked:" second.log
+      - name: Verify
+        run: tests/verify.sh
