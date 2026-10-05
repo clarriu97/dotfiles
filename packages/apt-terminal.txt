@@ -17,3 +17,4 @@ tealdeer
 bat
 fastfetch
 neofetch
+jq

@@ -54,6 +54,11 @@ check "shellcheck (${#SHELL_FILES[@]} files)" shellcheck -x "${SHELL_FILES[@]}"
 check "zsh syntax (${#ZSH_FILES[@]} files)" each "zsh -n" "${ZSH_FILES[@]}"
 check "json (${#JSON_FILES[@]} files)" each "jq empty" "${JSON_FILES[@]}"
 check "toml (${#TOML_FILES[@]} files)" taplo check --no-schema "${TOML_FILES[@]}"
+if command -v check-jsonschema >/dev/null 2>&1; then
+    check "claude settings schema" check-jsonschema --schemafile https://json.schemastore.org/claude-code-settings.json claude/settings.json
+else
+    echo "skip claude settings schema (install check-jsonschema)"
+fi
 if command -v i3 >/dev/null 2>&1; then
     check "i3 config" i3 -C -c wm/linux/i3/config
 fi

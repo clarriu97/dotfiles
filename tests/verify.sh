@@ -172,10 +172,31 @@ if want keyboard; then
 fi
 
 if want claude; then
-    if version="$(claude --version 2>/dev/null)"; then
-        pass "claude $version"
+    if version="$("$HOME/.local/bin/claude" --version 2>/dev/null)"; then
+        pass "claude $version (native)"
     else
-        fail "claude --version"
+        fail "claude --version (native install in ~/.local/bin)"
+    fi
+    case "$OS" in
+        macos)  expect_app Claude ;;
+        ubuntu) expect_cmd claude-desktop ;;
+    esac
+    expect_link "$HOME/.claude/CLAUDE.md" claude/CLAUDE.md
+    expect_link "$HOME/.claude/settings.json" claude/settings.json
+    expect_link "$HOME/.claude/statusline.sh" claude/statusline.sh
+    expect_link "$HOME/.claude/hooks" claude/hooks
+    for skill in "$DOTFILES_DIR"/claude/skills/*/; do
+        skill="${skill%/}"
+        expect_link "$HOME/.claude/skills/${skill##*/}" "claude/skills/${skill##*/}"
+    done
+    expect "status line renders" bash -c "echo '{}' | '$HOME/.claude/statusline.sh' | grep -q Claude"
+    expect "guard hook blocks rm -rf ~" bash -c "! echo '{\"tool_input\":{\"command\":\"rm -rf ~\"}}' | '$HOME/.claude/hooks/guard-bash.sh' 2>/dev/null"
+    plugins="$("$HOME/.local/bin/claude" plugin list 2>/dev/null)"
+    for plugin in $(jq -r '.enabledPlugins | to_entries[] | select(.value) | .key' "$DOTFILES_DIR/claude/settings.json"); do
+        if [[ "$plugins" == *"$plugin"* ]]; then pass "plugin $plugin"; else fail "plugin $plugin"; fi
+    done
+    if git -C "$DOTFILES_DIR" rev-parse >/dev/null 2>&1; then
+        expect "claude/settings.json unchanged by the install" git -C "$DOTFILES_DIR" diff --quiet -- claude/settings.json
     fi
 fi
 

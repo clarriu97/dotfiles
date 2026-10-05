@@ -21,13 +21,19 @@ COPYFILE_DISABLE=1 tar -C "$REPO" --exclude .git --exclude .env -cf - . |
         apt-get update -qq
         DEBIAN_FRONTEND=noninteractive apt-get install -y -qq sudo git curl ca-certificates perl >/dev/null
     else
-        dnf install -y -q sudo git curl perl-Time-HiRes findutils procps-ng >/dev/null
+        dnf install -y -q sudo git curl perl-Time-HiRes findutils procps-ng diffutils >/dev/null
     fi
     useradd -m -s /bin/bash tester
     echo "tester ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/tester
     cp -a /src /home/tester/dotfiles
     chown -R tester: /home/tester/dotfiles
+    before="$(sha256sum /home/tester/dotfiles/claude/settings.json)"
     su - tester -c "cd ~/dotfiles && ./install.sh --yes --only $COMPONENTS"
+    if [[ "$(sha256sum /home/tester/dotfiles/claude/settings.json)" != "$before" ]]; then
+        echo "FAIL: the install modified claude/settings.json in the repo"
+        diff <(cd /src && cat claude/settings.json) /home/tester/dotfiles/claude/settings.json || true
+        exit 1
+    fi
     echo "=== second run must be a no-op for links ==="
     second="$(su - tester -c "cd ~/dotfiles && ./install.sh --yes --only $COMPONENTS")"
     if echo "$second" | grep "linked:"; then echo "FAIL: second run re-linked files"; exit 1; fi
