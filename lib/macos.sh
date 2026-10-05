@@ -69,7 +69,21 @@ component_terminal() {
     link_file "$DOTFILES_DIR/shell/.zshrc"         "$HOME/.zshrc"
     link_file "$DOTFILES_DIR/shell/.p10k.zsh"      "$HOME/.p10k.zsh"
     link_file "$DOTFILES_DIR/shell/zshrc.macos.sh" "$HOME/.config/zsh/zshrc.macos.sh"
-    ok "Terminal configured. Select 'Hack Nerd Font' in Warp/VS Code."
+    link_file "$DOTFILES_DIR/terminal/ghostty/config" "$HOME/.config/ghostty/config"
+    link_file "$DOTFILES_DIR/terminal/warp/themes/tokyo_night.yaml" "$HOME/.warp/themes/tokyo_night.yaml"
+    macos_free_ctrl_arrows
+    ok "Terminal configured. In Warp: Settings > Appearance > Theme 'Tokyo Night', font 'Hack Nerd Font'."
+}
+
+# Ctrl+Left/Right move between Spaces by default; free them so they jump words
+# in the terminal like on Linux (AeroSpace workspaces replace Spaces).
+macos_free_ctrl_arrows() {
+    local id
+    log "Freeing Ctrl+Left/Right from Mission Control (reverted by 'dotfiles rescue')..."
+    for id in 79 80 81 82; do
+        macos_default com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add "$id" '<dict><key>enabled</key><false/></dict>'
+    done
+    run_cmd /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null || true
 }
 
 # --- Apps ------------------------------------------------------------------
@@ -106,6 +120,21 @@ component_keyboard() {
     warn "  Input source: 'Spanish - ISO' (System Settings > Keyboard > Text Input)."
     warn "  Left Option + window-manager keys go to AeroSpace; Right Option keeps @ # | [ ] { } \\ ~."
     warn "  The Karabiner menu-bar icon switches to the 'Plain' profile at any time."
+}
+
+# --- Desktop (Dock, Finder, keyboard) --------------------------------------
+component_desktop() {
+    log "Dock, Finder and key repeat (reverted by 'dotfiles rescue')..."
+    macos_default com.apple.dock autohide -bool true
+    macos_default com.apple.dock autohide-delay -float 0
+    macos_default com.apple.dock show-recents -bool false
+    macos_default com.apple.dock tilesize -int 48
+    macos_default com.apple.finder ShowPathbar -bool true
+    macos_default NSGlobalDomain AppleShowAllExtensions -bool true
+    macos_default NSGlobalDomain KeyRepeat -int 2
+    macos_default NSGlobalDomain InitialKeyRepeat -int 15
+    run_cmd killall Dock Finder >/dev/null 2>&1 || true
+    info "Key repeat applies after logging out and back in."
 }
 
 # --- Dispatch --------------------------------------------------------------

@@ -35,7 +35,8 @@ rescue_main() {
     rescue_karabiner
     log "Restoring every macOS setting changed by the installer..."
     macos_restore_defaults
-    run_cmd killall Dock >/dev/null 2>&1 || true
+    run_cmd /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u 2>/dev/null || true
+    run_cmd killall Dock Finder >/dev/null 2>&1 || true
     run_cmd killall SystemUIServer >/dev/null 2>&1 || true
     ok "Rescued: stock keyboard, windows back on screen, original macOS settings."
     info "Re-enable later with: ./install.sh --only wm,keyboard"

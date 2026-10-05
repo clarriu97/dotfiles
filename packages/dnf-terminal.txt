@@ -16,3 +16,6 @@ tldr
 bat
 fastfetch
 jq
+zoxide
+ripgrep
+fd-find
