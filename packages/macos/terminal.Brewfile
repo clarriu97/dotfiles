@@ -3,6 +3,7 @@ brew "git"
 brew "lsd"                 # modern 'ls'
 brew "bat"                 # 'cat' with syntax highlighting
 brew "fzf"                 # fuzzy finder
+brew "jq"                  # JSON processor (Claude status line, hooks)
 brew "tealdeer"            # provides the 'tldr' command
 brew "fastfetch"           # neofetch replacement
 brew "powerlevel10k"       # prompt

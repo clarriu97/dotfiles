@@ -97,15 +97,6 @@ component_keyboard() {
     warn "  Input source must be 'Spanish - ISO' (System Settings > Keyboard > Text Input)."
 }
 
-# --- Claude Code -----------------------------------------------------------
-component_claude() {
-    if has_cmd claude; then
-        info "Claude CLI already installed."
-    else
-        install_with_script "Claude Code CLI" https://claude.ai/install.sh
-    fi
-}
-
 # --- Dispatch --------------------------------------------------------------
 install_main() {
     local c

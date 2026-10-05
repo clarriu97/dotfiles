@@ -106,16 +106,6 @@ linux_configure_wm() {
     link_file "$DOTFILES_DIR/images/candado.png"        "$HOME/Pictures/candado.png"
 }
 
-# --- Claude Code -----------------------------------------------------------
-
-component_claude() {
-    if has_cmd claude || [[ -x "$HOME/.local/bin/claude" ]]; then
-        info "Claude CLI already installed."
-    else
-        install_with_script "Claude Code CLI" https://claude.ai/install.sh
-    fi
-}
-
 # --- Dispatch --------------------------------------------------------------
 
 install_main() {

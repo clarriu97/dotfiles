@@ -146,6 +146,8 @@ fi
 # --- Dispatch to the OS module ---------------------------------------------
 # shellcheck source=/dev/null
 . "$DOTFILES_DIR/lib/${OS}.sh"
+# shellcheck source=lib/claude.sh
+. "$DOTFILES_DIR/lib/claude.sh"
 # shellcheck disable=SC2086
 install_main $SELECTED
 
