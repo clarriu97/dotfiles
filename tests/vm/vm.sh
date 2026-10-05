@@ -7,6 +7,7 @@
 #   tests/vm/vm.sh run <scenario> [base|golden]
 #                                       clone, boot, push the repo, run tests/vm/scenarios/<scenario>.sh,
 #                                       collect results in tests/vm/out/<scenario>/, destroy the clone
+#   tests/vm/vm.sh password [vm]        types the VM's password into a prompt (run by a human)
 #   tests/vm/vm.sh up|down|ssh|vnc|shot <vm> ...
 #
 # Nothing here touches the host beyond ~/.tart and tests/vm/out/.
@@ -241,6 +242,7 @@ main() {
         base)   cmd_base ;;
         golden) cmd_golden ;;
         approve) cmd_approve ;;
+        password) require; vnc "${1:-dotfiles-golden}" "type admin" "key return"; log "Typed the VM password." ;;
         run)    cmd_run "$@" ;;
         up)     require; up "$1" ;;
         down)   down "$1" ;;
