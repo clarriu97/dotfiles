@@ -69,8 +69,34 @@ macos_set_default_shell() {
     fi
 }
 
+# Warp's cask often lags behind re-published downloads (checksum mismatch);
+# fall back to the official DMG, installed only if Gatekeeper accepts it as notarized.
+macos_ensure_warp() {
+    local tmp mnt
+    [[ -d /Applications/Warp.app ]] && return 0
+    if [[ "$DRY_RUN" == 1 ]]; then
+        info "[dry-run] download Warp from releases.warp.dev if the cask failed"
+        return 0
+    fi
+    warn "Homebrew could not install Warp; downloading the official build..."
+    tmp="$(mktemp -d)"
+    if curl -fsSL -o "$tmp/Warp.dmg" 'https://app.warp.dev/download?package=dmg' &&
+        mnt="$(hdiutil attach -nobrowse -readonly "$tmp/Warp.dmg" | tail -1 | cut -f3-)"; then
+        if spctl -a -t exec -vv "$mnt/Warp.app" 2>&1 | grep -q 'source=Notarized Developer ID'; then
+            cp -R "$mnt/Warp.app" /Applications/ && ok "Warp installed from releases.warp.dev."
+        else
+            warn "The downloaded Warp is not notarized; not installed."
+        fi
+        hdiutil detach -quiet "$mnt"
+    else
+        warn "Could not download Warp; install it from https://www.warp.dev"
+    fi
+    rm -rf "$tmp"
+}
+
 component_terminal() {
     macos_bundle terminal
+    macos_ensure_warp
     macos_set_default_shell
     log "Linking terminal configuration..."
     link_file "$DOTFILES_DIR/shell/.zshrc"         "$HOME/.zshrc"

@@ -44,6 +44,15 @@ default_is() { [[ "$(defaults read "$1" "$2" 2>/dev/null)" == "$3" ]]; }
 
 has_font() { find "$HOME/Library/Fonts" /Library/Fonts -iname '*hack*nerd*' 2>/dev/null | grep -q .; }
 
+# Runs zsh under a pseudo-terminal, as fzf key bindings only load in a real terminal.
+fzf_cd_bound() {
+    if [[ "$OS" == macos ]]; then
+        script -q /dev/null zsh -i -c 'bindkey "\ec"' </dev/null 2>/dev/null | grep -q fzf-cd-widget
+    else
+        script -qec "zsh -i -c 'bindkey \"\\ec\"'" /dev/null </dev/null 2>/dev/null | grep -q fzf-cd-widget
+    fi
+}
+
 want() { [[ ",$ONLY," == *",$1,"* ]]; }
 
 expect_link() {
@@ -147,7 +156,7 @@ if want terminal; then
     fi
     check_zsh_startup
     expect "zsh: zoxide 'z' command" zsh -i -c 'whence z' </dev/null
-    expect "zsh: fzf Alt-C (cd widget) bound" bash -c "zsh -i -c 'bindkey \"\\\\ec\"' </dev/null 2>/dev/null | grep -q fzf-cd-widget"
+    expect "zsh: fzf Alt-C (cd widget) bound" fzf_cd_bound
     if [[ "$OS" == macos ]]; then
         expect_app Ghostty
         expect_link "$HOME/.config/ghostty/config" terminal/ghostty/config

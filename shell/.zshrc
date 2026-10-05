@@ -102,7 +102,7 @@ setopt auto_cd auto_pushd pushd_ignore_dups
 export FZF_DEFAULT_OPTS="--height 40% --layout=reverse --border \
   --color=fg:#c0caf5,bg:-1,hl:#bb9af7,fg+:#c0caf5,bg+:#283457,hl+:#7dcfff \
   --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff,marker:#9ece6a,spinner:#9ece6a,header:#9ece6a,border:#3b4261"
-if (( $+commands[fzf] )); then
+if (( $+commands[fzf] )) && [[ -t 0 ]]; then
     if fzf --zsh >/dev/null 2>&1; then
         source <(fzf --zsh)
     elif [[ -r /usr/share/doc/fzf/examples/key-bindings.zsh ]]; then
