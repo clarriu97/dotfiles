@@ -1,34 +1,45 @@
 #!/usr/bin/env bash
 # lib/linux-common.sh — logic shared between Ubuntu and Fedora:
 # dotfile linking, default shell, plugins, fonts and the window manager.
-# Meant to be sourced from lib/ubuntu.sh and lib/fedora.sh.
+# Expects the distro module to define pkg_install <pkgs...>.
 
 NERD_FONT_VERSION="v3.2.1"
 
-# read_pkgs <file>: prints the packages (ignoring comments and blank lines).
-read_pkgs() {
-    grep -vE '^\s*(#|$)' "$1" | tr '\n' ' '
+# linux_install_list <file>: installs a package list in one go; if that fails,
+# retries one by one so a single missing package does not block the rest.
+linux_install_list() {
+    local file="$1" pkgs p failed=""
+    pkgs="$(read_pkgs "$file")"
+    # shellcheck disable=SC2086
+    pkg_install $pkgs && return 0
+    warn "Bulk install failed; retrying package by package..."
+    for p in $pkgs; do
+        pkg_install "$p" || failed="$failed $p"
+    done
+    [[ -n "$failed" ]] && warn "Packages not installed:$failed"
+    return 0
 }
 
 # --- Terminal --------------------------------------------------------------
 
 linux_set_default_shell() {
-    local zsh_path
+    local zsh_path user
     zsh_path="$(command -v zsh || true)"
+    user="$(id -un)"
     if [[ -z "$zsh_path" ]]; then
-        warn "zsh not found yet; skipping shell change."
+        warn "zsh not found; skipping shell change."
         return 0
     fi
-    if [[ "$SHELL" != "$zsh_path" ]]; then
+    if [[ "$(getent passwd "$user" | cut -d: -f7)" != "$zsh_path" ]]; then
         log "Setting zsh as the default shell..."
-        chsh -s "$zsh_path" || warn "Could not change the shell (do it manually: chsh -s $zsh_path)."
+        as_root chsh -s "$zsh_path" "$user" || warn "Could not change the shell (do it manually: chsh -s $zsh_path)."
     fi
 }
 
 linux_clone_p10k() {
     if [[ ! -d "$HOME/powerlevel10k" ]]; then
         log "Cloning Powerlevel10k..."
-        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/powerlevel10k"
+        run_cmd git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$HOME/powerlevel10k"
     else
         info "Powerlevel10k is already cloned."
     fi
@@ -49,12 +60,16 @@ linux_install_nerd_font() {
         info "Hack Nerd Font already installed."
         return 0
     fi
+    if [[ "$DRY_RUN" == 1 ]]; then
+        info "[dry-run] install Hack Nerd Font ${NERD_FONT_VERSION} into $font_dir"
+        return 0
+    fi
     log "Installing Hack Nerd Font (${NERD_FONT_VERSION})..."
     mkdir -p "$font_dir"
     local url="https://github.com/ryanoasis/nerd-fonts/releases/download/${NERD_FONT_VERSION}/Hack.zip"
     local tmp
     tmp="$(mktemp -d)"
-    if wget -q "$url" -O "$tmp/Hack.zip"; then
+    if curl -fsSL "$url" -o "$tmp/Hack.zip"; then
         unzip -n -q "$tmp/Hack.zip" -d "$font_dir"
         fc-cache -f >/dev/null 2>&1 || true
         ok "Hack Nerd Font installed."
@@ -64,18 +79,11 @@ linux_install_nerd_font() {
     rm -rf "$tmp"
 }
 
-linux_install_ai_clis() {
-    if ! has_cmd claude; then
-        log "Installing Claude Code CLI..."
-        curl -fsSL https://claude.ai/install.sh | sh || warn "Failed to install claude; install it manually."
-    else
-        info "Claude CLI already installed."
-    fi
-    if ! has_cmd opencode; then
-        log "Installing opencode..."
-        curl -fsSL https://opencode.ai/install | bash || warn "Failed to install opencode; install it manually."
-    else
+linux_install_opencode() {
+    if has_cmd opencode || [[ -x "$HOME/.opencode/bin/opencode" ]]; then
         info "opencode already installed."
+    else
+        install_with_script opencode https://opencode.ai/install || warn "Failed to install opencode."
     fi
 }
 
@@ -84,12 +92,12 @@ linux_configure_terminal() {
     linux_clone_p10k
     linux_link_terminal
     linux_install_nerd_font
-    linux_install_ai_clis
+    linux_install_opencode
 }
 
 # --- Window manager (i3 + polybar) -----------------------------------------
 
-linux_link_wm() {
+linux_configure_wm() {
     log "Linking i3 and polybar configuration..."
     link_file "$DOTFILES_DIR/wm/linux/i3/config"        "$HOME/.config/i3/config"
     link_file "$DOTFILES_DIR/wm/linux/i3/scripts"       "$HOME/.config/i3/scripts"
@@ -98,7 +106,22 @@ linux_link_wm() {
     link_file "$DOTFILES_DIR/images/candado.png"        "$HOME/Pictures/candado.png"
 }
 
-linux_configure_wm() {
-    linux_link_wm
-    ok "i3/polybar linked. Network interface and battery detection is done by polybar/launch.sh at startup."
+# --- Claude Code -----------------------------------------------------------
+
+component_claude() {
+    if has_cmd claude || [[ -x "$HOME/.local/bin/claude" ]]; then
+        info "Claude CLI already installed."
+    else
+        install_with_script "Claude Code CLI" https://claude.ai/install.sh
+    fi
+}
+
+# --- Dispatch --------------------------------------------------------------
+
+install_main() {
+    local c
+    pkg_refresh
+    for c in "$@"; do
+        "component_$c"
+    done
 }

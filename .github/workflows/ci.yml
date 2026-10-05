@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - run: sudo apt-get update && sudo apt-get install -y shellcheck zsh jq i3-wm
+      - run: npm install -g @taplo/cli
+      - run: make lint
+
+  unit:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-26]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y bats
+      - if: runner.os == 'macOS'
+        run: brew install bats-core
+      - run: make test-unit

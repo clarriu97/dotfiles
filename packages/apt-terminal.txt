@@ -1,0 +1,18 @@
+# Terminal component packages for Ubuntu/Debian, installable from the
+# default repos. One package per line; '#' is a comment.
+# Packages needing external repos (Warp) are handled in lib/ubuntu.sh.
+zsh
+git
+wget
+curl
+gpg
+unzip
+fontconfig
+tox
+xclip
+lsd
+fzf
+tldr
+bat
+fastfetch
+neofetch

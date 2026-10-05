@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # lib/common.sh — shared utilities used by every installer module.
-# Meant to be sourced, not executed directly.
+# Meant to be sourced, not executed directly. Must stay bash 3.2 compatible
+# (the bash that ships with macOS).
 
 # --- Colors ----------------------------------------------------------------
 export black='\033[0;30m'
@@ -19,6 +20,19 @@ info() { echo -e "${cyan}  $*${nc}"; }
 ok()   { echo -e "${green}$*${nc}"; }
 warn() { echo -e "${purple}! $*${nc}"; }
 err()  { echo -e "${red}✗ $*${nc}" >&2; }
+
+# --- Run modes ---------------------------------------------------------------
+: "${DRY_RUN:=0}"
+: "${ASSUME_YES:=0}"
+
+# run_cmd <cmd...>: executes the command, or only prints it in dry-run mode.
+run_cmd() {
+    if [[ "$DRY_RUN" == 1 ]]; then
+        info "[dry-run] $*"
+        return 0
+    fi
+    "$@"
+}
 
 # --- Helpers ---------------------------------------------------------------
 
@@ -40,28 +54,79 @@ link_file() {
         err "Source does not exist: $src"
         return 1
     fi
-    mkdir -p "$(dirname "$dest")"
 
     if [[ -L "$dest" && "$(readlink "$dest")" == "$src" ]]; then
         info "ok (already linked): $dest"
         return 0
     fi
 
+    run_cmd mkdir -p "$(dirname "$dest")"
     if [[ -e "$dest" || -L "$dest" ]]; then
         local backup
         backup="${dest}.bak-$(date +%Y%m%d%H%M%S)"
         warn "Backing up $dest -> $backup"
-        mv "$dest" "$backup"
+        run_cmd mv "$dest" "$backup"
     fi
 
-    ln -s "$src" "$dest"
-    ok "  linked: $dest -> $src"
+    run_cmd ln -s "$src" "$dest"
+    [[ "$DRY_RUN" == 1 ]] || ok "  linked: $dest -> $src"
+}
+
+# read_pkgs <file>: prints the packages (ignoring comments and blank lines).
+read_pkgs() {
+    sed -e 's/#.*//' -e 's/[[:space:]]*$//' "$1" | grep -v '^[[:space:]]*$' | tr '\n' ' '
 }
 
 # ask_yes_no <question>: returns 0 for "yes" (empty input / Enter defaults to yes).
 ask_yes_no() {
     local prompt="$1" input
+    if [[ "$ASSUME_YES" == 1 ]]; then
+        return 0
+    fi
     echo -e "\n${white}${prompt} (Y/n)${nc}"
     read -r input
     [[ -z "$input" || "$input" =~ ^[Yy]$ ]]
+}
+
+# as_root <cmd...>: runs the command as root (directly when already root,
+# e.g. inside a container; through sudo otherwise).
+as_root() {
+    if [[ "$(id -u)" == 0 ]]; then
+        run_cmd "$@"
+    else
+        run_cmd sudo "$@"
+    fi
+}
+
+# write_root_file <path> <content>: writes a root-owned file.
+write_root_file() {
+    local path="$1" content="$2"
+    if [[ "$DRY_RUN" == 1 ]]; then
+        info "[dry-run] write $path"
+        return 0
+    fi
+    printf '%s\n' "$content" | as_root tee "$path" >/dev/null
+}
+
+# install_key <url> <dest>: downloads a repository signing key (dearmored).
+install_key() {
+    local url="$1" dest="$2"
+    if [[ "$DRY_RUN" == 1 ]]; then
+        info "[dry-run] key $url -> $dest"
+        return 0
+    fi
+    as_root install -d -m 0755 "$(dirname "$dest")"
+    curl -fsSL "$url" | gpg --dearmor | as_root tee "$dest" >/dev/null
+}
+
+# install_with_script <name> <url> [args...]: runs a remote installer script.
+install_with_script() {
+    local name="$1" url="$2"
+    shift 2
+    if [[ "$DRY_RUN" == 1 ]]; then
+        info "[dry-run] curl -fsSL $url | bash -s -- $*"
+        return 0
+    fi
+    log "Installing $name..."
+    curl -fsSL "$url" | bash -s -- "$@"
 }

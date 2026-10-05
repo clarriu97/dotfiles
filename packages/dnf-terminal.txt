@@ -1,0 +1,17 @@
+# Terminal component packages for Fedora/RHEL.
+# Packages needing external repos (Warp) are handled in lib/fedora.sh.
+zsh
+util-linux-user
+git
+wget
+curl
+gnupg2
+unzip
+fontconfig
+tox
+xclip
+lsd
+fzf
+tldr
+bat
+fastfetch
