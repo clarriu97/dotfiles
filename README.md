@@ -44,7 +44,7 @@ The installer never hides the menu bar, never starts the window manager by itsel
 
 The Karabiner menu-bar icon switches to the **Plain** profile at any time, without a terminal.
 
-**First run on a real Mac**: take a local snapshot first (`tmutil localsnapshot`), then go component by component: `--only terminal,claude`, then `--only wm` (approve Accessibility), then `--only keyboard` (approve the driver and Input Monitoring).
+**First run on a real Mac**: take a local snapshot first (`tmutil localsnapshot`), then go component by component: `--only terminal,claude`, then `--only wm` (approve AeroSpace under *Privacy & Security → Device Control and Data Access*, the macOS 27 name of Accessibility), then `--only keyboard` (approve Karabiner's *Privileged Daemons* under *Login Items & Extensions → Background App Activity*, its driver extension, and Karabiner-Core-Service under *Device Control and Data Access*). `dotfiles doctor` shows which approval is still missing.
 
 ---
 

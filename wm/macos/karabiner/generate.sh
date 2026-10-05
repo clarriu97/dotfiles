@@ -33,6 +33,6 @@ def extra_out: {"": [], shift: ["left_shift"], cmd: ["left_command"]}[.];
     complex_modifications: { rules: $rules }
   };
 {
-  global: { check_for_updates_on_startup: true, show_in_menu_bar: true, show_profile_name_in_menu_bar: false },
+  global: { check_for_updates_on_startup: true, show_in_menu_bar: true, show_profile_name_in_menu_bar: false, enable_cgeventtap_fallback: true },
   profiles: [ profile("Dotfiles"; true; [$rule]), profile("Plain"; false; []) ]
 }'

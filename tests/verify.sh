@@ -200,6 +200,11 @@ if want keyboard; then
     else
         warn "Karabiner driver extension not approved yet (Login Items & Extensions > Driver Extensions)"
     fi
+    if pgrep -u root -f Karabiner-Core-Service >/dev/null; then
+        pass "Karabiner privileged daemon running"
+    else
+        warn "Karabiner privileged daemon not running (Login Items & Extensions > Background App Activity)"
+    fi
 fi
 
 expect_link "$HOME/.local/bin/dotfiles" bin/dotfiles

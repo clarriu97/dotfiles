@@ -110,7 +110,7 @@ component_wm() {
 
     warn "AeroSpace is installed but NOT started. When you are ready:"
     warn "  1) open -a AeroSpace"
-    warn "  2) System Settings > Privacy & Security > Accessibility > enable AeroSpace"
+    warn "  2) System Settings > Privacy & Security > Device Control and Data Access (Accessibility) > enable AeroSpace"
     warn "  Log out and back in once so 'Displays have separate Spaces' takes effect."
     warn "  Something wrong? Run: dotfiles rescue"
 }
@@ -121,9 +121,10 @@ component_keyboard() {
     # Karabiner rewrites karabiner.json on every change, which would replace a symlink.
     install_file "$DOTFILES_DIR/wm/macos/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
 
-    warn "Karabiner-Elements only acts after these one-time approvals:"
-    warn "  System Settings > General > Login Items & Extensions > Driver Extensions > enable Karabiner"
-    warn "  System Settings > Privacy & Security > Input Monitoring > enable karabiner_grabber / karabiner_observer"
+    warn "Karabiner-Elements only acts after these one-time approvals (System Settings):"
+    warn "  General > Login Items & Extensions > Background App Activity > enable 'Karabiner-Elements Privileged Daemons v2'"
+    warn "  General > Login Items & Extensions > Extensions (By Category) > Driver Extensions > enable Karabiner"
+    warn "  Privacy & Security > Device Control and Data Access (Accessibility) > enable Karabiner-Core-Service"
     warn "  Input source: 'Spanish - ISO' (System Settings > Keyboard > Text Input)."
     warn "  Left Option + window-manager keys go to AeroSpace; Right Option keeps @ # | [ ] { } \\ ~."
     warn "  The Karabiner menu-bar icon switches to the 'Plain' profile at any time."

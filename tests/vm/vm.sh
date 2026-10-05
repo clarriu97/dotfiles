@@ -195,11 +195,10 @@ cmd_approve() {
     tart list --quiet | grep -qx dotfiles-golden || die "Run 'vm.sh golden' first."
     cat <<EOF
 
-A window with the VM opens now. Approve, once (VM password: admin):
-  1. AeroSpace   System Settings > Privacy & Security > Accessibility > enable AeroSpace
-  2. Karabiner   System Settings > General > Login Items & Extensions > Driver Extensions > enable
-                 System Settings > Privacy & Security > Input Monitoring > enable karabiner_grabber
-                 (and karabiner_observer if listed)
+A window with the VM opens now. Approve, once (VM password: admin), in System Settings:
+  1. Privacy & Security > Device Control and Data Access > enable AeroSpace and Karabiner-Core-Service
+  2. General > Login Items & Extensions > Background App Activity > enable Karabiner-Elements Privileged Daemons v2
+  3. Open Karabiner-Elements, click "Open System Settings" and enable its driver extension
 Then shut the VM down from the Apple menu (Shut Down...). Every 'golden' scenario clones it.
 
 EOF
