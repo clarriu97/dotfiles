@@ -46,11 +46,12 @@ macos_trust_taps() {
 }
 
 # macos_bundle <component>: installs packages/macos/<component>.Brewfile.
+# --adopt takes over apps that were installed by hand (same version) instead of failing.
 macos_bundle() {
     local brewfile="$BREWFILES/$1.Brewfile"
     log "Installing $1 packages (brew bundle)..."
     macos_trust_taps "$brewfile"
-    run_cmd brew bundle --no-upgrade --file="$brewfile" ||
+    HOMEBREW_CASK_OPTS="${HOMEBREW_CASK_OPTS:-} --adopt" run_cmd brew bundle --no-upgrade --file="$brewfile" ||
         warn "Some $1 packages failed to install (see above); continuing. 'make doctor' reports what is missing."
 }
 
