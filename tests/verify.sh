@@ -157,6 +157,12 @@ if want wm; then
     if [[ "$OS" == macos ]]; then
         expect_app AeroSpace
         expect_link "$HOME/.aerospace.toml" wm/macos/aerospace/.aerospace.toml
+        expect_cmd borders
+        if pgrep -x AeroSpace >/dev/null && aerospace list-workspaces --focused >/dev/null 2>&1; then
+            pass "AeroSpace running (focused workspace $(aerospace list-workspaces --focused))"
+        else
+            warn "AeroSpace not running or missing Accessibility permission (open -a AeroSpace)"
+        fi
     else
         expect_cmd i3
         expect_cmd polybar
@@ -168,8 +174,15 @@ fi
 
 if want keyboard; then
     expect_app Karabiner-Elements
-    expect_link "$HOME/.config/karabiner/karabiner.json" wm/macos/karabiner/karabiner.json
+    expect "karabiner.json installed" cmp -s "$DOTFILES_DIR/wm/macos/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
+    if systemextensionsctl list 2>/dev/null | grep -q 'Karabiner.*\[activated enabled\]'; then
+        pass "Karabiner driver extension active"
+    else
+        warn "Karabiner driver extension not approved yet (Login Items & Extensions > Driver Extensions)"
+    fi
 fi
+
+expect_link "$HOME/.local/bin/dotfiles" bin/dotfiles
 
 if want claude; then
     if version="$("$HOME/.local/bin/claude" --version 2>/dev/null)"; then

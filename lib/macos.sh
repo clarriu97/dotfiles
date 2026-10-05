@@ -4,6 +4,9 @@
 
 BREWFILES="$DOTFILES_DIR/packages/macos"
 
+# shellcheck source=lib/macos-defaults.sh
+. "$DOTFILES_DIR/lib/macos-defaults.sh"
+
 # --- Homebrew --------------------------------------------------------------
 macos_load_brew() {
     if [[ -x /opt/homebrew/bin/brew ]]; then
@@ -77,24 +80,32 @@ component_apps() {
 # --- Window manager (AeroSpace) --------------------------------------------
 component_wm() {
     macos_bundle wm
-    log "Linking AeroSpace and SketchyBar..."
     link_file "$DOTFILES_DIR/wm/macos/aerospace/.aerospace.toml" "$HOME/.aerospace.toml"
-    link_file "$DOTFILES_DIR/wm/macos/sketchybar"                "$HOME/.config/sketchybar"
 
-    warn "MANUAL STEP (one-time): open AeroSpace and grant Accessibility:"
-    warn "  System Settings > Privacy & Security > Accessibility > enable AeroSpace."
+    log "Mission Control settings recommended by AeroSpace (reverted by 'dotfiles rescue')..."
+    macos_default com.apple.dock expose-group-apps -bool true
+    macos_default com.apple.spaces spans-displays -bool true
+    run_cmd killall Dock >/dev/null 2>&1 || true
+
+    warn "AeroSpace is installed but NOT started. When you are ready:"
+    warn "  1) open -a AeroSpace"
+    warn "  2) System Settings > Privacy & Security > Accessibility > enable AeroSpace"
+    warn "  Log out and back in once so 'Displays have separate Spaces' takes effect."
+    warn "  Something wrong? Run: dotfiles rescue"
 }
 
 # --- Keyboard (Karabiner-Elements) -----------------------------------------
 component_keyboard() {
     macos_bundle keyboard
-    log "Linking Karabiner configuration..."
-    link_file "$DOTFILES_DIR/wm/macos/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
+    # Karabiner rewrites karabiner.json on every change, which would replace a symlink.
+    install_file "$DOTFILES_DIR/wm/macos/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
 
-    warn "MANUAL STEPS (one-time) for Karabiner-Elements:"
-    warn "  System Settings > General > Login Items & Extensions > Driver Extensions > enable Karabiner."
-    warn "  System Settings > Privacy & Security > Input Monitoring > enable karabiner_grabber."
-    warn "  Input source must be 'Spanish - ISO' (System Settings > Keyboard > Text Input)."
+    warn "Karabiner-Elements only acts after these one-time approvals:"
+    warn "  System Settings > General > Login Items & Extensions > Driver Extensions > enable Karabiner"
+    warn "  System Settings > Privacy & Security > Input Monitoring > enable karabiner_grabber / karabiner_observer"
+    warn "  Input source: 'Spanish - ISO' (System Settings > Keyboard > Text Input)."
+    warn "  Left Option + window-manager keys go to AeroSpace; Right Option keeps @ # | [ ] { } \\ ~."
+    warn "  The Karabiner menu-bar icon switches to the 'Plain' profile at any time."
 }
 
 # --- Dispatch --------------------------------------------------------------

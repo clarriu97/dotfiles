@@ -69,6 +69,7 @@ link_file() {
     fi
 
     run_cmd ln -s "$src" "$dest"
+    state_add links "$dest"
     [[ "$DRY_RUN" == 1 ]] || ok "  linked: $dest -> $src"
 }
 
@@ -129,4 +130,34 @@ install_with_script() {
     fi
     log "Installing $name..."
     curl -fsSL "$url" | bash -s -- "$@"
+}
+
+# --- Install state (used by `dotfiles rescue` / `dotfiles uninstall`) --------
+DOTFILES_STATE="${DOTFILES_STATE:-$HOME/.local/state/dotfiles}"
+
+# state_add <file> <line>: appends <line> to a state file once.
+state_add() {
+    [[ "$DRY_RUN" == 1 ]] && return 0
+    mkdir -p "$DOTFILES_STATE"
+    grep -qxF "$2" "$DOTFILES_STATE/$1" 2>/dev/null || printf '%s\n' "$2" >> "$DOTFILES_STATE/$1"
+}
+
+# install_file <src> <dest>: copies a file (for apps that rewrite their config
+# and would replace a symlink). Backs up a different existing file first.
+install_file() {
+    local src="$1" dest="$2"
+    if [[ -f "$dest" ]] && cmp -s "$src" "$dest"; then
+        info "ok (up to date): $dest"
+        return 0
+    fi
+    run_cmd mkdir -p "$(dirname "$dest")"
+    if [[ -e "$dest" || -L "$dest" ]]; then
+        local backup
+        backup="${dest}.bak-$(date +%Y%m%d%H%M%S)"
+        warn "Backing up $dest -> $backup"
+        run_cmd mv "$dest" "$backup"
+    fi
+    run_cmd cp "$src" "$dest"
+    state_add files "$dest"
+    [[ "$DRY_RUN" == 1 ]] || ok "  installed: $dest"
 }

@@ -150,5 +150,6 @@ fi
 . "$DOTFILES_DIR/lib/claude.sh"
 # shellcheck disable=SC2086
 install_main $SELECTED
+link_file "$DOTFILES_DIR/bin/dotfiles" "$HOME/.local/bin/dotfiles"
 
 ok "\nDone! Open a new terminal to load the configuration."

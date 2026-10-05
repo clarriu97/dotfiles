@@ -1,0 +1,7 @@
+# Loaded by `dotfiles rescue`: AeroSpace does not start at login, binds no keys
+# and, if launched anyway, stops managing windows right away.
+# Re-enable the real config with: ./install.sh --only wm
+start-at-login = false
+after-startup-command = ['enable off']
+
+[mode.main.binding]
