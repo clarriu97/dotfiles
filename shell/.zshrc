@@ -104,4 +104,4 @@ setopt auto_cd
 #  For machine-specific PATHs (e.g. lmstudio), tokens or per-machine tweaks,
 #  create ~/.zshrc.local; it is sourced last so it can override the above.
 # ===========================================================================
-[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local
+if [[ -f ~/.zshrc.local ]]; then source ~/.zshrc.local; fi

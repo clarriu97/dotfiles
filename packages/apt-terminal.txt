@@ -13,6 +13,7 @@ xclip
 lsd
 fzf
 tldr
+tealdeer
 bat
 fastfetch
 neofetch

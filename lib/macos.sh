@@ -54,7 +54,7 @@ macos_bundle() {
 macos_set_default_shell() {
     if [[ "${SHELL:-}" != */zsh ]]; then
         log "Setting zsh as the default shell..."
-        run_cmd chsh -s /bin/zsh || warn "Could not change the shell (do it manually: chsh -s /bin/zsh)."
+        as_root chsh -s /bin/zsh "$(id -un)" || warn "Could not change the shell (do it manually: chsh -s /bin/zsh)."
     fi
 }
 
