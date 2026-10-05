@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# dotfiles — day-to-day commands for this repo (linked to ~/.local/bin/dotfiles).
+#
+#   dotfiles doctor [--only a,b]   health check of the installed setup
+#   dotfiles rescue                macOS: stock keyboard, windows back, original settings
+#   dotfiles uninstall             rescue + remove every link and restore previous files
+#   dotfiles install [args]        ./install.sh [args]
+set -euo pipefail
+
+self="${BASH_SOURCE[0]}"
+while [[ -L "$self" ]]; do
+    target="$(readlink "$self")"
+    [[ "$target" == /* ]] || target="$(dirname "$self")/$target"
+    self="$target"
+done
+DOTFILES_DIR="$(cd "$(dirname "$self")/.." && pwd)"
+export DOTFILES_DIR
+
+# shellcheck source=lib/common.sh
+. "$DOTFILES_DIR/lib/common.sh"
+# shellcheck source=lib/detect.sh
+. "$DOTFILES_DIR/lib/detect.sh"
+# shellcheck source=lib/macos-defaults.sh
+. "$DOTFILES_DIR/lib/macos-defaults.sh"
+# shellcheck source=lib/rescue.sh
+. "$DOTFILES_DIR/lib/rescue.sh"
+
+cmd="${1:-help}"
+shift || true
+case "$cmd" in
+    doctor)    exec "$DOTFILES_DIR/tests/verify.sh" "$@" ;;
+    rescue)    rescue_main ;;
+    uninstall) uninstall_main ;;
+    install)   exec "$DOTFILES_DIR/install.sh" "$@" ;;
+    *)         sed -n '2,7p' "$DOTFILES_DIR/bin/dotfiles"; [[ "$cmd" == help ]] ;;
+esac

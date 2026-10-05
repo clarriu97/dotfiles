@@ -1,96 +1,73 @@
-# .aerospace.toml — i3-like tiling window manager for macOS.
-# Equivalent to the i3/config on Linux. Docs: https://nikitabobko.github.io/AeroSpace/guide
+# .aerospace.toml — i3-like tiling for macOS, same keys as wm/linux/i3/config.
+# Docs: https://nikitabobko.github.io/AeroSpace/guide
 #
-# ---------------------------------------------------------------------------
-#  Modifier key (READ THIS)
-# ---------------------------------------------------------------------------
-#  The window-manager modifier is the LEFT Option key.
+# Modifier: hold the LEFT Option key (like Super on i3). Karabiner turns
+# Left Option + <window-manager key> into Ctrl+Option + <key>, so every binding
+# below is ctrl-alt-*. Right Option is untouched for @ # | [ ] { } \ ~.
 #
-#  Karabiner-Elements turns LEFT Option into Ctrl+Option (see
-#  wm/macos/karabiner/karabiner.json), so every binding below is written as
-#  `ctrl-alt-*`. In practice you just hold the LEFT Option key, like the Super
-#  key in i3.
+#   i3 $mod        -> Left Option              (ctrl-alt-*)
+#   i3 $mod+Shift  -> Left Option + Shift      (ctrl-alt-shift-*)
+#   i3 $mod+Ctrl   -> Left Option + Cmd        (ctrl-alt-cmd-*)
 #
-#  The RIGHT Option key is left completely untouched, so on a Spanish keyboard
-#  you use it for @ # [ ] { } \ | ~ etc. — exactly like AltGr on Linux.
-#
-#  Layers:
-#    ctrl-alt            → LEFT Option            (focus, workspaces, launch)
-#    ctrl-alt-shift      → LEFT Option + Shift    (move window / send to ws)
-#    ctrl-alt-cmd        → LEFT Option + Cmd      (move workspace to monitor)
+# Keys use qwerty positions: 'semicolon' is the ñ key on a Spanish keyboard.
+# tests/unit/wm.bats checks that every key bound here is remapped by Karabiner.
 
-after-startup-command = [
-    'exec-and-forget sketchybar',
-    # JankyBorders: colored border around the focused window (like i3 focus).
-    'exec-and-forget borders active_color=0xff7aa2f7 inactive_color=0xff414868 width=6.0',
-]
 start-at-login = true
+after-startup-command = [
+    'exec-and-forget borders active_color=0xff7aa2f7 inactive_color=0x00000000 width=5.0',
+]
 
-# Container normalization (natural i3-like behavior)
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
-
 accordion-padding = 30
 default-root-container-layout = 'tiles'
 default-root-container-orientation = 'auto'
-
-# Notify SketchyBar when the workspace changes (bar highlight)
-exec-on-workspace-change = ['/bin/bash', '-c',
-    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE'
-]
-
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 
-# ===========================================================================
-#  Gaps — per-monitor top gap so windows never overlap SketchyBar.
-#  A notched built-in display already reserves the top strip, so it needs a
-#  small gap; external displays need a gap the size of the bar (~40px) + air.
-#  If you see windows under the bar, raise the value; too much air, lower it.
-# ===========================================================================
 [gaps]
 inner.horizontal = 8
 inner.vertical = 8
 outer.left = 8
 outer.right = 8
 outer.bottom = 8
-outer.top = [
-    { monitor.'built-in' = 10 },   # MacBook built-in (notched) display
-    50,                            # any external / non-notched display
-]
+outer.top = 8
 
-# ===========================================================================
-#  Main mode (key bindings) — modifier = LEFT Option (see header)
-# ===========================================================================
 [mode.main.binding]
-# Terminal (i3: $mod+Return) and app launchers
 ctrl-alt-enter = 'exec-and-forget open -na Warp'
+ctrl-alt-shift-enter = 'exec-and-forget open -na Ghostty'
+ctrl-alt-d = 'exec-and-forget open -a Raycast'
 ctrl-alt-shift-v = 'exec-and-forget open -na "Visual Studio Code"'
 ctrl-alt-shift-b = 'exec-and-forget open -na "Brave Browser"'
-ctrl-alt-shift-s = 'exec-and-forget screencapture -ic'  # interactive screenshot to the clipboard
-# Note: the app launcher (rofi on i3) is covered by Spotlight (Cmd+Space) or Raycast.
+ctrl-alt-cmd-e = 'exec-and-forget open ~'
+ctrl-alt-cmd-s = 'exec-and-forget screencapture -ic'
+ctrl-alt-shift-x = 'exec-and-forget pmset displaysleepnow'
 
-# Close window (i3: $mod+Shift+q)
 ctrl-alt-shift-q = 'close'
 
-# Change focus (i3: $mod+h/j/k/l). hjkl = left/down/up/right.
-ctrl-alt-h = 'focus left'
-ctrl-alt-j = 'focus down'
-ctrl-alt-k = 'focus up'
-ctrl-alt-l = 'focus right'
+ctrl-alt-j = 'focus left'
+ctrl-alt-k = 'focus down'
+ctrl-alt-l = 'focus up'
+ctrl-alt-semicolon = 'focus right'
+ctrl-alt-left = 'focus left'
+ctrl-alt-down = 'focus down'
+ctrl-alt-up = 'focus up'
+ctrl-alt-right = 'focus right'
 
-# Move window (i3: $mod+Shift+...)
-ctrl-alt-shift-h = 'move left'
-ctrl-alt-shift-j = 'move down'
-ctrl-alt-shift-k = 'move up'
-ctrl-alt-shift-l = 'move right'
+ctrl-alt-shift-j = 'move left'
+ctrl-alt-shift-k = 'move down'
+ctrl-alt-shift-l = 'move up'
+ctrl-alt-shift-semicolon = 'move right'
+ctrl-alt-shift-left = 'move left'
+ctrl-alt-shift-down = 'move down'
+ctrl-alt-shift-up = 'move up'
+ctrl-alt-shift-right = 'move right'
 
-# Layouts (i3: stacking/tabbed/split/fullscreen)
-ctrl-alt-slash = 'layout tiles horizontal vertical'    # toggle tiles orientation
-ctrl-alt-comma = 'layout accordion horizontal vertical'
 ctrl-alt-f = 'fullscreen'
-ctrl-alt-shift-space = 'layout floating tiling'        # tiling <-> floating
+ctrl-alt-s = 'layout v_accordion'
+ctrl-alt-w = 'layout h_accordion'
+ctrl-alt-e = 'layout tiles horizontal vertical'
+ctrl-alt-shift-space = 'layout floating tiling'
 
-# Workspaces 1..10 (i3: $mod+number)
 ctrl-alt-1 = 'workspace 1'
 ctrl-alt-2 = 'workspace 2'
 ctrl-alt-3 = 'workspace 3'
@@ -101,9 +78,8 @@ ctrl-alt-7 = 'workspace 7'
 ctrl-alt-8 = 'workspace 8'
 ctrl-alt-9 = 'workspace 9'
 ctrl-alt-0 = 'workspace 10'
-ctrl-alt-tab = 'workspace-back-and-forth'              # i3: $mod+Tab
+ctrl-alt-tab = 'workspace-back-and-forth'
 
-# Move container to workspace (i3: $mod+Shift+number)
 ctrl-alt-shift-1 = 'move-node-to-workspace 1'
 ctrl-alt-shift-2 = 'move-node-to-workspace 2'
 ctrl-alt-shift-3 = 'move-node-to-workspace 3'
@@ -115,28 +91,35 @@ ctrl-alt-shift-8 = 'move-node-to-workspace 8'
 ctrl-alt-shift-9 = 'move-node-to-workspace 9'
 ctrl-alt-shift-0 = 'move-node-to-workspace 10'
 
-# Move workspace between monitors (i3: $mod+Ctrl+>/<)
-ctrl-alt-cmd-l = 'move-workspace-to-monitor --wrap-around next'
-ctrl-alt-cmd-h = 'move-workspace-to-monitor --wrap-around prev'
+ctrl-alt-cmd-j = 'move-workspace-to-monitor --wrap-around prev'
+ctrl-alt-cmd-semicolon = 'move-workspace-to-monitor --wrap-around next'
+ctrl-alt-cmd-left = 'move-workspace-to-monitor --wrap-around prev'
+ctrl-alt-cmd-right = 'move-workspace-to-monitor --wrap-around next'
 
-# Reload config (i3: $mod+Shift+c) and resize mode (i3: $mod+r)
 ctrl-alt-shift-c = 'reload-config'
 ctrl-alt-r = 'mode resize'
 
-# ===========================================================================
-#  Resize mode (i3: mode "resize")
-# ===========================================================================
 [mode.resize.binding]
-h = 'resize width -50'
-j = 'resize height +50'
-k = 'resize height -50'
-l = 'resize width +50'
+j = 'resize width -50'
+k = 'resize height +50'
+l = 'resize height -50'
+semicolon = 'resize width +50'
+left = 'resize width -25'
+down = 'resize height +25'
+up = 'resize height -25'
+right = 'resize width +25'
 enter = 'mode main'
 esc = 'mode main'
+ctrl-alt-r = 'mode main'
 
-# ===========================================================================
-#  Assign apps to workspaces (i3: assign / for_window)
-# ===========================================================================
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+run = 'layout floating'
+
+[[on-window-detected]]
+if.app-id = 'org.pqrs.Karabiner-Elements.Settings'
+run = 'layout floating'
+
 [[on-window-detected]]
 if.app-id = 'com.brave.Browser'
 run = 'move-node-to-workspace 1'
