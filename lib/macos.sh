@@ -47,7 +47,8 @@ macos_bundle() {
     local brewfile="$BREWFILES/$1.Brewfile"
     log "Installing $1 packages (brew bundle)..."
     macos_trust_taps "$brewfile"
-    run_cmd brew bundle --no-upgrade --file="$brewfile"
+    run_cmd brew bundle --no-upgrade --file="$brewfile" ||
+        warn "Some $1 packages failed to install (see above); continuing. 'make doctor' reports what is missing."
 }
 
 # --- Terminal --------------------------------------------------------------
