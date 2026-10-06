@@ -24,8 +24,9 @@ remote 'xattr -dr com.apple.quarantine /Applications/*.app 2>/dev/null; killall 
 
 step "Start AeroSpace (Accessibility already approved in this image)"
 remote 'open -a AeroSpace'
-sleep 8
-expect_remote "AeroSpace answers" 'aerospace list-workspaces --focused'
+wait_remote "AeroSpace answers" 'aerospace list-workspaces --focused'
+wait_remote "startup layout opened VS Code" 'aerospace list-windows --workspace 4 --format %{app-bundle-id} | grep -qx com.microsoft.VSCode'
+sleep 12
 expect_remote "JankyBorders running" 'pgrep -x borders'
 expect_remote "Karabiner driver active" "systemextensionsctl list | grep -q 'Karabiner.*activated enabled'"
 
@@ -68,8 +69,9 @@ screenshot "3-ghostty"
 
 reboot_vm "$VM"
 step "After reboot"
-sleep 10
-expect_remote "AeroSpace started at login" 'pgrep -x AeroSpace'
+wait_remote "AeroSpace started at login" 'pgrep -x AeroSpace'
+wait_remote "startup layout finished" 'aerospace list-windows --workspace 4 --format %{app-bundle-id} | grep -qx com.microsoft.VSCode'
+sleep 12
 expect_remote "JankyBorders started by AeroSpace" 'pgrep -x borders'
 expect_remote "startup layout: Brave on 1" 'aerospace list-windows --workspace 1 --format %{app-bundle-id} | grep -qx com.brave.Browser'
 expect_remote "startup layout: Warp on 2" 'aerospace list-windows --workspace 2 --format %{app-bundle-id} | grep -qx dev.warp.Warp-Stable'
