@@ -15,10 +15,10 @@
 
 config-version = 2
 start-at-login = true
-# At login: Brave on 1, Warp on 2, Claude on 3, VS Code on 4 (see on-window-detected).
+# At login: Brave on 1, Warp on 2, Claude on 3, VS Code on 4 (startup.sh).
 after-startup-command = [
     'exec-and-forget borders active_color=0xff7aa2f7 inactive_color=0x00000000 width=5.0',
-    'exec-and-forget open -a "Brave Browser"; open -a Warp; open -a Claude; open -a "Visual Studio Code"; sleep 8; /opt/homebrew/bin/aerospace workspace 1',
+    'exec-and-forget ~/.config/aerospace/startup.sh',
 ]
 
 enable-normalization-flatten-containers = true
@@ -137,11 +137,6 @@ run = 'layout floating'
 [[on-window-detected]]
 if.app-id = 'com.brave.Browser'
 run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-id = 'dev.warp.Warp-Stable'
-if.during-aerospace-startup = true
-run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
 if.app-id = 'com.anthropic.claudefordesktop'
