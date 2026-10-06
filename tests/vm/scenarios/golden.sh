@@ -79,7 +79,7 @@ screenshot "3-ghostty"
 reboot_vm "$VM"
 step "After reboot"
 wait_remote "AeroSpace started at login" 'pgrep -x AeroSpace'
-expect_remote "JankyBorders started by AeroSpace" 'pgrep -x borders'
+wait_remote "JankyBorders started by AeroSpace" 'pgrep -x borders'
 wait_remote "startup layout: Brave on 1" 'aerospace list-windows --workspace 1 --format %{app-bundle-id} | grep -qx com.brave.Browser'
 wait_remote "startup layout: Warp on 2" 'aerospace list-windows --workspace 2 --format %{app-bundle-id} | grep -qx dev.warp.Warp-Stable'
 wait_remote "startup layout: Claude on 3" 'aerospace list-windows --workspace 3 --format %{app-bundle-id} | grep -qx com.anthropic.claudefordesktop'
