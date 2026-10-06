@@ -96,12 +96,13 @@ start_vncd() {
     [[ -n "$url" ]] || die "$vm: no VNC URL in $s/tart.log"
     pass="$(sed -E 's#vnc://:([^@]*)@.*#\1#' <<<"$url")"
     port="$(sed -E 's#.*:([0-9]+)$#\1#' <<<"$url")"
-    echo $((port + 10000)) > "$s/vncd.port"
-    "$VENV/bin/python" "$VM_DIR/vncd.py" "127.0.0.1::$port" "$pass" "$(cat "$s/vncd.port")" \
-        > "$s/vncd.log" 2>&1 &
+    "$VENV/bin/python" "$VM_DIR/vncd.py" "127.0.0.1::$port" "$pass" > "$s/vncd.log" 2>&1 &
     echo $! > "$s/vncd.pid"
     for _ in $(seq 1 30); do
-        grep -q ready "$s/vncd.log" && return 0
+        if grep -q ready "$s/vncd.log"; then
+            awk '/^ready/ { print $2 }' "$s/vncd.log" > "$s/vncd.port"
+            return 0
+        fi
         sleep 1
     done
     die "$vm: VNC daemon did not start ($s/vncd.log)."
