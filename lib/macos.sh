@@ -121,7 +121,13 @@ macos_free_ctrl_arrows() {
 
 # --- Apps ------------------------------------------------------------------
 component_apps() {
+    local agent
     macos_bundle apps
+    log "Starting Stats and Caffeine at login..."
+    for agent in "$DOTFILES_DIR"/packages/macos/launchagents/*.plist; do
+        install_file "$agent" "$HOME/Library/LaunchAgents/${agent##*/}"
+        run_cmd launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/${agent##*/}" 2>/dev/null || true
+    done
 }
 
 # --- Window manager (AeroSpace) --------------------------------------------
@@ -132,6 +138,8 @@ component_wm() {
     log "Mission Control settings recommended by AeroSpace (reverted by 'dotfiles rescue')..."
     macos_default com.apple.dock expose-group-apps -bool true
     macos_default com.apple.spaces spans-displays -bool true
+    # AeroSpace's menu-bar label lists every occupied workspace (like i3bar).
+    macos_default bobko.aerospace displayStyle -string i3Ordered
     run_cmd killall Dock >/dev/null 2>&1 || true
 
     warn "AeroSpace is installed but NOT started. When you are ready:"

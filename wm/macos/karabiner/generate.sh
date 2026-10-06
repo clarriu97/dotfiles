@@ -12,9 +12,9 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 AEROSPACE="$DIR/../aerospace/.aerospace.toml"
 
 sed -n '/^\[mode\.main\.binding\]/,/^\[/p' "$AEROSPACE" |
-    sed -nE 's/^ctrl-alt-((shift|cmd)-)?([a-z0-9]+) =.*/\2 \3/p' |
+    sed -nE 's/^ctrl-alt-((shift|cmd)-)?([a-zA-Z0-9]+) =.*/\2 \3/p' |
     jq -R -n '
-def key_code: {enter: "return_or_enter", space: "spacebar", left: "left_arrow", right: "right_arrow", up: "up_arrow", down: "down_arrow"}[.] // .;
+def key_code: {enter: "return_or_enter", space: "spacebar", left: "left_arrow", right: "right_arrow", up: "up_arrow", down: "down_arrow", minus: "hyphen", equal: "equal_sign", leftSquareBracket: "open_bracket", rightSquareBracket: "close_bracket"}[.] // .;
 def extra: {"": [], shift: ["shift"], cmd: ["command"]}[.];
 def extra_out: {"": [], shift: ["left_shift"], cmd: ["left_command"]}[.];
 [inputs | split(" ") | {mod: .[0], key: (.[1] | key_code)}] as $bindings

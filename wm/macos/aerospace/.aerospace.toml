@@ -9,9 +9,11 @@
 #   i3 $mod+Shift  -> Left Option + Shift      (ctrl-alt-shift-*)
 #   i3 $mod+Ctrl   -> Left Option + Cmd        (ctrl-alt-cmd-*)
 #
-# Keys use qwerty positions: 'semicolon' is the ñ key on a Spanish keyboard.
+# Keys use qwerty positions. On a Spanish keyboard: 'semicolon' is ñ, 'slash' is -
+# and 'rightSquareBracket' is +.
 # tests/unit/wm.bats checks that every key bound here is remapped by Karabiner.
 
+config-version = 2
 start-at-login = true
 after-startup-command = [
     'exec-and-forget borders active_color=0xff7aa2f7 inactive_color=0x00000000 width=5.0',
@@ -67,6 +69,9 @@ ctrl-alt-s = 'layout v_accordion'
 ctrl-alt-w = 'layout h_accordion'
 ctrl-alt-e = 'layout tiles horizontal vertical'
 ctrl-alt-shift-space = 'layout floating tiling'
+ctrl-alt-slash = 'resize smart -50'
+ctrl-alt-rightSquareBracket = 'resize smart +50'
+ctrl-alt-b = 'balance-sizes'
 
 ctrl-alt-1 = 'workspace 1'
 ctrl-alt-2 = 'workspace 2'

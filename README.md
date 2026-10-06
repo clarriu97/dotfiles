@@ -24,8 +24,8 @@ Unattended: `./install.sh --yes --only terminal,claude`. Components:
 | Component | macOS | Linux |
 |---|---|---|
 | `terminal` | zsh + p10k, CLI tools (fzf, zoxide, bat, lsd, ripgrep, fd…), Warp + Ghostty, Nerd Font | same, Warp |
-| `apps` | VS Code, Brave, Raycast | VS Code, Brave |
-| `wm` | AeroSpace + JankyBorders (native menu bar kept) | i3 + polybar |
+| `apps` | VS Code, Brave, Raycast, Stats + Caffeine in the menu bar (started at login) | VS Code, Brave |
+| `wm` | AeroSpace + JankyBorders; native menu bar kept, showing every occupied workspace | i3 + polybar |
 | `keyboard` | Karabiner-Elements: Left Option = window-manager key | — |
 | `desktop` | Dock auto-hide, Finder extensions/path bar, key repeat | — |
 | `claude` | Claude Code CLI + Desktop + config ([details](claude/README.md)) | CLI (+ Desktop on Ubuntu/Debian) |
@@ -66,6 +66,7 @@ The modifier is **Super/Win** on i3 and **LEFT Option** on macOS (same physical 
 | Stacking / tabbed / toggle split | `Win`+`s` / `w` / `e` | `L⌥`+`s` / `w` / `e` (accordion / tiles) |
 | Close window | `Win`+`Shift`+`q` | `L⌥`+`Shift`+`q` |
 | Resize mode (j/k/l/ñ, Esc) | `Win`+`r` | `L⌥`+`r` |
+| Shrink / grow / balance | — | `L⌥`+`-` / `L⌥`+`+` / `L⌥`+`b` |
 | Reload config | `Win`+`Shift`+`c` | `L⌥`+`Shift`+`c` |
 | VS Code / Brave | `Win`+`Shift`+`v` / — | `L⌥`+`Shift`+`v` / `b` |
 | Screenshot | `Win`+`Ctrl`+`s` (flameshot) | `L⌥`+`⌘`+`s` (to clipboard) |

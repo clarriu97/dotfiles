@@ -180,6 +180,12 @@ if want apps; then
     if [[ "$OS" == macos ]]; then
         expect_app "Visual Studio Code"
         expect_app "Brave Browser"
+        expect_app Raycast
+        expect_app Stats
+        expect_app Caffeine
+        for agent in dev.dotfiles.stats dev.dotfiles.caffeine; do
+            expect "login item $agent" test -f "$HOME/Library/LaunchAgents/$agent.plist"
+        done
     else
         expect_cmd code
         expect_cmd brave-browser

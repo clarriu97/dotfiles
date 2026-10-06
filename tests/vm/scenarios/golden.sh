@@ -67,6 +67,9 @@ step "After reboot"
 sleep 10
 expect_remote "AeroSpace started at login" 'pgrep -x AeroSpace'
 expect_remote "JankyBorders started by AeroSpace" 'pgrep -x borders'
+expect_remote "Stats started at login" 'pgrep -x Stats'
+expect_remote "Caffeine started at login" 'pgrep -x Caffeine'
+expect_remote "menu bar lists only occupied workspaces" '[ "$(aerospace list-workspaces --all | wc -l)" -lt 10 ]'
 desktop_is_usable "4-after-reboot"
 vnc "$VM" "combo lmeta+4"
 expect_workspace 4 "Left Option + 4 after reboot"
