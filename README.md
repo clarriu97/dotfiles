@@ -74,6 +74,8 @@ The modifier is **Super/Win** on i3 and **LEFT Option** on macOS (same physical 
 | Home folder | `Win`+`Ctrl`+`e` | `L⌥`+`⌘`+`e` |
 | Lock | `Win`+`Shift`+`x` | `L⌥`+`Shift`+`x` |
 
+At login AeroSpace opens **Brave on 1, Warp on 2, Claude on 3 and VS Code on 4** and lands on workspace 1. Brave, Claude and VS Code always go to their workspace; Warp only at startup, so `L⌥`+`Enter` still opens a terminal where you are.
+
 `$mod+Ctrl` on i3 becomes `L⌥`+`⌘` on macOS. Karabiner's rules are generated from `.aerospace.toml` (`wm/macos/karabiner/generate.sh`), and a test fails if they drift apart.
 
 Spanish keyboard on macOS: the input source must be **Spanish - ISO** (System Settings → Keyboard → Text Input).

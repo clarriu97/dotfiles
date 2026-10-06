@@ -67,6 +67,10 @@ step "After reboot"
 sleep 10
 expect_remote "AeroSpace started at login" 'pgrep -x AeroSpace'
 expect_remote "JankyBorders started by AeroSpace" 'pgrep -x borders'
+expect_remote "startup layout: Brave on 1" 'aerospace list-windows --workspace 1 --format %{app-bundle-id} | grep -qx com.brave.Browser'
+expect_remote "startup layout: Warp on 2" 'aerospace list-windows --workspace 2 --format %{app-bundle-id} | grep -qx dev.warp.Warp-Stable'
+expect_remote "startup layout: Claude on 3" 'aerospace list-windows --workspace 3 --format %{app-bundle-id} | grep -qx com.anthropic.claudefordesktop'
+expect_remote "startup layout: VS Code on 4" 'aerospace list-windows --workspace 4 --format %{app-bundle-id} | grep -qx com.microsoft.VSCode'
 expect_remote "Stats started at login" 'pgrep -x Stats'
 expect_remote "Caffeine started at login" 'pgrep -x Caffeine'
 expect_remote "menu bar lists only occupied workspaces" '[ "$(aerospace list-workspaces --all | wc -l)" -lt 10 ]'
