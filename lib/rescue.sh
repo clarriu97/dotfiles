@@ -71,7 +71,12 @@ uninstall_main() {
             restore_latest_backup "$dest"
         done < "$DOTFILES_STATE/files"
     fi
-    [[ "$DRY_RUN" == 1 ]] || rm -f "$DOTFILES_STATE/links" "$DOTFILES_STATE/files"
+    if [[ -f "$DOTFILES_STATE/apps" ]]; then
+        while read -r dest; do
+            [[ -d "$dest" ]] && run_cmd rm -rf "$dest"
+        done < "$DOTFILES_STATE/apps"
+    fi
+    [[ "$DRY_RUN" == 1 ]] || rm -f "$DOTFILES_STATE/links" "$DOTFILES_STATE/files" "$DOTFILES_STATE/apps"
     ok "Uninstalled. Installed apps and packages were kept."
     [[ "$OS" == macos ]] && info "Remove apps with: brew uninstall --cask aerospace karabiner-elements"
     return 0

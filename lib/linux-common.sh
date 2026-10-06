@@ -112,6 +112,7 @@ install_main() {
     local c
     pkg_refresh
     for c in "$@"; do
+        section "$c" "$(describe_component "$c")"
         "component_$c"
     done
 }
