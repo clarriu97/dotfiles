@@ -49,6 +49,16 @@ desktop_is_usable() {
 # on the VM, sends the keystrokes (physical keys, so the VM's Spanish layout
 # applies), ends with Ctrl-D and prints what the keyboard produced.
 capture_keys() {
+    local out
+    out="$(capture_keys_once "$@")"
+    if [[ -z "$out" ]]; then
+        sleep 15
+        out="$(capture_keys_once "$@")"
+    fi
+    printf '%s\n' "$out"
+}
+
+capture_keys_once() {
     local file="$1"
     shift
     remote "rm -f $file; printf '#!/bin/sh\\ncat > $file\\n' > /tmp/capture.command; chmod +x /tmp/capture.command; open /tmp/capture.command" >/dev/null
