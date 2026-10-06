@@ -66,6 +66,7 @@ uninstall_main() {
     fi
     if [[ -f "$DOTFILES_STATE/files" ]]; then
         while read -r dest; do
+            [[ "$dest" == */LaunchAgents/*.plist ]] && run_cmd launchctl bootout "gui/$(id -u)" "$dest" 2>/dev/null
             [[ -f "$dest" ]] && run_cmd rm "$dest"
             restore_latest_backup "$dest"
         done < "$DOTFILES_STATE/files"

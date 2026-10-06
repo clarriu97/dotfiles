@@ -8,8 +8,7 @@
     <array>
         <string>/usr/bin/open</string>
         <string>-g</string>
-        <string>-a</string>
-        <string>Caffeine</string>
+        <string>/Applications/Caffeine.app</string>
     </array>
     <key>RunAtLoad</key>
     <true/>

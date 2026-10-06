@@ -126,9 +126,8 @@ component_apps() {
     log "Starting Stats and Caffeine at login..."
     for agent in "$DOTFILES_DIR"/packages/macos/launchagents/*.plist; do
         install_file "$agent" "$HOME/Library/LaunchAgents/${agent##*/}"
+        run_cmd launchctl bootstrap "gui/$(id -u)" "$HOME/Library/LaunchAgents/${agent##*/}" 2>/dev/null || true
     done
-    run_cmd open -g -a Stats 2>/dev/null || true
-    run_cmd open -g -a Caffeine 2>/dev/null || true
 }
 
 # --- Window manager (AeroSpace) --------------------------------------------
