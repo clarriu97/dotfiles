@@ -138,6 +138,7 @@ if want terminal; then
     expect_cmd zoxide
     expect_cmd rg
     expect_cmd fd fdfind
+    optional_cmd just
     optional_cmd lsd
     optional_cmd fastfetch neofetch
     case "$(login_shell)" in
