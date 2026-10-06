@@ -18,6 +18,10 @@ expect_workspace() {
 install_dotfiles "$ALL"
 doctor "$ALL"
 
+step "Approve the new apps once, as a user does on their first launch"
+remote 'xattr -dr com.apple.quarantine /Applications/*.app 2>/dev/null; killall CoreServicesUIAgent 2>/dev/null
+    open -a Stats; open /Applications/Caffeine.app' || true
+
 step "Start AeroSpace (Accessibility already approved in this image)"
 remote 'open -a AeroSpace'
 sleep 8
