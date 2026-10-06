@@ -225,6 +225,13 @@ if want keyboard; then
     else
         warn "Karabiner privileged daemon not running (Login Items & Extensions > Background App Activity)"
     fi
+    if [[ -d /Applications/Raycast.app ]]; then
+        if default_is com.raycast.macos raycastGlobalHotkey Control-Option-Shift-Command-2; then
+            pass "Raycast opens with Left Option + d"
+        else
+            warn "Raycast hotkey not recorded yet (Raycast settings > Raycast Hotkey > Left Option + d)"
+        fi
+    fi
 fi
 
 expect_link "$HOME/.local/bin/dotfiles" bin/dotfiles

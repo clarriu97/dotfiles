@@ -39,7 +39,6 @@ outer.top = 8
 [mode.main.binding]
 ctrl-alt-enter = 'exec-and-forget open -na Warp'
 ctrl-alt-shift-enter = 'exec-and-forget open -na Ghostty'
-ctrl-alt-d = 'exec-and-forget open -a Raycast'
 ctrl-alt-shift-v = 'exec-and-forget open -na "Visual Studio Code"'
 ctrl-alt-shift-b = 'exec-and-forget open -na "Brave Browser"'
 ctrl-alt-cmd-e = 'exec-and-forget open ~'

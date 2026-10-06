@@ -6,9 +6,7 @@
     <string>dev.dotfiles.stats</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/bin/open</string>
-        <string>-g</string>
-        <string>/Applications/Stats.app</string>
+        <string>/Applications/Stats.app/Contents/MacOS/Stats</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
