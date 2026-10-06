@@ -54,7 +54,7 @@ Enable these in the project's `.claude/settings.json` rather than globally, so t
 - **Parallel work**: separate git worktrees (one per Desktop session) so sessions never edit the same checkout.
 - **Review before you push**: built-in `/code-review` and `/security-review` on the diff.
 - **Project memory**: `/init` once per repo for a project `CLAUDE.md`; keep it short and factual.
-- **Verify, don't trust**: give Claude a command that proves the change (tests, `make doctor`), like this repo does.
+- **Verify, don't trust**: give Claude a command that proves the change (tests, `just doctor`), like this repo does.
 
 ## Security notes
 
