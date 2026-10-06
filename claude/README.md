@@ -26,15 +26,17 @@ A Homebrew `claude-code` cask, if present, is removed: two installs on `PATH` me
 
 ## Plugins enabled by default
 
-| Plugin | Why |
-|---|---|
-| `commit-commands` | `/commit`, `/commit-push-pr`, `/clean_gone` |
-| `pr-review-toolkit` | Specialised review agents (tests, error handling, types, comments) |
-| `security-guidance` | Warns on insecure patterns while Claude edits |
-| `claude-md-management` | Audits CLAUDE.md files and captures session learnings |
-| `context7` | Up-to-date library docs over MCP, so answers match the version you use |
+| Plugin | How it is used | Example |
+|---|---|---|
+| `commit-commands` | You type the command | `/commit` after a change: stages, writes a Conventional Commit. `/commit-push-pr` opens the PR. `/clean_gone` deletes local branches already merged and gone on the remote |
+| `pr-review-toolkit` | You type the command, or ask for a review | `/pr-review-toolkit:review-pr` before merging: specialised agents check tests, silent failures, comments, types and simplifications |
+| `security-guidance` | Automatic (hook) | While Claude edits, it warns about risky patterns (shell injection, `eval`, secrets in code…) without being asked |
+| `claude-md-management` | You type the command | `/revise-claude-md` at the end of a session: proposes updates to the repo's CLAUDE.md with what was learned |
+| `context7` | Automatic (MCP tool), or ask for it | "How do I configure X in library Y? use context7": Claude reads the current docs of the version you use instead of guessing |
 
 To add one: put `"name@claude-plugins-official": true` in `enabledPlugins` and re-run `./install.sh --only claude`.
+
+`.env` files: `settings.json` denies the **Read** tool on `.env*`, so secrets never end up in the conversation. Commands still get the variables (`set -a; . ./.env; set +a; <command>` or a `just` recipe with `set dotenv-load`), because the deny only applies to reading the file into the context.
 
 ## Opt-in, per project
 

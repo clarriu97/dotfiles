@@ -13,6 +13,7 @@ brew "opencode"            # terminal AI agent
 brew "zoxide"              # `z` smart cd
 brew "ripgrep"
 brew "fd"
+brew "just"                # task runner (see claude/CLAUDE.md)
 
 cask "warp"                # default terminal
 cask "ghostty"             # second terminal (config in terminal/ghostty)

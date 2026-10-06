@@ -21,3 +21,4 @@ jq
 zoxide
 ripgrep
 fd-find
+just
