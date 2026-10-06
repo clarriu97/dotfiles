@@ -94,34 +94,29 @@ elif [[ "$ASSUME_YES" == 1 ]]; then
     SELECTED="$AVAILABLE"
 fi
 
-# --- Banner -----------------------------------------------------------------
-echo -e "${orange}"
-echo -e "██╗    ██╗███████╗██╗      ██████╗ ██████╗ ███╗   ███╗███████╗    ████████╗ ██████╗ "
-echo -e "██║    ██║██╔════╝██║     ██╔════╝██╔═══██╗████╗ ████║██╔════╝    ╚══██╔══╝██╔═══██╗"
-echo -e "██║ █╗ ██║█████╗  ██║     ██║     ██║   ██║██╔████╔██║█████╗         ██║   ██║   ██║"
-echo -e "██║███╗██║██╔══╝  ██║     ██║     ██║   ██║██║╚██╔╝██║██╔══╝         ██║   ██║   ██║"
-echo -e "╚███╔███╔╝███████╗███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║███████╗       ██║   ╚██████╔╝"
-echo -e " ╚══╝╚══╝ ╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝       ╚═╝    ╚═════╝ "
-echo -e "          ██████╗  ██████╗ ████████╗███████╗██╗██╗     ███████╗███████╗             "
-echo -e "          ██╔══██╗██╔═══██╗╚══██╔══╝██╔════╝██║██║     ██╔════╝██╔════╝             "
-echo -e "          ██║  ██║██║   ██║   ██║   █████╗  ██║██║     █████╗  ███████╗             "
-echo -e "          ██║  ██║██║   ██║   ██║   ██╔══╝  ██║██║     ██╔══╝  ╚════██║             "
-echo -e "          ██████╔╝╚██████╔╝   ██║   ██║     ██║███████╗███████╗███████║             "
-echo -e "          ╚═════╝  ╚═════╝    ╚═╝   ╚═╝     ╚═╝╚══════╝╚══════╝╚══════╝             "
-echo -e "${nc}"
-echo -e "A project by ${red}clarriu97${nc} — https://github.com/${red}clarriu97${nc}/dotfiles"
-log "\nDetected system: ${green}${OS}${orange} (${ARCH})"
-[[ "$DRY_RUN" == 1 ]] && warn "Dry run: nothing will be changed."
+# --- Header ----------------------------------------------------------------
+os_label() {
+    case "$OS" in
+        macos) echo "macOS $(sw_vers -productVersion 2>/dev/null)" ;;
+        *)     echo "${OS_RAW} $(sed -n 's/^VERSION_ID="\{0,1\}\([^"]*\)"\{0,1\}$/\1/p' "$OS_RELEASE_FILE" 2>/dev/null)" ;;
+    esac
+}
+
+echo -e "
+${bold}${blue}  ╭───────────────────────────────────────────╮${nc}
+${bold}${blue}  │${nc}  ${bold}dotfiles${nc} ${dim}· clarriu97/dotfiles${nc}              ${bold}${blue}│${nc}
+${bold}${blue}  ╰───────────────────────────────────────────╯${nc}
+${dim}  $(os_label) · ${ARCH}$([[ "$DRY_RUN" == 1 ]] && echo ' · dry run: nothing will change')${nc}"
 
 # --- Interactive menu -------------------------------------------------------
 if [[ -z "$SELECTED" ]]; then
-    echo -e "\n${white}What do you want to install and configure?${nc}"
+    echo -e "\n${bold}  What should be installed?${nc}"
     i=1
     for c in $AVAILABLE; do
-        echo -e "${green}${i}) ${c}${nc} — $(describe_component "$c")"
+        printf "  ${green}%s${nc}  %-9s ${dim}%s${nc}\n" "$i" "$c" "$(describe_component "$c")"
         i=$((i + 1))
     done
-    echo -e "${white}Numbers separated by spaces, Enter for everything:${nc}"
+    echo -ne "\n  Numbers separated by spaces, ${bold}Enter${nc} for everything: "
     read -r input
     if [[ -z "$input" ]]; then
         SELECTED="$AVAILABLE"
@@ -138,8 +133,8 @@ if [[ -z "$SELECTED" ]]; then
 fi
 SELECTED="${SELECTED# }"
 
-log "\nComponents: ${green}${SELECTED}${nc}"
-if ! ask_yes_no "This will install packages and link your configuration. Continue?"; then
+echo -e "\n  Components: ${bold}${green}${SELECTED}${nc}"
+if ! ask_yes_no "  Install packages and link the configuration?"; then
     err "Cancelled."
     exit 1
 fi
@@ -150,7 +145,10 @@ fi
 # shellcheck source=lib/claude.sh
 . "$DOTFILES_DIR/lib/claude.sh"
 # shellcheck disable=SC2086
-install_main $SELECTED
+set -- $SELECTED
+STEPS=$#
+install_main "$@"
 link_file "$DOTFILES_DIR/bin/dotfiles" "$HOME/.local/bin/dotfiles"
 
-ok "\nDone! Open a new terminal to load the configuration."
+summary
+echo -e "\n${bold}${green}  Done.${nc} Open a new terminal to load the configuration.\n"

@@ -44,7 +44,7 @@ install() {
 @test "dry run of every component writes nothing to HOME" {
     run install --yes --dry-run
     [ "$status" -eq 0 ]
-    [[ "$output" == *"Done!"* ]]
+    [[ "$output" == *"Done."* ]]
     [ -z "$(find "$FAKE_HOME" -mindepth 1)" ]
 }
 

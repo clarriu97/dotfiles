@@ -6,6 +6,8 @@ BREWFILES="$DOTFILES_DIR/packages/macos"
 
 # shellcheck source=lib/macos-defaults.sh
 . "$DOTFILES_DIR/lib/macos-defaults.sh"
+# shellcheck source=lib/macos-permissions.sh
+. "$DOTFILES_DIR/lib/macos-permissions.sh"
 
 # --- Homebrew --------------------------------------------------------------
 macos_load_brew() {
@@ -136,17 +138,16 @@ component_wm() {
     link_file "$DOTFILES_DIR/wm/macos/aerospace/.aerospace.toml" "$HOME/.aerospace.toml"
 
     log "Mission Control settings recommended by AeroSpace (reverted by 'dotfiles rescue')..."
+    if [[ "$(defaults read com.apple.spaces spans-displays 2>/dev/null)" != 1 ]]; then
+        pending "Log out and back in once, so 'Displays have separate Spaces' (off) takes effect."
+    fi
     macos_default com.apple.dock expose-group-apps -bool true
     macos_default com.apple.spaces spans-displays -bool true
     # AeroSpace's menu-bar label lists every occupied workspace (like i3bar).
     macos_default bobko.aerospace displayStyle -string i3Ordered
     run_cmd killall Dock >/dev/null 2>&1 || true
 
-    warn "AeroSpace is installed but NOT started. When you are ready:"
-    warn "  1) open -a AeroSpace"
-    warn "  2) System Settings > Privacy & Security > Device Control and Data Access (Accessibility) > enable AeroSpace"
-    warn "  Log out and back in once so 'Displays have separate Spaces' takes effect."
-    warn "  Something wrong? Run: dotfiles rescue"
+    macos_install_rescue_app
 }
 
 # --- Keyboard (Karabiner-Elements) -----------------------------------------
@@ -155,13 +156,7 @@ component_keyboard() {
     # Karabiner rewrites karabiner.json on every change, which would replace a symlink.
     install_file "$DOTFILES_DIR/wm/macos/karabiner/karabiner.json" "$HOME/.config/karabiner/karabiner.json"
 
-    warn "Karabiner-Elements only acts after these one-time approvals (System Settings):"
-    warn "  General > Login Items & Extensions > Background App Activity > enable 'Karabiner-Elements Privileged Daemons v2'"
-    warn "  General > Login Items & Extensions > Extensions (By Category) > Driver Extensions > enable Karabiner"
-    warn "  Privacy & Security > Device Control and Data Access (Accessibility) > enable Karabiner-Core-Service"
-    warn "  Input source: 'Spanish - ISO' (System Settings > Keyboard > Text Input)."
-    warn "  Left Option + window-manager keys go to AeroSpace; Right Option keeps @ # | [ ] { } \\ ~."
-    warn "  The Karabiner menu-bar icon switches to the 'Plain' profile at any time."
+    macos_install_rescue_app
 }
 
 # --- Desktop (Dock, Finder, keyboard) --------------------------------------
@@ -181,9 +176,14 @@ component_desktop() {
 
 # --- Dispatch --------------------------------------------------------------
 install_main() {
-    local c
+    local c guided=0
+    case " $* " in *" wm "*|*" keyboard "*|*" apps "*) guided=1; STEPS=$((STEPS + 1)) ;; esac
     macos_install_homebrew
     for c in "$@"; do
+        section "$c" "$(describe_component "$c")"
         "component_$c"
     done
+    if [[ "$guided" == 1 ]]; then
+        macos_guided_permissions "$@"
+    fi
 }

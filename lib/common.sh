@@ -14,12 +14,43 @@ export cyan='\033[0;36m'
 export white='\033[0;37m'
 export nc='\033[0m' # No Color
 
-# --- Logging ---------------------------------------------------------------
-log()  { echo -e "${orange}$*${nc}"; }
-info() { echo -e "${cyan}  $*${nc}"; }
-ok()   { echo -e "${green}$*${nc}"; }
-warn() { echo -e "${purple}! $*${nc}"; }
-err()  { echo -e "${red}✗ $*${nc}" >&2; }
+# --- Output ----------------------------------------------------------------
+bold='\033[1m'
+dim='\033[2m'
+WARNINGS=()
+PENDING=()
+
+log()  { echo -e "${cyan}  ›${nc} $*"; }
+info() { echo -e "${dim}    $*${nc}"; }
+ok()   { echo -e "${green}  ✓${nc} $*"; }
+warn() { echo -e "${orange}  !${nc} $*"; WARNINGS+=("$*"); }
+err()  { echo -e "${red}  ✗ $*${nc}" >&2; }
+
+# pending <text>: a manual step left for the user, listed in the final summary.
+pending() { PENDING+=("$*"); }
+
+STEP=0
+STEPS=0
+# section <title> <subtitle>: numbered header for each component.
+section() {
+    STEP=$((STEP + 1))
+    echo -e "\n${bold}${blue}━━ [${STEP}/${STEPS}] $1${nc} ${dim}$2${nc}"
+}
+
+summary() {
+    local item
+    echo -e "\n${bold}━━ Summary${nc}"
+    if [[ "${#WARNINGS[@]}" -eq 0 ]]; then
+        ok "No warnings."
+    else
+        for item in "${WARNINGS[@]}"; do echo -e "${orange}  !${nc} $item"; done
+    fi
+    if [[ "${#PENDING[@]}" -gt 0 ]]; then
+        echo -e "\n${bold}  Still to do by hand${nc}"
+        for item in "${PENDING[@]}"; do echo -e "${blue}  →${nc} $item"; done
+    fi
+    echo -e "\n${dim}  Check everything: dotfiles doctor   ·   Undo: dotfiles rescue / dotfiles uninstall${nc}"
+}
 
 # --- Run modes ---------------------------------------------------------------
 : "${DRY_RUN:=0}"
@@ -84,7 +115,7 @@ ask_yes_no() {
     if [[ "$ASSUME_YES" == 1 ]]; then
         return 0
     fi
-    echo -e "\n${white}${prompt} (Y/n)${nc}"
+    echo -ne "\n${prompt} ${dim}[Y/n]${nc} "
     read -r input
     [[ -z "$input" || "$input" =~ ^[Yy]$ ]]
 }

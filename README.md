@@ -41,10 +41,11 @@ The installer never hides the menu bar, never starts the window manager by itsel
 | `dotfiles doctor` | Health check of everything installed (PASS / WARN / FAIL) |
 | `dotfiles rescue` | Stock keyboard (Karabiner "Plain" profile), AeroSpace stopped (windows come back on screen) and kept from starting, every macOS setting restored to its previous value |
 | `dotfiles uninstall` | `rescue` + remove every link and restore the backed-up files. Apps stay installed |
+| **Dotfiles Rescue** app | Same as `dotfiles rescue`, from Spotlight or a double click, without the keyboard layer or a terminal |
 
 The Karabiner menu-bar icon switches to the **Plain** profile at any time, without a terminal.
 
-**First run on a real Mac**: take a local snapshot first (`tmutil localsnapshot`), then go component by component: `--only terminal,claude`, then `--only wm` (approve AeroSpace under *Privacy & Security → Device Control and Data Access*, the macOS 27 name of Accessibility), then `--only keyboard` (approve Karabiner's *Privileged Daemons* under *Login Items & Extensions → Background App Activity*, its driver extension, and Karabiner-Core-Service under *Device Control and Data Access*). `dotfiles doctor` shows which approval is still missing.
+**First run on a real Mac**: take a local snapshot first (`tmutil localsnapshot`), then go component by component: `--only terminal,claude`, then `--only wm` (approve AeroSpace under *Privacy & Security → Device Control and Data Access*, the macOS 27 name of Accessibility), then `--only keyboard` (approve Karabiner's *Privileged Daemons* under *Login Items & Extensions → Background App Activity*, its driver extension, and Karabiner-Core-Service under *Device Control and Data Access*). `dotfiles doctor` shows which approval is still missing. The installer walks you through each one (step-by-step guide with screenshots: [guides/macos-permissions.md](guides/macos-permissions.md)); run it again with `dotfiles permissions`.
 
 ---
 

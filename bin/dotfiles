@@ -4,6 +4,7 @@
 #   dotfiles doctor [--only a,b]   health check of the installed setup
 #   dotfiles rescue                macOS: stock keyboard, windows back, original settings
 #   dotfiles uninstall             rescue + remove every link and restore previous files
+#   dotfiles permissions           macOS: guided one-time approvals (AeroSpace, Karabiner)
 #   dotfiles install [args]        ./install.sh [args]
 set -euo pipefail
 
@@ -31,6 +32,12 @@ case "$cmd" in
     doctor)    exec "$DOTFILES_DIR/tests/verify.sh" "$@" ;;
     rescue)    rescue_main ;;
     uninstall) uninstall_main ;;
+    permissions)
+        # shellcheck source=lib/macos-permissions.sh
+        . "$DOTFILES_DIR/lib/macos-permissions.sh"
+        STEPS=1
+        macos_guided_permissions wm keyboard
+        summary ;;
     install)   exec "$DOTFILES_DIR/install.sh" "$@" ;;
-    *)         sed -n '2,7p' "$DOTFILES_DIR/bin/dotfiles"; [[ "$cmd" == help ]] ;;
+    *)         sed -n '2,8p' "$DOTFILES_DIR/bin/dotfiles"; [[ "$cmd" == help ]] ;;
 esac

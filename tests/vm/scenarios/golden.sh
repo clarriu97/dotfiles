@@ -75,8 +75,11 @@ vnc "$VM" "combo lmeta+4"
 expect_workspace 4 "Left Option + 4 after reboot"
 vnc "$VM" "combo lmeta+1"
 
-step "dotfiles rescue with everything active"
-if remote '.local/bin/dotfiles rescue' > "$RESULTS/rescue.log" 2>&1; then pass "dotfiles rescue"; else fail "dotfiles rescue (see rescue.log)"; fi
+step "Dotfiles Rescue app with everything active (no keyboard layer, no terminal)"
+remote 'open ~/Applications/Dotfiles\ Rescue.app'
+sleep 15
+expect_remote "Karabiner switched to the Plain profile" '[ "$("/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli" --show-current-profile-name)" = Plain ]'
+vnc "$VM" "key return"
 expect_remote "AeroSpace stopped" '! pgrep -x AeroSpace'
 typed="$(capture_keys /tmp/golden-rescued.txt "combo lmeta+2" "combo rmeta+2")"
 if [[ "$typed" == "@@" ]]; then pass "after rescue both Option keys type @"; else fail "after rescue: expected '@@', got '$typed'"; fi
