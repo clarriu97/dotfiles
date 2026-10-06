@@ -6,7 +6,9 @@
     <string>dev.dotfiles.caffeine</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Applications/Caffeine.app/Contents/MacOS/Caffeine</string>
+        <string>/usr/bin/open</string>
+        <string>-g</string>
+        <string>/Applications/Caffeine.app</string>
     </array>
     <key>RunAtLoad</key>
     <true/>
