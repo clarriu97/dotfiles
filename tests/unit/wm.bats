@@ -6,7 +6,7 @@ setup() {
     KARABINER="$REPO/wm/macos/karabiner/karabiner.json"
 }
 
-@test "karabiner.json is generated from the AeroSpace bindings (run generate.sh after editing .aerospace.toml)" {
+@test "karabiner.json is generated from the AeroSpace bindings (run: just karabiner, after editing .aerospace.toml)" {
     diff <("$REPO/wm/macos/karabiner/generate.sh") "$KARABINER"
 }
 

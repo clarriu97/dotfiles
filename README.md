@@ -102,11 +102,11 @@ Spanish keyboard on macOS: the input source must be **Spanish - ISO** (System Se
 
 | Command | What it covers | Where |
 |---|---|---|
-| `make lint` | shellcheck, zsh syntax, JSON, TOML, Claude settings schema, `i3 -C` | local, CI |
-| `make test-unit` | bats: installer CLI and dry run, links, OS detection, Claude hook/status line, AeroSpace ↔ Karabiner consistency | local, CI (Ubuntu + macOS) |
-| `make test-linux DISTRO=ubuntu:24.04` | unattended install as a sudo user in a fresh container, idempotency, `doctor` | local (Docker), CI: Ubuntu 22.04/24.04/26.04, Debian 12, Fedora |
+| `just lint` | shellcheck, zsh syntax, JSON, TOML, Claude settings schema, `i3 -C` | local, CI |
+| `just test-unit` | bats: installer CLI and dry run, links, OS detection, Claude hook/status line, AeroSpace ↔ Karabiner consistency | local, CI (Ubuntu + macOS) |
+| `just test-linux ubuntu:24.04` | unattended install as a sudo user in a fresh container, idempotency, `doctor` | local (Docker), CI: Ubuntu 22.04/24.04/26.04, Debian 12, Fedora |
 | CI `macos-install` | every component on GitHub's macOS 26 and 15 runners, idempotency, `doctor` | CI |
-| `tests/vm/vm.sh run <scenario>` | disposable macOS 27 VMs ([tart](https://github.com/cirruslabs/tart)): real keystrokes, reboots, screenshots | local (Apple Silicon) |
+| `just test-vm <scenario>` | disposable macOS 27 VMs ([tart](https://github.com/cirruslabs/tart)): real keystrokes, reboots, screenshots | local (Apple Silicon) |
 
 VM scenarios (`tests/vm/scenarios/`):
 
@@ -118,8 +118,8 @@ VM scenarios (`tests/vm/scenarios/`):
 tests/vm/vm.sh base             # once: vanilla macOS -> dotfiles-base
 tests/vm/vm.sh golden           # once: install everything in dotfiles-golden
 tests/vm/vm.sh approve          # once: approve permissions by hand in the VM window
-tests/vm/vm.sh run fresh        # from dotfiles-base
-tests/vm/vm.sh run golden golden
+just test-vm fresh              # from dotfiles-base
+just test-vm golden golden
 ```
 
 ## Repository layout

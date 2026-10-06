@@ -26,7 +26,8 @@ jobs:
           shellcheck --version
       - run: npm install -g @taplo/cli
       - run: pipx install check-jsonschema
-      - run: make lint
+      - uses: extractions/setup-just@v3
+      - run: just lint
 
   unit:
     strategy:
@@ -40,7 +41,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y bats
       - if: runner.os == 'macOS'
         run: brew install bats-core
-      - run: make test-unit
+      - uses: extractions/setup-just@v3
+      - run: just test-unit
 
   linux-install:
     needs: [lint, unit]

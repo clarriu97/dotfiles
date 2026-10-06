@@ -60,7 +60,7 @@ macos_bundle() {
     macos_trust_taps "$brewfile"
     HOMEBREW_CASK_OPTS="${HOMEBREW_CASK_OPTS:-} --adopt" run_cmd brew bundle --no-upgrade --file="$brewfile" ||
         HOMEBREW_CASK_OPTS="${HOMEBREW_CASK_OPTS:-} --adopt" run_cmd brew bundle --no-upgrade --file="$brewfile" ||
-        warn "Some $1 packages failed to install (see above); continuing. 'make doctor' reports what is missing."
+        warn "Some $1 packages failed to install (see above); continuing. 'dotfiles doctor' reports what is missing."
 }
 
 # --- Terminal --------------------------------------------------------------
