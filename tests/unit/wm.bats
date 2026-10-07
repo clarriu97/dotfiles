@@ -49,3 +49,9 @@ setup() {
     grep -q '^bindsym $mod+j focus left' "$REPO/wm/linux/i3/config"
     grep -q '^bindsym $mod+ntilde focus right' "$REPO/wm/linux/i3/config"
 }
+
+@test "Left Option + d reaches Raycast's own hotkey, AeroSpace does not launch it" {
+    ! grep -q '^ctrl-alt-d ' "$AEROSPACE"
+    run jq -e '[.profiles[0].complex_modifications.rules[].manipulators[] | select(.from.key_code == "d" and .from.modifiers.mandatory == ["left_option"] and .to[0].modifiers == ["left_control", "left_option", "left_shift", "left_command"])] | length == 1' "$KARABINER"
+    [ "$status" -eq 0 ]
+}

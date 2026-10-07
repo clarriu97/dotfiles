@@ -17,6 +17,16 @@ expect_remote() {
     if remote "$@" >/dev/null 2>&1; then pass "$desc"; else fail "$desc"; fi
 }
 
+# wait_remote <description> <remote shell command> [seconds]: polls until it succeeds.
+wait_remote() {
+    local desc="$1" cmd="$2" deadline=$((SECONDS + ${3:-120}))
+    until remote "$cmd" >/dev/null 2>&1; do
+        if [[ "$SECONDS" -ge "$deadline" ]]; then fail "$desc"; return 0; fi
+        sleep 3
+    done
+    pass "$desc"
+}
+
 screenshot() { shot "$VM" "$RESULTS/screens/$1.png"; }
 
 install_dotfiles() {

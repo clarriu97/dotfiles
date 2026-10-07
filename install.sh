@@ -104,7 +104,7 @@ os_label() {
 
 echo -e "
 ${bold}${blue}  ╭───────────────────────────────────────────╮${nc}
-${bold}${blue}  │${nc}  ${bold}dotfiles${nc} ${dim}· clarriu97/dotfiles${nc}              ${bold}${blue}│${nc}
+${bold}${blue}  │${nc}  ${bold}dotfiles${nc} ${dim}· clarriu97/dotfiles${nc}            ${bold}${blue}│${nc}
 ${bold}${blue}  ╰───────────────────────────────────────────╯${nc}
 ${dim}  $(os_label) · ${ARCH}$([[ "$DRY_RUN" == 1 ]] && echo ' · dry run: nothing will change')${nc}"
 

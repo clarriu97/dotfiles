@@ -4,6 +4,8 @@
 #   ctrl-alt-KEY        <- Left Option + KEY
 #   ctrl-alt-shift-KEY  <- Left Option + Shift + KEY
 #   ctrl-alt-cmd-KEY    <- Left Option + Cmd + KEY
+# plus Left Option + d -> Ctrl+Option+Shift+Cmd+D, recorded as Raycast's hotkey:
+# launching Raycast from AeroSpace is unreliable, and Raycast also fires on Ctrl+Option+digit.
 #
 #   wm/macos/karabiner/generate.sh > wm/macos/karabiner/karabiner.json
 set -euo pipefail
@@ -11,12 +13,15 @@ set -euo pipefail
 DIR="$(cd "$(dirname "$0")" && pwd)"
 AEROSPACE="$DIR/../aerospace/.aerospace.toml"
 
-sed -n '/^\[mode\.main\.binding\]/,/^\[/p' "$AEROSPACE" |
-    sed -nE 's/^ctrl-alt-((shift|cmd)-)?([a-zA-Z0-9]+) =.*/\2 \3/p' |
+{
+    sed -n '/^\[mode\.main\.binding\]/,/^\[/p' "$AEROSPACE" |
+        sed -nE 's/^ctrl-alt-((shift|cmd)-)?([a-zA-Z0-9]+) =.*/\2 \3/p'
+    echo "raycast d"
+} |
     jq -R -n '
 def key_code: {enter: "return_or_enter", space: "spacebar", left: "left_arrow", right: "right_arrow", up: "up_arrow", down: "down_arrow", minus: "hyphen", equal: "equal_sign", leftSquareBracket: "open_bracket", rightSquareBracket: "close_bracket"}[.] // .;
-def extra: {"": [], shift: ["shift"], cmd: ["command"]}[.];
-def extra_out: {"": [], shift: ["left_shift"], cmd: ["left_command"]}[.];
+def extra: {"": [], shift: ["shift"], cmd: ["command"], raycast: []}[.];
+def extra_out: {"": [], shift: ["left_shift"], cmd: ["left_command"], raycast: ["left_shift", "left_command"]}[.];
 [inputs | split(" ") | {mod: .[0], key: (.[1] | key_code)}] as $bindings
 | {
     description: "Left Option + window-manager keys -> Ctrl+Option (AeroSpace). Generated from .aerospace.toml by generate.sh; Right Option and every other Left Option combination are untouched.",

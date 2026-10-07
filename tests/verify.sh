@@ -197,6 +197,7 @@ if want wm; then
     if [[ "$OS" == macos ]]; then
         expect_app AeroSpace
         expect_link "$HOME/.aerospace.toml" wm/macos/aerospace/.aerospace.toml
+        expect_link "$HOME/.config/aerospace/startup.sh" wm/macos/aerospace/startup.sh
         expect_cmd borders
         if pgrep -x AeroSpace >/dev/null && aerospace list-workspaces --focused >/dev/null 2>&1; then
             pass "AeroSpace running (focused workspace $(aerospace list-workspaces --focused))"
@@ -224,6 +225,13 @@ if want keyboard; then
         pass "Karabiner privileged daemon running"
     else
         warn "Karabiner privileged daemon not running (Login Items & Extensions > Background App Activity)"
+    fi
+    if [[ -d /Applications/Raycast.app ]]; then
+        if default_is com.raycast.macos raycastGlobalHotkey Control-Option-Shift-Command-2; then
+            pass "Raycast opens with Left Option + d"
+        else
+            warn "Raycast hotkey not recorded yet (Raycast settings > Raycast Hotkey > Left Option + d)"
+        fi
     fi
 fi
 

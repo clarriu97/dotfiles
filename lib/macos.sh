@@ -136,6 +136,7 @@ component_apps() {
 component_wm() {
     macos_bundle wm
     link_file "$DOTFILES_DIR/wm/macos/aerospace/.aerospace.toml" "$HOME/.aerospace.toml"
+    link_file "$DOTFILES_DIR/wm/macos/aerospace/startup.sh" "$HOME/.config/aerospace/startup.sh"
 
     log "Mission Control settings recommended by AeroSpace (reverted by 'dotfiles rescue')..."
     if [[ "$(defaults read com.apple.spaces spans-displays 2>/dev/null)" != 1 ]]; then

@@ -25,6 +25,9 @@ karabiner_daemon_running() { pgrep -u root -f Karabiner-Core-Service >/dev/null 
 karabiner_driver_enabled() { systemextensionsctl list 2>/dev/null | grep -q 'Karabiner.*\[activated enabled\]'; }
 spanish_iso_enabled() { defaults read com.apple.HIToolbox AppleEnabledInputSources 2>/dev/null | grep -q 'Spanish - ISO'; }
 needs_confirmation() { return 1; }
+# Karabiner sends Left Option + d as Ctrl+Option+Shift+Cmd+D. Raycast ignores a
+# hotkey written with defaults; it has to be recorded in its settings.
+raycast_hotkey_set() { [[ "$(defaults read com.raycast.macos raycastGlobalHotkey 2>/dev/null)" == Control-Option-Shift-Command-2 ]]; }
 
 # guide <check> <settings-url> <title> <instruction>
 #   <check> is a command that succeeds once the step is done; with
@@ -68,15 +71,21 @@ macos_guided_permissions() {
             "System Settings > $(accessibility_pane): turn on AeroSpace."
     fi
     if [[ "$components" == *" keyboard "* ]]; then
+        # Karabiner registers its background services the first time the app opens.
+        [[ "$DRY_RUN" == 1 || "$ASSUME_YES" == 1 ]] || open -a Karabiner-Elements
         guide karabiner_daemon_running "$SETTINGS_LOGIN_ITEMS" "Karabiner background service" \
             "System Settings > General > Login Items & Extensions > Background App Activity: turn on 'Karabiner-Elements Privileged Daemons v2'."
-        [[ "$DRY_RUN" == 1 || "$ASSUME_YES" == 1 ]] || open -a Karabiner-Elements
         guide karabiner_driver_enabled "" "Karabiner driver" \
             "Karabiner asks to use a driver extension: click 'Open System Settings' and turn it on (Login Items & Extensions > Driver Extensions)."
         guide needs_confirmation "$SETTINGS_PRIVACY_ACCESSIBILITY" "Karabiner core service" \
             "System Settings > $(accessibility_pane): turn on Karabiner-Core-Service."
         guide spanish_iso_enabled "$SETTINGS_KEYBOARD" "Spanish keyboard" \
             "System Settings > Keyboard > Text Input > Edit > + > Spanish - ISO."
+        if [[ -d /Applications/Raycast.app ]]; then
+            [[ "$DRY_RUN" == 1 || "$ASSUME_YES" == 1 ]] || raycast_hotkey_set || open -a Raycast
+            guide raycast_hotkey_set "" "Raycast hotkey" \
+                "Raycast: Cmd+, > General > Raycast Hotkey > click it and press Left Option + d."
+        fi
     fi
     if [[ "$components" == *" apps "* ]]; then
         pending "Optional: hide Raycast's menu-bar icon (System Settings > Menu Bar, or Raycast Settings)."

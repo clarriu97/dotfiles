@@ -40,6 +40,10 @@ Same pane as step 1 → turn on **Karabiner-Core-Service**.
 
 *Keyboard → Text Input → Edit → + → Spanish → Spanish - ISO*.
 
+## 6. Raycast hotkey
+
+Raycast → `⌘`+`,` → *General → Raycast Hotkey* → click it and press **Left Option + d** (it shows as `⌃⌥⇧⌘D`). Raycast ignores a hotkey written from a script, so this one is recorded by hand.
+
 ## If something goes wrong
 
 | Way back | How |

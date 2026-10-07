@@ -6,6 +6,14 @@
 # shellcheck disable=SC2016
 ALL=terminal,apps,wm,keyboard,desktop,claude
 
+# Signed-out first-run windows get in the way of keystrokes in the VM: Claude's
+# sign-in page turns on Secure Event Input (hidden from Karabiner's event-tap
+# fallback) and Warp's onboarding hands focus back. Signed-in apps on a real Mac
+# do neither.
+quit_signed_out_apps() {
+    remote 'osascript -e "quit app \"Claude\"" -e "quit app \"Warp\""; sleep 3; aerospace workspace 1' || true
+}
+
 focused() { remote 'aerospace list-workspaces --focused' 2>/dev/null || true; }
 
 expect_workspace() {
@@ -18,10 +26,16 @@ expect_workspace() {
 install_dotfiles "$ALL"
 doctor "$ALL"
 
+step "Approve the new apps once, as a user does on their first launch"
+remote 'xattr -dr com.apple.quarantine /Applications/*.app 2>/dev/null; killall CoreServicesUIAgent 2>/dev/null
+    open -a Stats; open /Applications/Caffeine.app' || true
+
 step "Start AeroSpace (Accessibility already approved in this image)"
 remote 'open -a AeroSpace'
-sleep 8
-expect_remote "AeroSpace answers" 'aerospace list-workspaces --focused'
+wait_remote "AeroSpace answers" 'aerospace list-workspaces --focused'
+wait_remote "startup layout opened VS Code" 'aerospace list-windows --workspace 4 --format %{app-bundle-id} | grep -qx com.microsoft.VSCode'
+sleep 12
+quit_signed_out_apps
 expect_remote "JankyBorders running" 'pgrep -x borders'
 expect_remote "Karabiner driver active" "systemextensionsctl list | grep -q 'Karabiner.*activated enabled'"
 
@@ -64,13 +78,14 @@ screenshot "3-ghostty"
 
 reboot_vm "$VM"
 step "After reboot"
-sleep 10
-expect_remote "AeroSpace started at login" 'pgrep -x AeroSpace'
-expect_remote "JankyBorders started by AeroSpace" 'pgrep -x borders'
-expect_remote "startup layout: Brave on 1" 'aerospace list-windows --workspace 1 --format %{app-bundle-id} | grep -qx com.brave.Browser'
-expect_remote "startup layout: Warp on 2" 'aerospace list-windows --workspace 2 --format %{app-bundle-id} | grep -qx dev.warp.Warp-Stable'
-expect_remote "startup layout: Claude on 3" 'aerospace list-windows --workspace 3 --format %{app-bundle-id} | grep -qx com.anthropic.claudefordesktop'
-expect_remote "startup layout: VS Code on 4" 'aerospace list-windows --workspace 4 --format %{app-bundle-id} | grep -qx com.microsoft.VSCode'
+wait_remote "AeroSpace started at login" 'pgrep -x AeroSpace'
+wait_remote "JankyBorders started by AeroSpace" 'pgrep -x borders'
+wait_remote "startup layout: Brave on 1" 'aerospace list-windows --workspace 1 --format %{app-bundle-id} | grep -qx com.brave.Browser'
+wait_remote "startup layout: Warp on 2" 'aerospace list-windows --workspace 2 --format %{app-bundle-id} | grep -qx dev.warp.Warp-Stable'
+wait_remote "startup layout: Claude on 3" 'aerospace list-windows --workspace 3 --format %{app-bundle-id} | grep -qx com.anthropic.claudefordesktop'
+wait_remote "startup layout: VS Code on 4" 'aerospace list-windows --workspace 4 --format %{app-bundle-id} | grep -qx com.microsoft.VSCode'
+sleep 12
+quit_signed_out_apps
 expect_remote "Stats started at login" 'pgrep -x Stats'
 expect_remote "Caffeine started at login" 'pgrep -x Caffeine'
 expect_remote "menu bar lists only occupied workspaces" '[ "$(aerospace list-workspaces --all | wc -l)" -lt 10 ]'
