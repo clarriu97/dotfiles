@@ -21,12 +21,18 @@ fi
 alias spo="systemctl poweroff"
 alias srb="systemctl reboot"
 alias nanoi3="nano ~/.config/i3/config"
-alias update="sudo apt-get update -y && sudo apt-get upgrade -y"   # Debian/Ubuntu
 alias xclip="xclip -selection clipboard"
 
 # --- Linux-specific functions ----------------------------------------------
 function open() { xdg-open "$1" & }
 function opemacs() { setsid emacs "$1" &>/dev/null; }
+function update() {
+    if command -v dnf &>/dev/null; then
+        sudo dnf upgrade -y --refresh
+    else
+        sudo apt-get update -y && sudo apt-get upgrade -y
+    fi
+}
 function ss() { flameshot gui; }                       # screenshot
 function rmk() {                                       # secure delete
     scrub -p dod "$1"
