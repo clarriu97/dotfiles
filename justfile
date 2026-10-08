@@ -28,3 +28,9 @@ doctor *args:
 # Regenerate karabiner.json from the AeroSpace bindings
 karabiner:
     wm/macos/karabiner/generate.sh > wm/macos/karabiner/karabiner.json
+
+# Record the README terminal GIFs (needs vhs)
+demos:
+    demos/sandbox.sh /tmp/dotfiles-demo
+    vhs demos/shell.tape
+    vhs demos/installer.tape

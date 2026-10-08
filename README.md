@@ -1,57 +1,123 @@
-# Dotfiles — cross-platform dev environment (macOS · Ubuntu · Fedora)
+<div align="center">
 
-[![CI](https://github.com/clarriu97/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/clarriu97/dotfiles/actions/workflows/ci.yml) [![OS: macOS](https://img.shields.io/badge/OS-macOS-black)](#) [![OS: Linux](https://img.shields.io/badge/OS-Linux-blue)](#) [![Tiling WM](https://img.shields.io/badge/tiling-i3%20%2F%20AeroSpace-brightgreen)](#) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
+# ⌨️ dotfiles
 
-![ScreenRecord](images/screenrecord.gif)
+**One command. Same keyboard-driven setup on macOS, Ubuntu, Debian and Fedora.**
 
-One installer for a consistent, keyboard-driven setup on **macOS, Ubuntu/Debian and Fedora**: zsh with powerlevel10k, Warp and Ghostty, i3-style tiling (i3 on Linux, AeroSpace on macOS) with the **same keys on both**, and Claude Code (CLI + Desktop) with a versioned configuration.
+Tiling windows · a fast, good-looking terminal · Claude Code ready to go
 
-Everything is tested before it reaches a real machine: lint and unit tests, full installs in Linux containers and on macOS runners in CI, and end-to-end scenarios in disposable macOS VMs (see [Testing](#testing)).
+[![CI](https://img.shields.io/github/actions/workflow/status/clarriu97/dotfiles/ci.yml?branch=master&style=for-the-badge&logo=githubactions&logoColor=white&label=CI)](https://github.com/clarriu97/dotfiles/actions/workflows/ci.yml)
+[![macOS](https://img.shields.io/badge/macOS-13%E2%86%9227-000000?style=for-the-badge&logo=apple&logoColor=white)](#-macos)
+[![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20%C2%B7%2024.04%20%C2%B7%2026.04-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)](#-ubuntu--debian)
+[![Debian](https://img.shields.io/badge/Debian-12-A81D33?style=for-the-badge&logo=debian&logoColor=white)](#-ubuntu--debian)
+[![Fedora](https://img.shields.io/badge/Fedora-latest-51A2DA?style=for-the-badge&logo=fedora&logoColor=white)](#-fedora)
+
+[![zsh](https://img.shields.io/badge/shell-zsh-89e051?style=flat-square&logo=gnubash&logoColor=white)](shell/.zshrc)
+[![Tiling](https://img.shields.io/badge/tiling-i3%20%C2%B7%20AeroSpace-7aa2f7?style=flat-square)](#-window-manager-keys)
+[![Theme](https://img.shields.io/badge/theme-Tokyo%20Night-bb9af7?style=flat-square)](terminal/)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-ready-D97757?style=flat-square&logo=anthropic&logoColor=white)](claude/README.md)
+[![Tested in VMs](https://img.shields.io/badge/tested%20in-real%20macOS%20VMs-success?style=flat-square)](#-tested-before-it-touches-your-machine)
+[![just](https://img.shields.io/badge/runner-just-f2b866?style=flat-square)](justfile)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow?style=flat-square)](LICENSE)
+
+<img src="images/readme/macos-desktop.png" alt="macOS with AeroSpace: Ghostty, Brave and Finder tiled, workspaces in the menu bar" width="900">
+
+</div>
 
 ---
 
-## Install
+## ✨ What you get
+
+| | |
+|---|---|
+| 🪟 **Tiling windows** | Windows arrange themselves. Move, resize and switch workspaces from the keyboard. i3 on Linux, AeroSpace on macOS, **same keys on both**. |
+| 🐚 **A terminal you'll like** | zsh + powerlevel10k prompt, smart `cd`, fuzzy search for files and history, colored `ls` and `cat`. Warp and Ghostty, Tokyo Night theme. |
+| 🤖 **Claude Code** | CLI + Desktop installed and configured: safe defaults, status line, plugins, your personal rules. [Details](claude/README.md) |
+| 🛟 **Safe to try** | Dry run first, everything it replaces is backed up, and there is a panic button that puts your Mac back to stock. |
+
+## 🚀 Quick start
 
 ```bash
-git clone https://github.com/clarriu97/dotfiles
-cd dotfiles
-./install.sh --dry-run        # see exactly what would happen, changes nothing
-./install.sh                  # interactive: pick components
+git clone https://github.com/clarriu97/dotfiles ~/dotfiles
+cd ~/dotfiles
+./install.sh --dry-run    # shows what would happen, changes nothing
+./install.sh              # pick what to install
 ```
 
-Unattended: `./install.sh --yes --only terminal,claude`. Components:
+<img src="images/readme/installer.gif" alt="Installer in dry-run mode" width="800">
 
-| Component | macOS | Linux |
+Pick only some parts, without questions:
+
+```bash
+./install.sh --yes --only terminal,claude
+```
+
+| Part | macOS | Linux |
 |---|---|---|
-| `terminal` | zsh + p10k, CLI tools (fzf, zoxide, bat, lsd, ripgrep, fd…), Warp + Ghostty, Nerd Font | same, Warp |
-| `apps` | VS Code, Brave, Raycast, Stats + Caffeine in the menu bar (started at login) | VS Code, Brave |
-| `wm` | AeroSpace + JankyBorders; native menu bar kept, showing every occupied workspace | i3 + polybar |
-| `keyboard` | Karabiner-Elements: Left Option = window-manager key | — |
-| `desktop` | Dock auto-hide, Finder extensions/path bar, key repeat | — |
-| `claude` | Claude Code CLI + Desktop + config ([details](claude/README.md)) | CLI (+ Desktop on Ubuntu/Debian) |
+| `terminal` | zsh, powerlevel10k, CLI tools, Warp + Ghostty, Nerd Font | same, with Warp |
+| `apps` | VS Code, Brave, Raycast, Stats + Caffeine in the menu bar | VS Code, Brave |
+| `wm` | AeroSpace tiling + window borders | i3 + polybar |
+| `keyboard` | Left Option becomes the window-manager key | — |
+| `desktop` | Dock auto-hide, Finder tweaks, fast key repeat | — |
+| `claude` | Claude Code CLI + Desktop + config | CLI (+ Desktop on Ubuntu/Debian) |
 
-Configuration is **symlinked** from the repo (edit the repo, the change is live). Any file it replaces is backed up as `*.bak-<date>`. Machine-specific shell settings go in `~/.zshrc.local` (not versioned).
+## 💻 Install on your OS
 
-## Safety net (macOS)
+### 🍎 macOS
 
-The installer never hides the menu bar, never starts the window manager by itself, and every macOS setting it changes is recorded first.
+Needs nothing but `git` (macOS asks to install it the first time you type `git`). Homebrew is installed for you.
 
-| Command | What it does |
+```bash
+tmutil localsnapshot      # optional: a restore point, just in case
+./install.sh
+```
+
+macOS doesn't let scripts approve some permissions, so the installer **walks you through them**: it opens the right settings page, tells you which switch to turn on, and continues by itself when it's done. Step-by-step with screenshots: [guides/macos-permissions.md](guides/macos-permissions.md). Run it again any time with `dotfiles permissions`.
+
+After a restart you get **Brave on workspace 1, Warp on 2, Claude on 3 and VS Code on 4**. The menu bar shows every workspace that has windows, next to Stats (CPU, RAM, disk) and Caffeine.
+
+### 🐧 Ubuntu / Debian
+
+```bash
+sudo apt install -y git
+git clone https://github.com/clarriu97/dotfiles ~/dotfiles && cd ~/dotfiles
+./install.sh
+```
+
+Log out and pick **i3** on the login screen.
+
+<img src="images/readme/linux-i3.gif" alt="i3 on Ubuntu" width="800">
+
+### 🎩 Fedora
+
+```bash
+sudo dnf install -y git
+git clone https://github.com/clarriu97/dotfiles ~/dotfiles && cd ~/dotfiles
+./install.sh
+```
+
+Log out and pick **i3** on the login screen.
+
+## ⌨️ Window manager keys
+
+**Mod** = `Win` on Linux, **left** `Option` on macOS (same place on the keyboard). The **right** `Option` key still types `@ # | [ ] { }` on a Spanish keyboard.
+
+| Do this | Press |
 |---|---|
-| `dotfiles doctor` | Health check of everything installed (PASS / WARN / FAIL) |
-| `dotfiles rescue` | Stock keyboard (Karabiner "Plain" profile), AeroSpace stopped (windows come back on screen) and kept from starting, every macOS setting restored to its previous value |
-| `dotfiles uninstall` | `rescue` + remove every link and restore the backed-up files. Apps stay installed |
-| **Dotfiles Rescue** app | Same as `dotfiles rescue`, from Spotlight or a double click, without the keyboard layer or a terminal |
+| Open a terminal | `Mod` + `Enter` |
+| App launcher (rofi / Raycast) | `Mod` + `d` |
+| Move focus | `Mod` + `j` `k` `l` `ñ` or arrows |
+| Move the window | `Mod` + `Shift` + `j` `k` `l` `ñ` or arrows |
+| Go to workspace 1–10 | `Mod` + `1` … `0` |
+| Send window to workspace | `Mod` + `Shift` + `1` … `0` |
+| Previous workspace | `Mod` + `Tab` |
+| Fullscreen / floating | `Mod` + `f` / `Mod` + `Shift` + `Space` |
+| Close window | `Mod` + `Shift` + `q` |
+| Resize | `Mod` + `r`, then arrows, `Esc` to finish |
+| Lock screen | `Mod` + `Shift` + `x` |
 
-The Karabiner menu-bar icon switches to the **Plain** profile at any time, without a terminal.
-
-**First run on a real Mac**: take a local snapshot first (`tmutil localsnapshot`), then go component by component: `--only terminal,claude`, then `--only wm` (approve AeroSpace under *Privacy & Security → Device Control and Data Access*, the macOS 27 name of Accessibility), then `--only keyboard` (approve Karabiner's *Privileged Daemons* under *Login Items & Extensions → Background App Activity*, its driver extension, and Karabiner-Core-Service under *Device Control and Data Access*). `dotfiles doctor` shows which approval is still missing. The installer walks you through each one (step-by-step guide with screenshots: [guides/macos-permissions.md](guides/macos-permissions.md)); run it again with `dotfiles permissions`.
-
----
-
-## Window manager keys
-
-The modifier is **Super/Win** on i3 and **LEFT Option** on macOS (same physical spot on a PC keyboard). On macOS the **RIGHT Option** key is untouched, so `@ # | [ ] { } \ ~` keep working like AltGr on Linux. Only the exact combinations below are taken; every other Left Option combination still types or reaches the terminal as Alt.
+<details>
+<summary>All keys, side by side</summary>
 
 | Action | i3 (Linux) | AeroSpace (macOS) |
 |---|---|---|
@@ -64,7 +130,7 @@ The modifier is **Super/Win** on i3 and **LEFT Option** on macOS (same physical 
 | Previous workspace | `Win`+`Tab` | `L⌥`+`Tab` |
 | Workspace to other monitor | `Win`+`Ctrl`+`<` / `>` | `L⌥`+`⌘`+`j/ñ` or arrows |
 | Fullscreen / floating | `Win`+`f` / `Win`+`Shift`+`Space` | `L⌥`+`f` / `L⌥`+`Shift`+`Space` |
-| Stacking / tabbed / toggle split | `Win`+`s` / `w` / `e` | `L⌥`+`s` / `w` / `e` (accordion / tiles) |
+| Stacking / tabbed / toggle split | `Win`+`s` / `w` / `e` | `L⌥`+`s` / `w` / `e` |
 | Close window | `Win`+`Shift`+`q` | `L⌥`+`Shift`+`q` |
 | Resize mode (j/k/l/ñ, Esc) | `Win`+`r` | `L⌥`+`r` |
 | Shrink / grow / balance | — | `L⌥`+`-` / `L⌥`+`+` / `L⌥`+`b` |
@@ -74,69 +140,105 @@ The modifier is **Super/Win** on i3 and **LEFT Option** on macOS (same physical 
 | Home folder | `Win`+`Ctrl`+`e` | `L⌥`+`⌘`+`e` |
 | Lock | `Win`+`Shift`+`x` | `L⌥`+`Shift`+`x` |
 
-At login AeroSpace opens **Brave on 1, Warp on 2, Claude on 3 and VS Code on 4** and lands on workspace 1. Brave, Claude and VS Code always go to their workspace; Warp only at startup, so `L⌥`+`Enter` still opens a terminal where you are.
+</details>
 
-`$mod+Ctrl` on i3 becomes `L⌥`+`⌘` on macOS. Karabiner's rules are generated from `.aerospace.toml` (`wm/macos/karabiner/generate.sh`), and a test fails if they drift apart.
+## 🐚 Terminal
 
-Spanish keyboard on macOS: the input source must be **Spanish - ISO** (System Settings → Keyboard → Text Input).
+<img src="images/readme/shell.gif" alt="Terminal tour: z, lsd, bat, fzf" width="800">
 
-## Terminal keys and navigation
+| Try this | What it does |
+|---|---|
+| `z weather` | Jump to a folder you visited before, typing only part of its name |
+| `zi` | Same, but pick from a list |
+| `..` | Go up one folder (no `cd` needed) |
+| `cd -` | Back to the previous folder |
+| `Ctrl` + `T` | Fuzzy-find a file and paste its path |
+| `Ctrl` + `R` | Fuzzy-search your command history |
+| `Alt` + `C` | Fuzzy-find a folder and go there |
+| `Ctrl` + `←` / `→` | Jump word by word |
 
-| Action | Linux | macOS (Warp / Ghostty) |
-|---|---|---|
-| Jump word | `Ctrl`+`←/→` | `Ctrl`+`←/→` (freed from Mission Control) |
-| Line start / end | `Alt`+`←/→` | `⌘`+`←/→` |
-| Fuzzy file / history / cd | `Ctrl`+`T` / `Ctrl`+`R` / `Alt`+`C` | same (`Alt` = Left Option in Ghostty) |
-| Smart cd | `z <part of path>`, `zi` | same |
-| cd without `cd`, recent dirs | `..`, `cd -<Tab>` | same |
+Handy aliases:
 
-## Aliases and functions
+| Alias | Runs |
+|---|---|
+| `l` | `ls -al` with icons and colors (lsd) |
+| `cat` | `bat`: syntax highlighting and line numbers |
+| `gs` · `gd` · `ga` · `gp` | git status · diff · add · push the current branch |
+| `gtree` | git log as a graph |
+| `update` | update all packages (brew, apt or dnf) |
+| `mkcd <dir>` | create a folder and go into it |
+| `ss` | screenshot (clipboard on macOS, flameshot on Linux) |
 
-- `l` → `ls -al` (lsd) · `cat` → `bat` (`batcat` on Debian/Ubuntu)
-- `gs` `gd` `ga` · `gp` → push current branch · `gtree` → log graph
-- `update` (apt/dnf/brew) · `reload` · `mkcd <dir>` · `sizeof <path>` · `ss` (screenshot)
+Your own tweaks go in `~/.zshrc.local` (not versioned, loaded last).
 
----
+## 🛟 The `dotfiles` command
 
-## Testing
+```console
+$ dotfiles doctor
+PASS link ~/.zshrc
+PASS command fzf
+PASS zsh -i starts without errors (119 ms)
+PASS AeroSpace running (focused workspace 1)
+PASS Karabiner privileged daemon running
+...
+All checks passed, 0 warning(s)
+```
 
-| Command | What it covers | Where |
-|---|---|---|
-| `just lint` | shellcheck, zsh syntax, JSON, TOML, Claude settings schema, `i3 -C` | local, CI |
-| `just test-unit` | bats: installer CLI and dry run, links, OS detection, Claude hook/status line, AeroSpace ↔ Karabiner consistency | local, CI (Ubuntu + macOS) |
-| `just test-linux ubuntu:24.04` | unattended install as a sudo user in a fresh container, idempotency, `doctor` | local (Docker), CI: Ubuntu 22.04/24.04/26.04, Debian 12, Fedora |
-| CI `macos-install` | every component on GitHub's macOS 26 and 15 runners, idempotency, `doctor` | CI |
-| `just test-vm <scenario>` | disposable macOS 27 VMs ([tart](https://github.com/cirruslabs/tart)): real keystrokes, reboots, screenshots | local (Apple Silicon) |
+| Command | What it does |
+|---|---|
+| `dotfiles doctor` | Checks that everything is installed and working |
+| `dotfiles permissions` | Walks you through the macOS approvals again |
+| `dotfiles rescue` | 🚨 Panic button: stock keyboard, windows back on screen, original macOS settings |
+| `dotfiles uninstall` | Removes every link and puts your old files back |
 
-VM scenarios (`tests/vm/scenarios/`):
+No terminal at hand? Open **Dotfiles Rescue** from Spotlight: same as `dotfiles rescue`, works even if the keyboard setup is broken.
 
-- `smoke` — the harness itself: boot, desktop, Spanish ISO keystrokes.
-- `fresh` — what once broke a real Mac: install everything with **no permission approved**, reboot, keyboard and desktop must be untouched; then `rescue` and `uninstall`.
-- `golden` — permissions approved: `L⌥`+digits switch workspaces, `R⌥` still types `@ # |`, windows move, AeroSpace starts at login, `rescue` restores the stock keyboard.
+## 🔧 Make it yours
+
+The configuration is **linked** from this repo: edit a file here and the change is live. Common tasks have a [`just`](https://github.com/casey/just) recipe:
 
 ```bash
-tests/vm/vm.sh base             # once: vanilla macOS -> dotfiles-base
-tests/vm/vm.sh golden           # once: install everything in dotfiles-golden
-tests/vm/vm.sh approve          # once: approve permissions by hand in the VM window
-just test-vm fresh              # from dotfiles-base
-just test-vm golden golden
+just            # list recipes
+just doctor     # health check
+just lint       # shellcheck, zsh syntax, JSON, TOML
+just test       # lint + unit tests
+just karabiner  # after changing AeroSpace keys
+just demos      # re-record the GIFs in this README
 ```
 
-## Repository layout
+## 🧪 Tested before it touches your machine
+
+Every change runs through:
+
+- **Lint + unit tests** (shellcheck, bats) on Ubuntu and macOS.
+- **Full installs** in fresh Ubuntu 22.04 / 24.04 / 26.04, Debian 12 and Fedora containers, and on GitHub's macOS 15 and 26 runners. A second run must change nothing.
+- **Real macOS VMs** ([tart](https://github.com/cirruslabs/tart)) with real keystrokes and reboots: a Mac with no permissions approved, a Mac with everything approved, and a Mac that is already in use.
+
+```bash
+just test            # lint + unit tests
+just test-linux      # full install in a container
+just test-vm fresh   # macOS VM (Apple Silicon)
+```
+
+<details>
+<summary>Repository layout</summary>
 
 ```
-install.sh              entry point (components, --dry-run, --yes, --only)
-bin/dotfiles            doctor / rescue / uninstall
-lib/                    common, detect, macos (+ defaults recorder), ubuntu, fedora, claude, rescue
-packages/               Brewfiles per component, apt / dnf lists
-shell/                  .zshrc + per-OS fragments, p10k, vendored plugins (Linux)
-terminal/               Ghostty config, Warp theme
-wm/linux/               i3, polybar
-wm/macos/               AeroSpace (+ rescue config), Karabiner (generated)
-claude/                 CLAUDE.md, settings, status line, hooks, skills
-tests/                  lint, bats, verify (doctor), Linux containers, macOS VMs
+install.sh        the installer
+bin/dotfiles      doctor · permissions · rescue · uninstall
+lib/              installer code per OS
+packages/         package lists (Brewfiles, apt, dnf)
+shell/            .zshrc, prompt, plugins
+terminal/         Ghostty and Warp
+wm/               i3 + polybar (Linux), AeroSpace + Karabiner (macOS)
+claude/           Claude Code config
+guides/           step-by-step guides
+demos/            scripts that record the README GIFs
+tests/            lint, unit, containers, macOS VMs
 ```
 
-## License
+</details>
+
+## 📄 License
 
 [MIT](LICENSE)
