@@ -1,0 +1,31 @@
+name: agent-skills update summary
+
+on:
+  pull_request:
+    paths:
+      - vendor/agent-skills
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  summary:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: true
+          fetch-depth: 2
+      - name: Summarize the upstream changes
+        run: |
+          old="$(git ls-tree HEAD^1 vendor/agent-skills | awk '{print $3}')"
+          new="$(git ls-tree HEAD vendor/agent-skills | awk '{print $3}')"
+          git -C vendor/agent-skills fetch --quiet --unshallow origin || git -C vendor/agent-skills fetch --quiet origin
+          claude/agent-skills-diff.sh "$old" "$new" > summary.md
+          cat summary.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Comment on the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: gh pr comment "$PR" --body-file summary.md --edit-last --create-if-none

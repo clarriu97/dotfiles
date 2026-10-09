@@ -53,6 +53,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: true
       - run: tests/linux/run.sh "${{ matrix.image }}" terminal,apps,wm,claude
 
   macos-install:
@@ -64,6 +66,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: true
       - name: Install every component
         run: ./install.sh --yes
       - name: Second run is a no-op for links

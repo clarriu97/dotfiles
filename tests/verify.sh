@@ -251,6 +251,8 @@ if want claude; then
     expect_link "$HOME/.claude/settings.json" claude/settings.json
     expect_link "$HOME/.claude/statusline.sh" claude/statusline.sh
     expect_link "$HOME/.claude/hooks" claude/hooks
+    expect "link $HOME/.claude/dotfiles (local plugin marketplace)" test "$(readlink "$HOME/.claude/dotfiles")" = "$DOTFILES_DIR"
+    expect "vendored agent-skills checked out" test -f "$DOTFILES_DIR/vendor/agent-skills/.claude-plugin/plugin.json"
     for skill in "$DOTFILES_DIR"/claude/skills/*/; do
         skill="${skill%/}"
         expect_link "$HOME/.claude/skills/${skill##*/}" "claude/skills/${skill##*/}"

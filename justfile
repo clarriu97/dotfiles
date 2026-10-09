@@ -29,6 +29,15 @@ doctor *args:
 karabiner:
     wm/macos/karabiner/generate.sh > wm/macos/karabiner/karabiner.json
 
+# What changed upstream in addyosmani/agent-skills since the pinned commit
+agent-skills-diff *commits:
+    claude/agent-skills-diff.sh {{commits}}
+
+# After merging an agent-skills bump: check out the pinned commit (the plugin loads in place)
+agent-skills-sync:
+    git submodule update --init vendor/agent-skills
+    @echo "Run /reload-plugins in open Claude sessions."
+
 # Record the README terminal GIFs (needs vhs)
 demos:
     demos/sandbox.sh /tmp/dotfiles-demo

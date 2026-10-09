@@ -4,6 +4,7 @@
 
 CLAUDE_BIN="$HOME/.local/bin/claude"
 CLAUDE_MARKETPLACE="anthropics/claude-plugins-official"
+CLAUDE_LOCAL_MARKETPLACE="$HOME/.claude/dotfiles"
 
 claude_install_cli() {
     if [[ -x "$CLAUDE_BIN" ]]; then
@@ -55,9 +56,19 @@ claude_ensure_jq() {
     fi
 }
 
+claude_vendor_plugins() {
+    if [[ -f "$DOTFILES_DIR/vendor/agent-skills/.claude-plugin/plugin.json" ]]; then
+        return 0
+    fi
+    log "Fetching vendored Claude Code plugins (git submodules)..."
+    run_cmd git -C "$DOTFILES_DIR" submodule update --init vendor/agent-skills ||
+        warn "Could not fetch vendor/agent-skills."
+}
+
 claude_link_config() {
     local skill
     log "Linking Claude Code configuration..."
+    link_file "$DOTFILES_DIR"                      "$CLAUDE_LOCAL_MARKETPLACE"
     link_file "$DOTFILES_DIR/claude/CLAUDE.md"     "$HOME/.claude/CLAUDE.md"
     link_file "$DOTFILES_DIR/claude/settings.json" "$HOME/.claude/settings.json"
     link_file "$DOTFILES_DIR/claude/statusline.sh" "$HOME/.claude/statusline.sh"
@@ -77,6 +88,11 @@ claude_install_plugins() {
     log "Installing Claude Code plugins..."
     "$CLAUDE_BIN" plugin marketplace add "$CLAUDE_MARKETPLACE" >/dev/null ||
         warn "Could not add the $CLAUDE_MARKETPLACE marketplace."
+    # settings.json declares the local marketplace with a "~" path that Claude expands at
+    # session start; the CLI does not, so register it under a throwaway project's local
+    # scope to keep the absolute path out of the versioned settings.json.
+    (cd "$(mktemp -d)" && "$CLAUDE_BIN" plugin marketplace add "$CLAUDE_LOCAL_MARKETPLACE" --scope local >/dev/null) ||
+        warn "Could not add the local dotfiles marketplace."
     jq -r '.enabledPlugins // {} | to_entries[] | select(.value == true) | .key' \
         "$DOTFILES_DIR/claude/settings.json" | while read -r plugin; do
         "$CLAUDE_BIN" plugin install "$plugin" --scope user </dev/null ||
@@ -88,6 +104,7 @@ component_claude() {
     claude_install_cli
     claude_install_desktop
     claude_ensure_jq
+    claude_vendor_plugins
     claude_link_config
     claude_install_plugins
     ok "Claude Code ready. Run 'claude' once to sign in."

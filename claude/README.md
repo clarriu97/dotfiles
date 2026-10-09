@@ -21,6 +21,7 @@ A Homebrew `claude-code` cask, if present, is removed: two installs on `PATH` me
 | `hooks/guard-bash.sh` | Blocks `rm -rf /` or `~`, force pushes (use `--force-with-lease`), disk formatting, `csrutil disable` |
 | `skills/catchup` | `/catchup`: rebuilds context on the current branch after `/clear` |
 | `skills/handoff` | `/handoff`: writes an untracked `HANDOFF.md` before ending a session |
+| `dotfiles` | Link to this repo, the local plugin marketplace that serves `vendor/agent-skills` |
 
 `settings.json` is a symlink into this repo. When you approve "always allow" or change `/config`, Claude writes through the link, so the change shows up in `git diff`: commit what you want to keep. Machine-specific settings go in `~/.claude/settings.local.json` (not versioned). The file is stored in the key order Claude writes, so installing plugins does not create a diff (CI checks this).
 
@@ -29,12 +30,21 @@ A Homebrew `claude-code` cask, if present, is removed: two installs on `PATH` me
 | Plugin | How it is used | Example |
 |---|---|---|
 | `commit-commands` | You type the command | `/commit` after a change: stages, writes a Conventional Commit. `/commit-push-pr` opens the PR. `/clean_gone` deletes local branches already merged and gone on the remote |
-| `pr-review-toolkit` | You type the command, or ask for a review | `/pr-review-toolkit:review-pr` before merging: specialised agents check tests, silent failures, comments, types and simplifications |
+| `agent-skills` | You type the command, or it triggers from what you ask | `/agent-skills:spec` → `/agent-skills:plan` → `/agent-skills:build` → `/agent-skills:review` for a feature; see [the workflow guide](../guides/claude-workflow.md) |
 | `security-guidance` | Automatic (hook) | While Claude edits, it warns about risky patterns (shell injection, `eval`, secrets in code…) without being asked |
 | `claude-md-management` | You type the command | `/revise-claude-md` at the end of a session: proposes updates to the repo's CLAUDE.md with what was learned |
 | `context7` | Automatic (MCP tool), or ask for it | "How do I configure X in library Y? use context7": Claude reads the current docs of the version you use instead of guessing |
 
 To add one: put `"name@claude-plugins-official": true` in `enabledPlugins` and re-run `./install.sh --only claude`.
+
+## agent-skills (vendored)
+
+[addyosmani/agent-skills](https://github.com/addyosmani/agent-skills) is a git submodule at `vendor/agent-skills`, pinned to a commit and served by the local `dotfiles` marketplace (`.claude-plugin/marketplace.json`). Its own marketplace would install upstream `HEAD`; the submodule makes every update a reviewed pull request, since skills are instructions Claude runs with your permissions.
+
+- **Monthly update**: Dependabot opens a PR bumping the submodule, assigned to you. A workflow comments on it with the version change, skills added/removed/modified, changed descriptions (they decide when a skill triggers), command/agent changes, commits and files.
+- **Check now**: `just agent-skills-diff` compares the pinned commit with upstream (`just agent-skills-diff <old> <new>` for any range).
+- **After merging a bump**: `git pull` and `just agent-skills-sync`, then `/reload-plugins` in open sessions.
+- **Fresh clone**: the installer runs `git submodule update --init` (or clone with `--recurse-submodules`).
 
 `.env` files: `settings.json` denies the **Read** tool on `.env*`, so secrets never end up in the conversation. Commands still get the variables (`set -a; . ./.env; set +a; <command>` or a `just` recipe with `set dotenv-load`), because the deny only applies to reading the file into the context.
 

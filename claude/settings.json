@@ -49,16 +49,22 @@
   },
   "enabledPlugins": {
     "commit-commands@claude-plugins-official": true,
-    "pr-review-toolkit@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
-    "context7@claude-plugins-official": true
+    "context7@claude-plugins-official": true,
+    "agent-skills@dotfiles": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
       "source": {
         "source": "github",
         "repo": "anthropics/claude-plugins-official"
+      }
+    },
+    "dotfiles": {
+      "source": {
+        "source": "directory",
+        "path": "~/.claude/dotfiles"
       }
     }
   },
