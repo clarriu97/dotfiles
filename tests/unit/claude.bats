@@ -67,3 +67,45 @@ guard() {
     run jq -e '(.extraKnownMarketplaces | keys) as $m | [.enabledPlugins | keys[] | split("@")[1]] | all(. as $x | $m | index($x))' "$REPO/claude/settings.json"
     [ "$status" -eq 0 ]
 }
+
+skills_repo() {
+    local dir="$BATS_TEST_TMPDIR/agent-skills"
+    git init -q "$dir"
+    git -C "$dir" config user.email t@t
+    git -C "$dir" config user.name t
+    mkdir -p "$dir/.claude-plugin" "$dir/skills/kept" "$dir/skills/dropped" "$dir/.claude/commands"
+    echo '{"version": "1.0.0"}' > "$dir/.claude-plugin/plugin.json"
+    printf -- '---\nname: kept\ndescription: Old trigger.\n---\nBody\n' > "$dir/skills/kept/SKILL.md"
+    printf -- '---\nname: dropped\ndescription: Gone.\n---\n' > "$dir/skills/dropped/SKILL.md"
+    echo build > "$dir/.claude/commands/build.md"
+    git -C "$dir" add -A && git -C "$dir" commit -qm "initial"
+    echo '{"version": "1.1.0"}' > "$dir/.claude-plugin/plugin.json"
+    printf -- '---\nname: kept\ndescription: New trigger.\n---\nBody\n' > "$dir/skills/kept/SKILL.md"
+    git -C "$dir" rm -rq skills/dropped
+    mkdir -p "$dir/skills/fresh"
+    printf -- '---\nname: fresh\ndescription: New skill.\n---\n' > "$dir/skills/fresh/SKILL.md"
+    echo spec > "$dir/.claude/commands/spec.md"
+    git -C "$dir" add -A && git -C "$dir" commit -qm "add fresh, drop dropped"
+    echo "$dir"
+}
+
+@test "agent-skills diff summarizes versions, skills, descriptions and commands" {
+    dir="$(skills_repo)"
+    run env AGENT_SKILLS_DIR="$dir" "$REPO/claude/agent-skills-diff.sh" HEAD~1 HEAD
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"agent-skills 1.0.0 → 1.1.0"* ]]
+    [[ "$output" == *"Added: \`fresh\`"* ]]
+    [[ "$output" == *"Removed: \`dropped\`"* ]]
+    [[ "$output" == *"Modified: \`kept\`"* ]]
+    [[ "$output" == *"before: Old trigger."* ]]
+    [[ "$output" == *"after: New trigger."* ]]
+    [[ "$output" == *"added: .claude/commands/spec.md"* ]]
+    [[ "$output" == *"add fresh, drop dropped"* ]]
+}
+
+@test "agent-skills diff reports when nothing changed" {
+    dir="$(skills_repo)"
+    run env AGENT_SKILLS_DIR="$dir" "$REPO/claude/agent-skills-diff.sh" HEAD HEAD
+    [ "$status" -eq 0 ]
+    [[ "$output" == *"up to date"* ]]
+}
