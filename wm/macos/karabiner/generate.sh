@@ -6,6 +6,7 @@
 #   ctrl-alt-cmd-KEY    <- Left Option + Cmd + KEY
 # plus Left Option + d -> Ctrl+Option+Shift+Cmd+D, recorded as Raycast's hotkey:
 # launching Raycast from AeroSpace is unreliable, and Raycast also fires on Ctrl+Option+digit.
+# Left Option + w is left alone in Brave, where the Clut extension uses it to cycle last-used tabs.
 #
 #   wm/macos/karabiner/generate.sh > wm/macos/karabiner/karabiner.json
 set -euo pipefail
@@ -21,15 +22,17 @@ AEROSPACE="$DIR/../aerospace/.aerospace.toml"
     jq -R -n '
 def key_code: {enter: "return_or_enter", space: "spacebar", left: "left_arrow", right: "right_arrow", up: "up_arrow", down: "down_arrow", minus: "hyphen", equal: "equal_sign", leftSquareBracket: "open_bracket", rightSquareBracket: "close_bracket"}[.] // .;
 def extra: {"": [], shift: ["shift"], cmd: ["command"], raycast: []}[.];
+def brave_owned: .mod == "" and .key == "w";
 def extra_out: {"": [], shift: ["left_shift"], cmd: ["left_command"], raycast: ["left_shift", "left_command"]}[.];
 [inputs | split(" ") | {mod: .[0], key: (.[1] | key_code)}] as $bindings
 | {
     description: "Left Option + window-manager keys -> Ctrl+Option (AeroSpace). Generated from .aerospace.toml by generate.sh; Right Option and every other Left Option combination are untouched.",
     manipulators: [ $bindings[] | {
       type: "basic",
+      conditions: (if brave_owned then [{type: "frontmost_application_unless", bundle_identifiers: ["^com\\.brave\\.Browser$"]}] else null end),
       from: { key_code: .key, modifiers: { mandatory: (["left_option"] + (.mod | extra)) } },
       to: [ { key_code: .key, modifiers: (["left_control", "left_option"] + (.mod | extra_out)) } ]
-    } ]
+    } | with_entries(select(.value != null)) ]
   } as $rule
 | def profile($name; $selected; $rules): {
     name: $name,
