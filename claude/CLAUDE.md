@@ -21,6 +21,14 @@
 - Repositories without a task runner get a `justfile`.
 - If a repository uses a `Makefile`, recommend migrating it to a `justfile` and offer to do it; until then, use the `make` targets.
 
+## Development Workflow: agent-skills
+
+- For features and significant changes follow the agent-skills lifecycle: `interview-me` when the ask is underspecified, then `/agent-skills:spec`, `/agent-skills:plan`, `/agent-skills:build`, `/agent-skills:review`. Small or mechanical changes skip it.
+- Specs live in `docs/specs/YYYY-MM-DD-<slug>.md`, never `SPEC.md` at the root. They start with a `Status:` line (draft, accepted, implemented, superseded) and are committed with the change. Never rewrite an implemented spec: write a new one and mark the old one superseded.
+- `tasks/` (plan and todo lists) is local working state: add it to `.git/info/exclude` and never commit it.
+- `/agent-skills:build` commits on the feature branch, one commit per task.
+- Quality checks are `just` recipes (`check-fast`, `check-task`, `check-full`), never `package.json` scripts. Thresholds live in each tool's own config (e.g. `pyproject.toml`), and `CONSTRAINTS.md` points to those recipes.
+
 ---
 
 Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
