@@ -569,6 +569,14 @@
               },
               {
                 "type": "basic",
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.brave\\.Browser$"
+                    ]
+                  }
+                ],
                 "from": {
                   "key_code": "w",
                   "modifiers": {
