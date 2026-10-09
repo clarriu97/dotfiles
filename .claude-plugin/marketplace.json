@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "dotfiles",
+  "description": "Plugins vendored in clarriu97/dotfiles, pinned to the commit of their submodule.",
+  "owner": {
+    "name": "Carlos Larriu"
+  },
+  "plugins": [
+    {
+      "name": "agent-skills",
+      "source": "./vendor/agent-skills",
+      "description": "addyosmani/agent-skills: spec, plan, build, test, review and ship workflows."
+    }
+  ]
+}
