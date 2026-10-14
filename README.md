@@ -55,7 +55,7 @@ Pick only some parts, without questions:
 | Part | macOS | Linux |
 |---|---|---|
 | `terminal` | zsh, powerlevel10k, CLI tools, Warp + Ghostty, Nerd Font | same, with Warp |
-| `apps` | VS Code, Brave, Raycast, Stats + Caffeine in the menu bar | VS Code, Brave |
+| `apps` | VS Code, Brave, Raycast, Bitwarden, Stats + Caffeine + CodexBar in the menu bar | VS Code, Brave |
 | `wm` | AeroSpace tiling + window borders | i3 + polybar |
 | `keyboard` | Left Option becomes the window-manager key | — |
 | `desktop` | Dock auto-hide, Finder tweaks, fast key repeat | — |

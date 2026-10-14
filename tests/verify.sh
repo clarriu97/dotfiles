@@ -184,6 +184,8 @@ if want apps; then
         expect_app Raycast
         expect_app Stats
         expect_app Caffeine
+        expect_app Bitwarden
+        expect_app CodexBar
         for agent in dev.dotfiles.stats dev.dotfiles.caffeine; do
             expect "login item $agent" test -f "$HOME/Library/LaunchAgents/$agent.plist"
         done

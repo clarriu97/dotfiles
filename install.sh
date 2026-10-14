@@ -32,7 +32,7 @@ describe_component() {
     case "$1:$OS" in
         terminal:macos) echo "zsh + powerlevel10k + CLI tools + Warp & Ghostty" ;;
         terminal:*)     echo "zsh + powerlevel10k + CLI tools + Warp" ;;
-        apps:*)         echo "VS Code, Brave$([[ $OS == macos ]] && echo ', Raycast')" ;;
+        apps:*)         echo "VS Code, Brave$([[ $OS == macos ]] && echo ', Raycast, Bitwarden, CodexBar')" ;;
         wm:macos)       echo "AeroSpace tiling window manager" ;;
         wm:*)           echo "i3 + polybar" ;;
         keyboard:*)     echo "Karabiner-Elements: Left Option as window-manager key" ;;
