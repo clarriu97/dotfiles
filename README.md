@@ -171,6 +171,48 @@ Handy aliases:
 
 Your own tweaks go in `~/.zshrc.local` (not versioned, loaded last).
 
+## 🤖 Working with Claude Code
+
+The `claude` part leaves Claude Code ready in every repo: your rules ([`claude/CLAUDE.md`](claude/CLAUDE.md)), a status line with context and usage limits, a hook that blocks dangerous commands (`rm -rf ~`, force push), and the [agent-skills](https://github.com/addyosmani/agent-skills) workflow. Run `claude` in a repo (or open it in the Desktop app) and talk to it.
+
+**Small change**: just ask. Skills stay out of trivial work.
+
+```text
+Add a `gl` alias for `git pull` and open a PR.
+```
+
+**A feature**: one step at a time, each one waits for your OK.
+
+```text
+I want to export my workouts to CSV. Interview me.   # one question at a time until the ask is clear
+/agent-skills:spec          # docs/specs/YYYY-MM-DD-<slug>.md, committed with the change
+/agent-skills:plan          # small tasks with acceptance criteria (tasks/, not committed)
+/agent-skills:build auto    # failing test → code → commit, task by task
+/agent-skills:review        # correctness, readability, architecture, security, performance
+/commit-push-pr             # Conventional Commit, push, open the PR
+```
+
+**A bug**: ask for proof first.
+
+```text
+install.sh fails on Fedora with "pkg_install: command not found". Reproduce it with a test before changing anything.
+```
+
+| Command | When |
+|---|---|
+| `/commit` · `/commit-push-pr` | Commit with a Conventional Commit message · also push and open the PR |
+| `/agent-skills:test` | TDD, or prove a bug with a failing test |
+| `/agent-skills:code-simplify` | Same behavior, less code |
+| `/agent-skills:constraints` | Write down a repo's quality bar (`CONSTRAINTS.md` + `just` recipes) |
+| `/code-review` · `/security-review` | Review the current diff |
+| `/handoff` → `/clear` → `/catchup` | Pause a task and resume it in a fresh context |
+| `/clean_gone` | Delete local branches already merged and gone on the remote |
+| "… use context7" | Answer from the current docs of the library version you use |
+
+Habits that pay off: plan mode (`Shift` + `Tab`) before non-trivial edits, one task per session, and always give Claude a command that proves the change (`just test`).
+
+More: [the full workflow with a worked example](guides/claude-workflow.md) · [what gets installed and why](claude/README.md).
+
 ## 🛟 The `dotfiles` command
 
 ```console
