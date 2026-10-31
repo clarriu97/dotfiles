@@ -23,8 +23,6 @@
       "Bash(wc *)"
     ],
     "deny": [
-      "Read(./.env)",
-      "Read(./.env.*)",
       "Read(~/.ssh/**)",
       "Read(~/.aws/**)",
       "Read(~/.gnupg/**)"
@@ -38,6 +36,15 @@
           {
             "type": "command",
             "command": "~/.claude/hooks/guard-bash.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Read|Edit|MultiEdit|Write|Grep",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/guard-env.sh"
           }
         ]
       }

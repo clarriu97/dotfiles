@@ -46,7 +46,7 @@ To add one: put `"name@claude-plugins-official": true` in `enabledPlugins` and r
 - **After merging a bump**: `git pull` and `just agent-skills-sync`, then `/reload-plugins` in open sessions.
 - **Fresh clone**: the installer runs `git submodule update --init` (or clone with `--recurse-submodules`).
 
-`.env` files: `settings.json` denies the **Read** tool on `.env*`, so secrets never end up in the conversation. Commands still get the variables (`set -a; . ./.env; set +a; <command>` or a `just` recipe with `set dotenv-load`), because the deny only applies to reading the file into the context.
+`.env` files: the `hooks/guard-env.sh` hook blocks the file tools (Read, Edit, Write, Grep) on `.env` and `.env.*`, so secrets never end up in the conversation. Templates (`.env.example`, `.env.sample`, `.env.template`) stay readable and editable. A hook rather than a `deny` rule, because deny rules can't carve out exceptions. Commands still get the variables (`set -a; . ./.env; set +a; <command>` or a `just` recipe with `set dotenv-load`), because the hook only applies to reading the file into the context.
 
 ## Opt-in, per project
 
@@ -69,4 +69,4 @@ Enable these in the project's `.claude/settings.json` rather than globally, so t
 ## Security notes
 
 - Prefer `gh auth login` (token kept in the macOS keychain) over tokens in plain `.env` files, and use fine-grained tokens limited to the repos you need.
-- `settings.json` denies reading `.env*`, `~/.ssh`, `~/.aws` and `~/.gnupg` with the Read tool.
+- `settings.json` denies reading `~/.ssh`, `~/.aws` and `~/.gnupg` with the Read tool; `hooks/guard-env.sh` blocks `.env*` except templates.
