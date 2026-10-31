@@ -47,6 +47,35 @@ guard() {
     [ "$status" -eq 0 ]
 }
 
+guard_env() {
+    jq -n --arg p "$1" '{tool_name: "Read", tool_input: {file_path: $p}}' | "$REPO/claude/hooks/guard-env.sh"
+}
+
+@test "env guard blocks .env files anywhere" {
+    for p in ".env" "/repo/.env" "/repo/app/.env.local" "/repo/.env.production" "/repo/.env.prod"; do
+        run guard_env "$p"
+        [ "$status" -eq 2 ] || { echo "not blocked: $p"; return 1; }
+    done
+}
+
+@test "env guard allows templates and unrelated files" {
+    for p in "/repo/.env.example" "/repo/app/.env.sample" ".env.template" "/repo/env.py" "/repo/.envrc" "/repo/README.md"; do
+        run guard_env "$p"
+        [ "$status" -eq 0 ] || { echo "blocked: $p"; return 1; }
+    done
+}
+
+@test "env guard checks the Grep path" {
+    run bash -c "jq -n '{tool_name: \"Grep\", tool_input: {pattern: \"KEY\", path: \"/repo/.env\"}}' | '$REPO/claude/hooks/guard-env.sh'"
+    [ "$status" -eq 2 ]
+    run bash -c "jq -n '{tool_name: \"Grep\", tool_input: {pattern: \"KEY\", path: \"/repo\", glob: \".env*\"}}' | '$REPO/claude/hooks/guard-env.sh'"
+    [ "$status" -eq 2 ]
+    run bash -c "jq -n '{tool_name: \"Grep\", tool_input: {pattern: \"KEY\", path: \"/repo\", glob: \"**/.env.example\"}}' | '$REPO/claude/hooks/guard-env.sh'"
+    [ "$status" -eq 0 ]
+    run bash -c "echo '{}' | '$REPO/claude/hooks/guard-env.sh'"
+    [ "$status" -eq 0 ]
+}
+
 @test "status line shows model, directory, branch, context and rate limit" {
     run bash -c "jq -n --arg d '$REPO' '{model: {display_name: \"Opus\"}, workspace: {current_dir: \$d}, context_window: {used_percentage: 42.5}, rate_limits: {five_hour: {used_percentage: 81}}}' | '$STATUSLINE'"
     [ "$status" -eq 0 ]
