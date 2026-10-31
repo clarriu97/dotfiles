@@ -68,6 +68,10 @@ guard_env() {
 @test "env guard checks the Grep path" {
     run bash -c "jq -n '{tool_name: \"Grep\", tool_input: {pattern: \"KEY\", path: \"/repo/.env\"}}' | '$REPO/claude/hooks/guard-env.sh'"
     [ "$status" -eq 2 ]
+    run bash -c "jq -n '{tool_name: \"Grep\", tool_input: {pattern: \"KEY\", path: \"/repo\", glob: \".env*\"}}' | '$REPO/claude/hooks/guard-env.sh'"
+    [ "$status" -eq 2 ]
+    run bash -c "jq -n '{tool_name: \"Grep\", tool_input: {pattern: \"KEY\", path: \"/repo\", glob: \"**/.env.example\"}}' | '$REPO/claude/hooks/guard-env.sh'"
+    [ "$status" -eq 0 ]
     run bash -c "echo '{}' | '$REPO/claude/hooks/guard-env.sh'"
     [ "$status" -eq 0 ]
 }
